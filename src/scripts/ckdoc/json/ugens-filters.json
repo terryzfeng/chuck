@@ -1,0 +1,1103 @@
+{
+  "title": "Basic Filter UGens",
+  "groups": [
+    {
+      "name": "FilterBasic",
+      "description": "Base class for basic filters with a notion of center/cutoff frequency and Q.",
+      "inherits": ["UGen", "Object"],
+      "constructors": [
+        {
+          "constructor": "FilterBasic",
+          "arguments": [],
+          "description": "Default constructor for FilterBasic."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "Q",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "val"
+            }
+          ],
+          "description": "Set filter resonance."
+        },
+        {
+          "member function": "Q",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter resonance."
+        },
+        {
+          "member function": "freq",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "val"
+            }
+          ],
+          "description": "Set filter cutoff/center frequency."
+        },
+        {
+          "member function": "freq",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter cutoff/center frequency."
+        },
+        {
+          "member function": "set",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "freq"
+            },
+            {
+              "type": "float",
+              "name": "Q"
+            }
+          ],
+          "description": "Set filter frequency and resonance at the same time."
+        }
+      ]
+    },
+    {
+      "name": "LPF",
+      "description": "A resonant low-pass filter (2nd order Butterworth).",
+      "inherits": ["FilterBasic", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/filter/lpf.ck",
+        "https://chuck.stanford.edu/doc/examples/filter/rlpf.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "LPF",
+          "arguments": [],
+          "description": "Default constructor for LPF."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "Q",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "val"
+            }
+          ],
+          "description": "Set filter resonance."
+        },
+        {
+          "member function": "Q",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter resonance."
+        },
+        {
+          "member function": "freq",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "val"
+            }
+          ],
+          "description": "Set filter cutoff frequency."
+        },
+        {
+          "member function": "freq",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter cutoff frequency."
+        },
+        {
+          "member function": "set",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "freq"
+            },
+            {
+              "type": "float",
+              "name": "Q"
+            }
+          ],
+          "description": "Set filter frequency and resonance at the same time."
+        }
+      ]
+    },
+    {
+      "name": "HPF",
+      "description": "A resonant high-pass filter (2nd order Butterworth).",
+      "inherits": ["FilterBasic", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/filter/hpf.ck",
+        "https://chuck.stanford.edu/doc/examples/filter/rhpf.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "HPF",
+          "arguments": [],
+          "description": "Default constructor for HPF."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "Q",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "val"
+            }
+          ],
+          "description": "Set filter resonance."
+        },
+        {
+          "member function": "Q",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter resonance."
+        },
+        {
+          "member function": "freq",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "val"
+            }
+          ],
+          "description": "Set filter cutoff frequency."
+        },
+        {
+          "member function": "freq",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter cutoff frequency."
+        },
+        {
+          "member function": "set",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "freq"
+            },
+            {
+              "type": "float",
+              "name": "Q"
+            }
+          ],
+          "description": "Set filter frequency and resonance at the same time."
+        }
+      ]
+    },
+    {
+      "name": "BPF",
+      "description": "A bandpass filter (2nd order Butterworth).",
+      "inherits": ["FilterBasic", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/filter/bpf.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "BPF",
+          "arguments": [],
+          "description": "Default constructor for BPF."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "Q",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "val"
+            }
+          ],
+          "description": "Set filter resonance."
+        },
+        {
+          "member function": "Q",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter resonance."
+        },
+        {
+          "member function": "freq",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "val"
+            }
+          ],
+          "description": "Set filter center frequency."
+        },
+        {
+          "member function": "freq",
+          "return type": "float",
+          "arguments": [],
+          "description": "Set filter center frequency."
+        },
+        {
+          "member function": "set",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "freq"
+            },
+            {
+              "type": "float",
+              "name": "Q"
+            }
+          ],
+          "description": "Get filter frequency and resonance at the same time."
+        }
+      ]
+    },
+    {
+      "name": "BRF",
+      "description": "A band-reject filter (2nd order Butterworth).",
+      "inherits": ["FilterBasic", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/filter/brf.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "BRF",
+          "arguments": [],
+          "description": "Default constructor for BRF."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "Q",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "val"
+            }
+          ],
+          "description": "Set filter resonance."
+        },
+        {
+          "member function": "Q",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter resonance."
+        },
+        {
+          "member function": "freq",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "val"
+            }
+          ],
+          "description": "Set filter center frequency."
+        },
+        {
+          "member function": "freq",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter center frequency."
+        },
+        {
+          "member function": "set",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "freq"
+            },
+            {
+              "type": "float",
+              "name": "Q"
+            }
+          ],
+          "description": "Set filter frequency and resonance at the same time."
+        }
+      ]
+    },
+    {
+      "name": "BiQuad",
+      "description": "A BiQuad (two-pole, two-zero) filter section from STK. A method is provided for creating a resonance in the frequency response while maintaining a constant filter gain.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/basic/wind.ck",
+        "https://chuck.stanford.edu/doc/examples/basic/moe.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "BiQuad",
+          "arguments": [],
+          "description": "Default constructor for BiQuad."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "a0",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter coefficient."
+        },
+        {
+          "member function": "a0",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter coefficient."
+        },
+        {
+          "member function": "a1",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter coefficient."
+        },
+        {
+          "member function": "a1",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter coefficient."
+        },
+        {
+          "member function": "a2",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter coefficient."
+        },
+        {
+          "member function": "a2",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter coefficient."
+        },
+        {
+          "member function": "b0",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter coefficient."
+        },
+        {
+          "member function": "b0",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter coefficient."
+        },
+        {
+          "member function": "b1",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter coefficient."
+        },
+        {
+          "member function": "b1",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter coefficient."
+        },
+        {
+          "member function": "b2",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter coefficient."
+        },
+        {
+          "member function": "b2",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter coefficient."
+        },
+        {
+          "member function": "eqzs",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "value"
+            }
+          ],
+          "description": "Enable equal-gain zeroes."
+        },
+        {
+          "member function": "norm",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "value"
+            }
+          ],
+          "description": "Toggle normalization."
+        },
+        {
+          "member function": "norm",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get normalization setting."
+        },
+        {
+          "member function": "pfreq",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "freq"
+            }
+          ],
+          "description": "Set resonance frequency (poles)."
+        },
+        {
+          "member function": "pfreq",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get resonance frequency (poles)."
+        },
+        {
+          "member function": "prad",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set Pole radius (values greater than 1 will be unstable)."
+        },
+        {
+          "member function": "prad",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get pole radius."
+        },
+        {
+          "member function": "pregain",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "level"
+            }
+          ],
+          "description": "Set pregain."
+        },
+        {
+          "member function": "pregain",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get pregain."
+        },
+        {
+          "member function": "zfreq",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "freq"
+            }
+          ],
+          "description": "Set notch frequency."
+        },
+        {
+          "member function": "zfreq",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get notch frequency."
+        },
+        {
+          "member function": "zrad",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set zero radius."
+        },
+        {
+          "member function": "zrad",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get zero radius."
+        }
+      ]
+    },
+    {
+      "name": "ResonZ",
+      "description": "A resonance filter with equal-gain zeros; keeps gain under control independent of frequency.",
+      "inherits": ["FilterBasic", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/filter/resonz.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "ResonZ",
+          "arguments": [],
+          "description": "Default constructor for ResonZ."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "Q",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "val"
+            }
+          ],
+          "description": "Set filter resonance."
+        },
+        {
+          "member function": "Q",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter resonance."
+        },
+        {
+          "member function": "freq",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "val"
+            }
+          ],
+          "description": "Set filter center frequency."
+        },
+        {
+          "member function": "freq",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter center frequency."
+        },
+        {
+          "member function": "set",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "freq"
+            },
+            {
+              "type": "float",
+              "name": "Q"
+            }
+          ],
+          "description": "Set filter frequency and resonance at the same time."
+        }
+      ]
+    },
+    {
+      "name": "OnePole",
+      "description": "This Filter subclass implements a one-pole digital filter. A method is provided for setting the pole position along the real axis of the z-plane while maintaining a constant peak filter gain. by Perry R. Cook and Gary P. Scavone, 1995 - 2002.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/deep/follower.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "OnePole",
+          "arguments": [],
+          "description": "Default constructor for OnePole."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "a1",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter coefficient."
+        },
+        {
+          "member function": "a1",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter coefficient."
+        },
+        {
+          "member function": "b0",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter coefficient."
+        },
+        {
+          "member function": "b0",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter coefficient."
+        },
+        {
+          "member function": "pole",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set pole position along real axis of z-plane."
+        },
+        {
+          "member function": "pole",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get pole position along real axis of z-plane."
+        }
+      ]
+    },
+    {
+      "name": "OneZero",
+      "description": "This Filter subclass implements a one-zero digital filter. A method is provided for setting the zero position along the real axis of the z-plane while maintaining a constant filter gain. by Perry R. Cook and Gary P. Scavone, 1995 - 2002.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/deep/plu.ck",
+        "https://chuck.stanford.edu/doc/examples/deep/plu2.ck",
+        "https://chuck.stanford.edu/doc/examples/deep/plu3.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "OneZero",
+          "arguments": [],
+          "description": "Default constructor for OneZero."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "b0",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter coefficient."
+        },
+        {
+          "member function": "b0",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter coefficient."
+        },
+        {
+          "member function": "b1",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter coefficient."
+        },
+        {
+          "member function": "b1",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter coefficient."
+        },
+        {
+          "member function": "zero",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set zero position."
+        },
+        {
+          "member function": "zero",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get zero position."
+        }
+      ]
+    },
+    {
+      "name": "TwoPole",
+      "description": "This Filter subclass implements a two-pole digital filter. A method is provided for creating a resonance in the frequency response while maintaining a nearly constant filter gain. by Perry R. Cook and Gary P. Scavone, 1995 - 2002.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/shred/powerup.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "TwoPole",
+          "arguments": [],
+          "description": "Default constructor for TwoPole."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "a1",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter coefficient."
+        },
+        {
+          "member function": "a1",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter coefficient."
+        },
+        {
+          "member function": "a2",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter coefficient."
+        },
+        {
+          "member function": "a2",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter coefficient."
+        },
+        {
+          "member function": "b0",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter coefficient."
+        },
+        {
+          "member function": "b0",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter coefficient."
+        },
+        {
+          "member function": "freq",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter resonance frequency."
+        },
+        {
+          "member function": "freq",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter resonance frequency."
+        },
+        {
+          "member function": "norm",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter normalization."
+        },
+        {
+          "member function": "norm",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get filter normalization."
+        },
+        {
+          "member function": "radius",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter radius resonance."
+        },
+        {
+          "member function": "radius",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter radius resonance."
+        }
+      ]
+    },
+    {
+      "name": "TwoZero",
+      "description": "This Filter subclass implements a two-zero digital filter. A method is provided for creating a 'notch' in the frequency response while maintaining a constant filter gain. by Perry R. Cook and Gary P. Scavone, 1995 - 2002.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/deep/chant.ck",
+        "https://chuck.stanford.edu/doc/examples/deep/say-chu.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "TwoZero",
+          "arguments": [],
+          "description": "Default constructor for TwoZero."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "b0",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter coefficient."
+        },
+        {
+          "member function": "b0",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter coefficient."
+        },
+        {
+          "member function": "b1",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter coefficient."
+        },
+        {
+          "member function": "b1",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter coefficient."
+        },
+        {
+          "member function": "b2",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter coefficient."
+        },
+        {
+          "member function": "b2",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter coefficient."
+        },
+        {
+          "member function": "freq",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter notch frequency."
+        },
+        {
+          "member function": "freq",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter notch frequency."
+        },
+        {
+          "member function": "radius",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter notch radius."
+        },
+        {
+          "member function": "radius",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter notch radius."
+        }
+      ]
+    },
+    {
+      "name": "PoleZero",
+      "description": "A one-pole, one-zero digital filter. A method is provided for creating an allpass filter with a given coefficient. Another method is provided to create a DC blocking filter. by Perry R. Cook and Gary P. Scavone, 1995 - 2002.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/filter/dcblocker.ck",
+        "https://chuck.stanford.edu/doc/examples/deep/plu2.ck",
+        "https://chuck.stanford.edu/doc/examples/deep/plu3.ck",
+        "https://chuck.stanford.edu/doc/examples/stk/flute.ck",
+        "https://chuck.stanford.edu/doc/examples/analysis/tracking/pitch-track.ck",
+        "https://chuck.stanford.edu/doc/examples/analysis/tracking/pitch-third.ck",
+        "https://chuck.stanford.edu/doc/examples/analysis/tracking/pitch-fifth.ck",
+        "https://chuck.stanford.edu/doc/examples/analysis/tracking/pitch-seventh.ck",
+        "https://chuck.stanford.edu/doc/examples/analysis/tracking/Tracking.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "PoleZero",
+          "arguments": [],
+          "description": "Default constructor for PoleZero."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "a1",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter coefficient."
+        },
+        {
+          "member function": "a1",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter coefficient."
+        },
+        {
+          "member function": "allpass",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set allpass filter with given coefficient."
+        },
+        {
+          "member function": "allpass",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get allpass filter with given coefficient."
+        },
+        {
+          "member function": "b0",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter coefficient."
+        },
+        {
+          "member function": "b0",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter coefficient."
+        },
+        {
+          "member function": "b1",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set filter coefficient."
+        },
+        {
+          "member function": "b1",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter coefficient."
+        },
+        {
+          "member function": "blockZero",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Set DC blocking filter with given pole position."
+        },
+        {
+          "member function": "blockZero",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get DC blocking filter with given pole position."
+        }
+      ]
+    }
+  ]
+}

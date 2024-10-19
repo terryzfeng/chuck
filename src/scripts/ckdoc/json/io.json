@@ -1,0 +1,2128 @@
+{
+  "title": "Input & Output",
+  "groups": [
+    {
+      "name": "IO",
+      "description": "Base class for other IO classes such as FileIO, StdOut and StdErr. Besides IO.newline(), it’s unlikely you need to use this class directly.",
+      "inherits": ["Event", "Object"],
+      "constructors": [
+        {
+          "constructor": "IO",
+          "arguments": [],
+          "description": "Default constructor for IO."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "close",
+          "return type": "void",
+          "arguments": [],
+          "description": "Close the currently open IO."
+        },
+        {
+          "member function": "eof",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return whether end-of-file has been reached; the opposite of .more()."
+        },
+        {
+          "member function": "flush",
+          "return type": "void",
+          "arguments": [],
+          "description": "Write any buffered output."
+        },
+        {
+          "member function": "good",
+          "return type": "int",
+          "arguments": [],
+          "description": "Returns whether IO is ready for reading."
+        },
+        {
+          "member function": "mode",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "flag"
+            }
+          ],
+          "description": "Set the current IO mode; either IO.MODE_ASYNC or IO.MODE_SYNC."
+        },
+        {
+          "member function": "mode",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the current IO mode; either IO.MODE_ASYNC or IO.MODE_SYNC."
+        },
+        {
+          "member function": "more",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return whether there is more to read; the opposite of .eof()."
+        },
+        {
+          "member function": "readFloat",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "flags"
+            }
+          ],
+          "description": "Read and return the next floating point value; binary mode: 'flags' denotes the size of float to read (IO.FLOAT32 or IO.FLOAT64)."
+        },
+        {
+          "member function": "readInt",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "flags"
+            }
+          ],
+          "description": "Read and return the next integer; binary mode: 'flags' denotes the bit-size of int (IO.INT8, IO.INT16, or IO.INT32)."
+        },
+        {
+          "member function": "readLine",
+          "return type": "string",
+          "arguments": [],
+          "description": "Read until an end-of-line character."
+        },
+        {
+          "member function": "write",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "val"
+            }
+          ],
+          "description": "Write string 'val'."
+        },
+        {
+          "member function": "write",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "val"
+            }
+          ],
+          "description": "Write integer 'val'."
+        },
+        {
+          "member function": "write",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "val"
+            }
+          ],
+          "description": "Write floating point number 'val'."
+        }
+      ],
+      "static member functions": [
+        {
+          "static member function": "newline",
+          "return type": "string",
+          "arguments": [],
+          "description": "Newline character; same as IO.nl()."
+        },
+        {
+          "static member function": "nl",
+          "return type": "string",
+          "arguments": [],
+          "description": "Newline character; same as IO.newline()."
+        }
+      ],
+      "static member variables": [
+        {
+          "name": "APPEND",
+          "type": "int",
+          "description": "Flag denoting append mode."
+        },
+        {
+          "name": "ASCII",
+          "type": "int",
+          "description": "Flag denoting ASCII IO mode."
+        },
+        {
+          "name": "BINARY",
+          "type": "int",
+          "description": "Flag denoting binary IO mode."
+        },
+        {
+          "name": "FLOAT32",
+          "type": "int",
+          "description": "Flag denoting 32-bit floating point type."
+        },
+        {
+          "name": "FLOAT64",
+          "type": "int",
+          "description": "Flag denoting 64-bit floating point type."
+        },
+        {
+          "name": "INT16",
+          "type": "int",
+          "description": "Flag denoting 16-bit integer type."
+        },
+        {
+          "name": "INT24",
+          "type": "int",
+          "description": "Flag denoting 24-bit integer type."
+        },
+        {
+          "name": "INT32",
+          "type": "int",
+          "description": "Flag denoting 32-bit integer type."
+        },
+        {
+          "name": "INT64",
+          "type": "int",
+          "description": "Flag denoting 64-bit integer type."
+        },
+        {
+          "name": "INT8",
+          "type": "int",
+          "description": "Flag denoting 8-bit integer type."
+        },
+        {
+          "name": "MODE_ASYNC",
+          "type": "int",
+          "description": "Flag denoting asychronous IO."
+        },
+        {
+          "name": "MODE_SYNC",
+          "type": "int",
+          "description": "Flag denoting synchronous IO."
+        },
+        {
+          "name": "READ",
+          "type": "int",
+          "description": "Flag denoting read mode."
+        },
+        {
+          "name": "READ_WRITE",
+          "type": "int",
+          "description": "Flag denoting read/write mode."
+        },
+        {
+          "name": "SINT16",
+          "type": "int",
+          "description": "Flag denoting 16-bit signed integer type."
+        },
+        {
+          "name": "SINT24",
+          "type": "int",
+          "description": "Flag denoting 24-bit signed integer type."
+        },
+        {
+          "name": "SINT32",
+          "type": "int",
+          "description": "Flag denoting 32-bit signed integer type."
+        },
+        {
+          "name": "SINT64",
+          "type": "int",
+          "description": "Flag denoting 64-bit signed integer type."
+        },
+        {
+          "name": "SINT8",
+          "type": "int",
+          "description": "Flag denoting 8-bit signed integer type."
+        },
+        {
+          "name": "UINT16",
+          "type": "int",
+          "description": "Flag denoting 16-bit unsigned integer type."
+        },
+        {
+          "name": "UINT24",
+          "type": "int",
+          "description": "Flag denoting 24-bit unsigned integer type."
+        },
+        {
+          "name": "UINT32",
+          "type": "int",
+          "description": "Flag denoting 32-bit unsigned integer type."
+        },
+        {
+          "name": "UINT64",
+          "type": "int",
+          "description": "Flag denoting 64-bit unsigned integer type."
+        },
+        {
+          "name": "UINT8",
+          "type": "int",
+          "description": "Flag denoting 8-bit unsigned integer type."
+        },
+        {
+          "name": "WRITE",
+          "type": "int",
+          "description": "Flag denoting write mode."
+        }
+      ]
+    },
+    {
+      "name": "FileIO",
+      "description": "File input and output utilities for reading, writing, seeking, etc. See examples for usage.",
+      "inherits": ["IO", "Event", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/io/chout.ck",
+        "https://chuck.stanford.edu/doc/examples/io/read-float.ck",
+        "https://chuck.stanford.edu/doc/examples/io/read-int.ck",
+        "https://chuck.stanford.edu/doc/examples/io/read-line.ck",
+        "https://chuck.stanford.edu/doc/examples/io/read-str.ck",
+        "https://chuck.stanford.edu/doc/examples/io/read-tokens.ck",
+        "https://chuck.stanford.edu/doc/examples/io/seek.ck",
+        "https://chuck.stanford.edu/doc/examples/io/write.ck",
+        "https://chuck.stanford.edu/doc/examples/io/write2.ck",
+        "https://chuck.stanford.edu/doc/examples/io/write-auto.ck",
+        "https://chuck.stanford.edu/doc/examples/io/read-byte.ck",
+        "https://chuck.stanford.edu/doc/examples/io/write-byte.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "FileIO",
+          "arguments": [],
+          "description": "Default constructor for FileIO."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "autoExtension",
+          "return type": "string",
+          "arguments": [],
+          "description": "Get auto extension for \"special:auto\" filename generation (applicable to file writing only)."
+        },
+        {
+          "member function": "autoPrefix",
+          "return type": "string",
+          "arguments": [],
+          "description": "Get auto prefix for \"special:auto\" filename generation (applicable to file writing only)."
+        },
+        {
+          "member function": "autoPrefixExtension",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "prefix"
+            },
+            {
+              "type": "string",
+              "name": "extension"
+            }
+          ],
+          "description": "Set auto prefix and extension for \"special:auto\" filename generation (applicable to file writing only)."
+        },
+        {
+          "member function": "close",
+          "return type": "void",
+          "arguments": [],
+          "description": "Close (and flush) the currently open file."
+        },
+        {
+          "member function": "dirList",
+          "return type": "string[]",
+          "arguments": [],
+          "description": "Get an array of file names in an open directory."
+        },
+        {
+          "member function": "eof",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return whether end-of-file has been reached; the opposite of .more()."
+        },
+        {
+          "member function": "filename",
+          "return type": "string",
+          "arguments": [],
+          "description": "Get current filename."
+        },
+        {
+          "member function": "flush",
+          "return type": "void",
+          "arguments": [],
+          "description": "Write any buffered output to file."
+        },
+        {
+          "member function": "good",
+          "return type": "int",
+          "arguments": [],
+          "description": "Returns whether the file is ready for reading."
+        },
+        {
+          "member function": "isDir",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return if the open file is a directory."
+        },
+        {
+          "member function": "mode",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "flag"
+            }
+          ],
+          "description": "Set file IO mode (IO.MODE_SYNC or IO.MODE_ASYNC)."
+        },
+        {
+          "member function": "mode",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get file IO mode (IO.MODE_SYNC or IO.MODE_ASYNC)."
+        },
+        {
+          "member function": "more",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return whether there is more to read; the opposite of .eof()."
+        },
+        {
+          "member function": "open",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "path"
+            }
+          ],
+          "description": "Open a file by name (and by default in ASCII mode)."
+        },
+        {
+          "member function": "open",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "path"
+            },
+            {
+              "type": "int",
+              "name": "flags"
+            }
+          ],
+          "description": "Open a file by name with flags (bitwise combinations of IO.READ, IO.WRITE, IO.READ_WRITE, IO_APPEND, IO.ASCII, IO.BINARY)."
+        },
+        {
+          "member function": "readFloat",
+          "return type": "float",
+          "arguments": [],
+          "description": "Read and return the next floating point value."
+        },
+        {
+          "member function": "readFloat",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "flags"
+            }
+          ],
+          "description": "Read and return the next floating point value; if binary mode: 'flags' denotes the size of float to read (IO.FLOAT32 or IO.FLOAT64)."
+        },
+        {
+          "member function": "readInt",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "flags"
+            }
+          ],
+          "description": "Read and return an integer; binary mode: 'flags' specifies int size to read (IO.INT8, IO.INT16, IO.INT32 default to unsigned values; for signed integers use IO.SINT8, IO.SINT16, IO.SINT32)."
+        },
+        {
+          "member function": "readLine",
+          "return type": "string",
+          "arguments": [],
+          "description": "Read and return the next line from file."
+        },
+        {
+          "member function": "seek",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "pos"
+            }
+          ],
+          "description": "Seek to a specified byte offset in file."
+        },
+        {
+          "member function": "size",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return the size of the file in bytes, or -1 if no file is opened or if a directory is opened."
+        },
+        {
+          "member function": "tell",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return the byte read offset of the file, or -1 if no file is opened."
+        },
+        {
+          "member function": "write",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "val"
+            }
+          ],
+          "description": "Write a string to file."
+        },
+        {
+          "member function": "write",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "val"
+            }
+          ],
+          "description": "Write an integer to file."
+        },
+        {
+          "member function": "write",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "val"
+            },
+            {
+              "type": "int",
+              "name": "flags"
+            }
+          ],
+          "description": "Write integer value to file; binary mode: int size specified by 'flags' (IO.INT8, IO.INT16, IO.INT32)."
+        },
+        {
+          "member function": "write",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "val"
+            }
+          ],
+          "description": "Write floating point value to file."
+        },
+        {
+          "member function": "write",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "val"
+            },
+            {
+              "type": "int",
+              "name": "flags"
+            }
+          ],
+          "description": "Write floating point value to file; binary mode: flags indicate float size (IO.FLOAT32 or IO.FLOAT64)."
+        }
+      ],
+      "static member functions": [
+        {
+          "static member function": "expandPath",
+          "return type": "string",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "path"
+            }
+          ],
+          "description": "Expand platform-specific filepath to an absolute path, which is returned. On macOS and Linux expandPath() will attempt to resolve `~` or `~[username]`; on Windows expandPath() will attempt to resolve %USERNAME%. (Known issue: (macOS) expandPath currently introduced an audio click; it recommended to call expandPath() at the beginning; e.g., expanding path ahead of time could avoid a click instead of calling Machine.add() on a filepath with `~`.)"
+        }
+      ]
+    },
+    {
+      "name": "OscIn",
+      "description": "Class for receiving Open Sound Control (OSC) messages. See examples for usage.",
+      "inherits": ["Event", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/osc/r.ck",
+        "https://chuck.stanford.edu/doc/examples/osc/r2.ck",
+        "https://chuck.stanford.edu/doc/examples/osc/s.ck",
+        "https://chuck.stanford.edu/doc/examples/osc/osc-dump.ck",
+        "https://chuck.stanford.edu/doc/examples/osc/multi-msg/r-multi-msg.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "OscIn",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "addAddress",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "address"
+            }
+          ],
+          "description": "Add an OSC address to receive messages from."
+        },
+        {
+          "member function": "listenAll",
+          "return type": "void",
+          "arguments": [],
+          "description": "Set OscIn to receive messages of any OSC address."
+        },
+        {
+          "member function": "port",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get which port to listen on."
+        },
+        {
+          "member function": "port",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "p"
+            }
+          ],
+          "description": "Set which port to listen on; this will begin priming the background OSC listener on the named port. If port is set to 0, a usable port would be automatically assigned; the auto-assigned port number can be retrieved by calling .port() but may initially take some time to acquire (e.g., hundreds of milliseconds); if there is more than one OscIn client on port 0, they all will eventually share the same auto-assigned port."
+        },
+        {
+          "member function": "recv",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "OscMsg",
+              "name": "msg"
+            }
+          ],
+          "description": "Receive the next queued incoming OSC message, returning its contents in `msg`."
+        },
+        {
+          "member function": "removeAddress",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "address"
+            }
+          ],
+          "description": "Stop listening on a particular OSC address."
+        },
+        {
+          "member function": "removeAllAddresses",
+          "return type": "void",
+          "arguments": [],
+          "description": "Stop listening on all OSC addresses."
+        }
+      ]
+    },
+    {
+      "name": "OscOut",
+      "description": "Class for sending Open Sound Control (OSC) messages. See examples for usage.",
+      "inherits": ["Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/osc/s.ck",
+        "https://chuck.stanford.edu/doc/examples/osc/r.ck",
+        "https://chuck.stanford.edu/doc/examples/osc/r2.ck",
+        "https://chuck.stanford.edu/doc/examples/osc/osc-dump.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "OscOut",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "add",
+          "return type": "OscOut",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "i"
+            }
+          ],
+          "description": "Add an integer value to an OSC message."
+        },
+        {
+          "member function": "add",
+          "return type": "OscOut",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "f"
+            }
+          ],
+          "description": "Add a floating-point value to an OSC message."
+        },
+        {
+          "member function": "add",
+          "return type": "OscOut",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "s"
+            }
+          ],
+          "description": "Add an string value to an OSC message."
+        },
+        {
+          "member function": "dest",
+          "return type": "OscOut",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "hostname"
+            },
+            {
+              "type": "int",
+              "name": "port"
+            }
+          ],
+          "description": "Set the destination hostname and port for sending OSC message."
+        },
+        {
+          "member function": "send",
+          "return type": "OscOut",
+          "arguments": [],
+          "description": "Send the current OSC message."
+        },
+        {
+          "member function": "start",
+          "return type": "OscOut",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "address"
+            }
+          ],
+          "description": "Start an OSC message with a particular address."
+        },
+        {
+          "member function": "start",
+          "return type": "OscOut",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "address"
+            },
+            {
+              "type": "string",
+              "name": "host"
+            },
+            {
+              "type": "int",
+              "name": "port"
+            }
+          ],
+          "description": "Start an OSC message with a particular address, aimed at a destination host and port."
+        }
+      ]
+    },
+    {
+      "name": "OscMsg",
+      "description": "Helper class for receiving the contents of an OSC message.",
+      "inherits": ["Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/osc/r.ck",
+        "https://chuck.stanford.edu/doc/examples/osc/r2.ck",
+        "https://chuck.stanford.edu/doc/examples/osc/s.ck",
+        "https://chuck.stanford.edu/doc/examples/osc/osc-dump.ck",
+        "https://chuck.stanford.edu/doc/examples/osc/multi-msg/r-multi-msg.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "OscMsg",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "getFloat",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "i"
+            }
+          ],
+          "description": "Get argument (at index 'i') as a float."
+        },
+        {
+          "member function": "getInt",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "i"
+            }
+          ],
+          "description": "Get argument (at index 'i') as an integer."
+        },
+        {
+          "member function": "getString",
+          "return type": "string",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "i"
+            }
+          ],
+          "description": "Get argument (at index 'i') as a string."
+        },
+        {
+          "member function": "numArgs",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the number of arguments contained in this OscMsg."
+        }
+      ],
+      "member variables": [
+        {
+          "name": "address",
+          "type": "string",
+          "description": "The OSC address string (e.g., \"/foo/param\")."
+        },
+        {
+          "name": "args",
+          "type": "OscArg[]",
+          "description": "Array of OscArgs contained in this message."
+        },
+        {
+          "name": "typetag",
+          "type": "string",
+          "description": "The OSC type tag string (e.g., \"iif\" for int, int, float)."
+        }
+      ]
+    },
+    {
+      "name": "Hid",
+      "description": "Class for interacting with human-interface devices (HIDs) such as keyboards, mice, gamepads, joysticks, etc.",
+      "inherits": ["Event", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/hid/kb.ck",
+        "https://chuck.stanford.edu/doc/examples/hid/keyboard-organ.ck",
+        "https://chuck.stanford.edu/doc/examples/hid/mouse.ck",
+        "https://chuck.stanford.edu/doc/examples/hid/mouse-abs.ck",
+        "https://chuck.stanford.edu/doc/examples/hid/mouse-fm.ck",
+        "https://chuck.stanford.edu/doc/examples/hid/joy.ck",
+        "https://chuck.stanford.edu/doc/examples/hid/joy-fm.ck",
+        "https://chuck.stanford.edu/doc/examples/hid/joy-noise.ck",
+        "https://chuck.stanford.edu/doc/examples/hid/joy-shake.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Hid",
+          "arguments": [],
+          "description": "Default constructor for Hid."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "can_wait",
+          "return type": "int",
+          "arguments": [],
+          "description": "(internal) used by virtual machine for synthronization."
+        },
+        {
+          "member function": "good",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get whether a device has been successfully opened on this HID instance."
+        },
+        {
+          "member function": "name",
+          "return type": "string",
+          "arguments": [],
+          "description": "Get the name of the currently open device; return empty string (\"\") if no device is open on this HID instance."
+        },
+        {
+          "member function": "num",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the number of the currently open device; returns -1 if no device is open on this HID instance."
+        },
+        {
+          "member function": "open",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "type"
+            },
+            {
+              "type": "int",
+              "name": "num"
+            }
+          ],
+          "description": "Open a HID device by device number ('num') and type ('type'). See static member variables for possible types."
+        },
+        {
+          "member function": "open",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "name"
+            }
+          ],
+          "description": "Open a HID device by name."
+        },
+        {
+          "member function": "openJoystick",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "num"
+            }
+          ],
+          "description": "Open a joystick/gamepad by device number."
+        },
+        {
+          "member function": "openJoystick",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "num"
+            },
+            {
+              "type": "int",
+              "name": "suppressErrMsg"
+            }
+          ],
+          "description": "Open a joystick/gamepad by device number, with option (true/false) to suppress error messages."
+        },
+        {
+          "member function": "openKeyboard",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "num"
+            }
+          ],
+          "description": "Open a keyboard by device number."
+        },
+        {
+          "member function": "openKeyboard",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "num"
+            },
+            {
+              "type": "int",
+              "name": "suppressErrMsg"
+            }
+          ],
+          "description": "Open a keyboard by device number, with option (true/false) to suppress error messages."
+        },
+        {
+          "member function": "openMouse",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "num"
+            }
+          ],
+          "description": "Open a mouse/trackpad by device number."
+        },
+        {
+          "member function": "openMouse",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "num"
+            },
+            {
+              "type": "int",
+              "name": "suppressErrMsg"
+            }
+          ],
+          "description": "Open a mouse/trackpad by device number, with option (true/false) to suppress error messages."
+        },
+        {
+          "member function": "openTiltSensor",
+          "return type": "int",
+          "arguments": [],
+          "description": "Open a tilt-sensor by device number."
+        },
+        {
+          "member function": "printerr",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "toPrintOrNot"
+            }
+          ],
+          "description": "Set whether to print errors (default is YES)."
+        },
+        {
+          "member function": "read",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "type"
+            },
+            {
+              "type": "int",
+              "name": "which"
+            },
+            {
+              "type": "HidMsg",
+              "name": "msg"
+            }
+          ],
+          "description": "Read the next HidMsg from device of type 'type' with device id 'which'."
+        },
+        {
+          "member function": "recv",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "HidMsg",
+              "name": "msg"
+            }
+          ],
+          "description": "Receive the next available HidMsg."
+        },
+        {
+          "member function": "send",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "HidMsg",
+              "name": "msg"
+            }
+          ],
+          "description": "Send a HidMsg to device; return whether the operation was successful."
+        }
+      ],
+      "static member functions": [
+        {
+          "static member function": "globalTiltPollRate",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "d"
+            }
+          ],
+          "description": "Set tilt-sensor poll rate."
+        },
+        {
+          "static member function": "globalTiltPollRate",
+          "return type": "dur",
+          "arguments": [],
+          "description": "Get tilt-sensor poll rate."
+        },
+        {
+          "static member function": "readTiltSensor",
+          "return type": "int[]",
+          "arguments": [],
+          "description": "Read tilt-sensor and return as an int array."
+        },
+        {
+          "static member function": "startCursorTrack",
+          "return type": "int",
+          "arguments": [],
+          "description": "Start cursor tracking; return whether the request was successful."
+        },
+        {
+          "static member function": "stopCursorTrack",
+          "return type": "int",
+          "arguments": [],
+          "description": "Stop cursor tracking; return whether the request was successful."
+        }
+      ],
+      "static member variables": [
+        {
+          "name": "ACCELEROMETER",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "AXIS_MOTION",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "BUTTON_DOWN",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "BUTTON_UP",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "DEVICE_CONNECTED",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "DEVICE_DISCONNECTED",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "FORCE_FEEDBACK",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "JOYSTICK",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "JOYSTICK_BALL",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "JOYSTICK_HAT",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "KEYBOARD",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "LED",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "MOUSE",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "MOUSE_MOTION",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "MOUSE_WHEEL",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "TABLET",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "TILT_SENSOR",
+          "type": "int",
+          "description": ""
+        },
+        {
+          "name": "WII_REMOTE",
+          "type": "int",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "HidMsg",
+      "description": "Helper class for receiving HID information; e.g., which key was pressed, joystick position, etc.",
+      "inherits": ["Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/hid/kb.ck",
+        "https://chuck.stanford.edu/doc/examples/hid/keyboard-organ.ck",
+        "https://chuck.stanford.edu/doc/examples/hid/mouse.ck",
+        "https://chuck.stanford.edu/doc/examples/hid/mouse-abs.ck",
+        "https://chuck.stanford.edu/doc/examples/hid/mouse-fm.ck",
+        "https://chuck.stanford.edu/doc/examples/hid/joy.ck",
+        "https://chuck.stanford.edu/doc/examples/hid/joy-fm.ck",
+        "https://chuck.stanford.edu/doc/examples/hid/joy-noise.ck",
+        "https://chuck.stanford.edu/doc/examples/hid/joy-shake.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "HidMsg",
+          "arguments": [],
+          "description": "Default constructor for HidMsg."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "isAxisMotion",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return whether this message is an axis-motion event."
+        },
+        {
+          "member function": "isButtonDown",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return whether this message is a button-down event."
+        },
+        {
+          "member function": "isButtonUp",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return whether this message is a button-up event."
+        },
+        {
+          "member function": "isHatMotion",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return whether this message is a hat-motion event."
+        },
+        {
+          "member function": "isMouseMotion",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return whether this message is a mouse-motion event."
+        },
+        {
+          "member function": "isWheelMotion",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return whether this message is a wheel-motion event."
+        },
+        {
+          "member function": "is_axis_motion",
+          "return type": "int",
+          "arguments": [],
+          "description": "(Deprecated; use .isAxisMotion() instead)."
+        },
+        {
+          "member function": "is_button_down",
+          "return type": "int",
+          "arguments": [],
+          "description": "(Deprecated; use .isButtonDown() instead)."
+        },
+        {
+          "member function": "is_button_up",
+          "return type": "int",
+          "arguments": [],
+          "description": "(Deprecated; use .isButtonUp() instead)."
+        },
+        {
+          "member function": "is_hat_motion",
+          "return type": "int",
+          "arguments": [],
+          "description": "(Deprecated; use .isHatMotion() instead)."
+        },
+        {
+          "member function": "is_mouse_motion",
+          "return type": "int",
+          "arguments": [],
+          "description": "(Deprecated; use .isMouseMotion() instead)."
+        }
+      ],
+      "member variables": [
+        {
+          "name": "ascii",
+          "type": "int",
+          "description": "ASCII value associated with a keyboard key."
+        },
+        {
+          "name": "axis_position",
+          "type": "int",
+          "description": "Joystick axis position (int)."
+        },
+        {
+          "name": "axisPosition",
+          "type": "float",
+          "description": "Joystick axis position (float)."
+        },
+        {
+          "name": "cursorX",
+          "type": "int",
+          "description": "Position of X-axis of pointing device."
+        },
+        {
+          "name": "cursorY",
+          "type": "int",
+          "description": "Position of Y-axis of pointing device."
+        },
+        {
+          "name": "deltaX",
+          "type": "int",
+          "description": "Change in X-axis of pointing device."
+        },
+        {
+          "name": "deltaY",
+          "type": "int",
+          "description": "Change in Y-axis of pointing device."
+        },
+        {
+          "name": "deviceNum",
+          "type": "int",
+          "description": "Device number that produced the message."
+        },
+        {
+          "name": "deviceType",
+          "type": "int",
+          "description": "Device type that produced the message."
+        },
+        {
+          "name": "fdata",
+          "type": "float",
+          "description": "Float data generate from the Hid device."
+        },
+        {
+          "name": "hatPosition",
+          "type": "int",
+          "description": "Joystick hat position."
+        },
+        {
+          "name": "idata",
+          "type": "int",
+          "description": "Integer data generated from the Hid device."
+        },
+        {
+          "name": "key",
+          "type": "int",
+          "description": "Code (USB) for a keyboard key."
+        },
+        {
+          "name": "scaled_axis_position",
+          "type": "float",
+          "description": "Position of the primary pointing device, scaled between 0.0 and 1.0."
+        },
+        {
+          "name": "scaledCursorX",
+          "type": "float",
+          "description": "Position of X-axis of pointing device, scaled between 0.0 and 1.0."
+        },
+        {
+          "name": "scaledCursorY",
+          "type": "float",
+          "description": "Position of Y-axis of pointing device, scaled between 0.0 and 1.0."
+        },
+        {
+          "name": "touchSize",
+          "type": "float",
+          "description": "Multi-touch size."
+        },
+        {
+          "name": "touchX",
+          "type": "float",
+          "description": "Position of X-axis of pointing device, scaled between 0.0 and 1.0."
+        },
+        {
+          "name": "touchY",
+          "type": "float",
+          "description": "Position of X-axis of pointing device, scaled between 0.0 and 1.0."
+        },
+        {
+          "name": "type",
+          "type": "int",
+          "description": "A number representing the message type."
+        },
+        {
+          "name": "when",
+          "type": "time",
+          "description": "Time when the HidMsg occurred, relative to the start of the file."
+        },
+        {
+          "name": "which",
+          "type": "int",
+          "description": "Code (platform dependent) associated with a keyboard key."
+        },
+        {
+          "name": "x",
+          "type": "int",
+          "description": "Change in X-axis of pointing device (same as deltaX)."
+        },
+        {
+          "name": "y",
+          "type": "int",
+          "description": "Change in Y-axis of pointing device (same as deltaY)."
+        },
+        {
+          "name": "z",
+          "type": "int",
+          "description": "Change in Z-axis of pointing device."
+        }
+      ]
+    },
+    {
+      "name": "KBHit",
+      "description": "KBHit (terminal only) is a simple mechanism for capturing keyboard input; for a more flexible mechanism, see HID. (On Linux, KBHit does not require granting device permissions; it works out of the box.)",
+      "inherits": ["Event", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/hid/kbhit/kbhit.ck",
+        "https://chuck.stanford.edu/doc/examples/hid/kbhit/kbhit2.ck",
+        "https://chuck.stanford.edu/doc/examples/hid/kbhit/clix.ck",
+        "https://chuck.stanford.edu/doc/examples/hid/kbhit/clix2.ck",
+        "https://chuck.stanford.edu/doc/examples/hid/kbhit/clix3.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "KBHit",
+          "arguments": [],
+          "description": "Default constructor for KBHit."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "can_wait",
+          "return type": "int",
+          "arguments": [],
+          "description": "(internal) used by virtual machine for synthronization."
+        },
+        {
+          "member function": "getchar",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the ASCII value of the last keyboard press."
+        },
+        {
+          "member function": "hit",
+          "return type": "Event",
+          "arguments": [],
+          "description": "Return itself as an Event to wait on; this is largely unnecessary as the KBHit instance can be directly => to 'now'."
+        },
+        {
+          "member function": "more",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return whether there are unprocessed KBHit events (e.g., if a user presses multiple keys at once)."
+        },
+        {
+          "member function": "off",
+          "return type": "void",
+          "arguments": [],
+          "description": "Disable the KBHit."
+        },
+        {
+          "member function": "on",
+          "return type": "void",
+          "arguments": [],
+          "description": "Enable the KBHit."
+        },
+        {
+          "member function": "state",
+          "return type": "void",
+          "arguments": [],
+          "description": "Get whether the KBHit is currently enabled."
+        }
+      ]
+    },
+    {
+      "name": "SerialIO",
+      "description": "Serial input/output. popularly used to communicate with systems like Arduino.",
+      "inherits": ["IO", "Event", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/serial/byte.ck",
+        "https://chuck.stanford.edu/doc/examples/serial/bytes.ck",
+        "https://chuck.stanford.edu/doc/examples/serial/ints-bin.ck",
+        "https://chuck.stanford.edu/doc/examples/serial/ints-ascii.ck",
+        "https://chuck.stanford.edu/doc/examples/serial/lines.ck",
+        "https://chuck.stanford.edu/doc/examples/serial/list.ck",
+        "https://chuck.stanford.edu/doc/examples/serial/write-bytes.ck",
+        "https://chuck.stanford.edu/doc/examples/serial/write.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "SerialIO",
+          "arguments": [],
+          "description": "Default constructor for SerialIO."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "baudRate",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "r"
+            }
+          ],
+          "description": "Set baud rate."
+        },
+        {
+          "member function": "baudRate",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get current baud rate."
+        },
+        {
+          "member function": "close",
+          "return type": "void",
+          "arguments": [],
+          "description": ""
+        },
+        {
+          "member function": "dataAvailable",
+          "return type": "int",
+          "arguments": [],
+          "description": ""
+        },
+        {
+          "member function": "flush",
+          "return type": "void",
+          "arguments": [],
+          "description": "Flush the IO buffer."
+        },
+        {
+          "member function": "getByte",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get next requested byte."
+        },
+        {
+          "member function": "getBytes",
+          "return type": "int[]",
+          "arguments": [],
+          "description": "Get next requested number of bytes."
+        },
+        {
+          "member function": "getInts",
+          "return type": "int[]",
+          "arguments": [],
+          "description": "Get next requested number of integers."
+        },
+        {
+          "member function": "getLine",
+          "return type": "string",
+          "arguments": [],
+          "description": "Get next requested line."
+        },
+        {
+          "member function": "onByte",
+          "return type": "SerialIO",
+          "arguments": [],
+          "description": "Wait for one byte (binary mode only)."
+        },
+        {
+          "member function": "onBytes",
+          "return type": "SerialIO",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "num"
+            }
+          ],
+          "description": "Wait for requested number of bytes (binary mode only)."
+        },
+        {
+          "member function": "onFloats",
+          "return type": "SerialIO",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "num"
+            }
+          ],
+          "description": "Wait for requested number of floats (ASCII or binary mode)."
+        },
+        {
+          "member function": "onInts",
+          "return type": "SerialIO",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "num"
+            }
+          ],
+          "description": "Wait for requested number of ints (ASCII or binary mode)."
+        },
+        {
+          "member function": "onLine",
+          "return type": "SerialIO",
+          "arguments": [],
+          "description": "Wait for one line (ASCII mode only)."
+        },
+        {
+          "member function": "open",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "i"
+            },
+            {
+              "type": "int",
+              "name": "baud"
+            },
+            {
+              "type": "int",
+              "name": "mode"
+            }
+          ],
+          "description": "Open serial device i with specified baud rate and mode (binary or ASCII)."
+        },
+        {
+          "member function": "readLine",
+          "return type": "string",
+          "arguments": [],
+          "description": ""
+        },
+        {
+          "member function": "writeByte",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "b"
+            }
+          ],
+          "description": "Write a single byte."
+        },
+        {
+          "member function": "writeBytes",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int[]",
+              "name": "b"
+            }
+          ],
+          "description": "Write array of bytes."
+        }
+      ],
+      "static member functions": [
+        {
+          "static member function": "list",
+          "return type": "string[]",
+          "arguments": [],
+          "description": "Get list of available serial devices."
+        }
+      ],
+      "static member variables": [
+        {
+          "name": "B115200",
+          "type": "int",
+          "description": "115200 baud."
+        },
+        {
+          "name": "B14400",
+          "type": "int",
+          "description": "14400 baud."
+        },
+        {
+          "name": "B19200",
+          "type": "int",
+          "description": "19200 baud."
+        },
+        {
+          "name": "B230400",
+          "type": "int",
+          "description": "230400 baud."
+        },
+        {
+          "name": "B2400",
+          "type": "int",
+          "description": "2400 baud."
+        },
+        {
+          "name": "B28800",
+          "type": "int",
+          "description": "28800 baud."
+        },
+        {
+          "name": "B38400",
+          "type": "int",
+          "description": "38400 baud."
+        },
+        {
+          "name": "B4800",
+          "type": "int",
+          "description": "4800 baud."
+        },
+        {
+          "name": "B57600",
+          "type": "int",
+          "description": "57600 baud."
+        },
+        {
+          "name": "B7200",
+          "type": "int",
+          "description": "7200 baud."
+        },
+        {
+          "name": "B76800",
+          "type": "int",
+          "description": "76800 baud."
+        },
+        {
+          "name": "B9600",
+          "type": "int",
+          "description": "9600 baud."
+        }
+      ]
+    },
+    {
+      "name": "MidiIn",
+      "description": "Class that can be ChucKed to now as an event. When receiving a message, an event is signaled and Midi information can be read.",
+      "inherits": ["Event", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/midi/gomidi.ck",
+        "https://chuck.stanford.edu/doc/examples/midi/gomidi2.ck",
+        "https://chuck.stanford.edu/doc/examples/midi/polyfony.ck",
+        "https://chuck.stanford.edu/doc/examples/midi/polyfony2.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "MidiIn",
+          "arguments": [],
+          "description": "Default constructor for MidiIn."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "can_wait",
+          "return type": "int",
+          "arguments": [],
+          "description": "(internal) used by virtual machine for synthronization."
+        },
+        {
+          "member function": "good",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return true (1) if a device has been opened for this instance and there was no error connecting to it. Return false (0) if a device has not been opened or there was an error opening a device."
+        },
+        {
+          "member function": "name",
+          "return type": "string",
+          "arguments": [],
+          "description": "Return the Midi device's name as string."
+        },
+        {
+          "member function": "num",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return the device number of the device (i.e. the number passed to MidiIn/MidiOut.open)."
+        },
+        {
+          "member function": "open",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "port"
+            }
+          ],
+          "description": "Open Midi device using a port number."
+        },
+        {
+          "member function": "open",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "name"
+            }
+          ],
+          "description": "Open Midi device using the device's name."
+        },
+        {
+          "member function": "printerr",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "print_or_not"
+            }
+          ],
+          "description": "Set error printing (1 for on, 0 for off). On by default."
+        },
+        {
+          "member function": "recv",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "MidiMsg",
+              "name": "msg"
+            }
+          ],
+          "description": "Return into the MidiMsg argument the next message in the queue from the device. Return 0 if the queue is empty or 1 if a message was in the queue and returned in the argument."
+        }
+      ]
+    },
+    {
+      "name": "MidiOut",
+      "description": "Class for sending out MIDI messages. Note that channel numbers are 0-based.",
+      "inherits": ["Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/midi/midiout.ck",
+        "https://chuck.stanford.edu/doc/examples/midi/midiout2.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "MidiOut",
+          "arguments": [],
+          "description": "Default constructor for MidiOut."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "channelPressure",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "channel"
+            },
+            {
+              "type": "int",
+              "name": "pressure"
+            }
+          ],
+          "description": "Send out a channelPressure message."
+        },
+        {
+          "member function": "controlChange",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "channel"
+            },
+            {
+              "type": "int",
+              "name": "controller"
+            },
+            {
+              "type": "int",
+              "name": "value"
+            }
+          ],
+          "description": "Send out a controlChange message."
+        },
+        {
+          "member function": "good",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return true (1) if a device has been opened for this instance and there was no error connecting to it. Return false (0) if a device has not been opened or there was an error opening a device."
+        },
+        {
+          "member function": "name",
+          "return type": "string",
+          "arguments": [],
+          "description": "Return the Midi device's name as string."
+        },
+        {
+          "member function": "noteOff",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "channel"
+            },
+            {
+              "type": "int",
+              "name": "note"
+            },
+            {
+              "type": "int",
+              "name": "velocity"
+            }
+          ],
+          "description": "Send out a noteOff message."
+        },
+        {
+          "member function": "noteOn",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "channel"
+            },
+            {
+              "type": "int",
+              "name": "note"
+            },
+            {
+              "type": "int",
+              "name": "velocity"
+            }
+          ],
+          "description": "Send out a noteOn message."
+        },
+        {
+          "member function": "num",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return the device number of the device (i.e. the number passed to MidiIn/MidiOut.open)."
+        },
+        {
+          "member function": "open",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "port"
+            }
+          ],
+          "description": "Open Midi device using a port number."
+        },
+        {
+          "member function": "open",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "name"
+            }
+          ],
+          "description": "Open Midi device using the device's name."
+        },
+        {
+          "member function": "pitchBend",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "channel"
+            },
+            {
+              "type": "int",
+              "name": "value"
+            }
+          ],
+          "description": "Send out a pitchBend message."
+        },
+        {
+          "member function": "pitchBend",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "channel"
+            },
+            {
+              "type": "int",
+              "name": "lsb"
+            },
+            {
+              "type": "int",
+              "name": "msb"
+            }
+          ],
+          "description": "Send out a pitchBend message with fine and coarse values."
+        },
+        {
+          "member function": "polyPressure",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "channel"
+            },
+            {
+              "type": "int",
+              "name": "note"
+            },
+            {
+              "type": "int",
+              "name": "pressure"
+            }
+          ],
+          "description": "Send out a polyPressure message."
+        },
+        {
+          "member function": "printerr",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "print_or_not"
+            }
+          ],
+          "description": "Set error printing (1 for on, 0 for off). On by default."
+        },
+        {
+          "member function": "programChange",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "channel"
+            },
+            {
+              "type": "int",
+              "name": "program"
+            }
+          ],
+          "description": "Send out a programChange message."
+        },
+        {
+          "member function": "send",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "status"
+            },
+            {
+              "type": "int",
+              "name": "data1"
+            },
+            {
+              "type": "int",
+              "name": "data2"
+            }
+          ],
+          "description": "Send out a MIDI message consisting of one status byte and two data bytes."
+        },
+        {
+          "member function": "send",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "MidiMsg",
+              "name": "msg"
+            }
+          ],
+          "description": "Send out a MIDI message using a MidiMsg."
+        }
+      ]
+    },
+    {
+      "name": "MidiMsg",
+      "description": "Creates a message for sending and receiving Midi information.",
+      "inherits": ["Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/midi/gomidi.ck",
+        "https://chuck.stanford.edu/doc/examples/midi/gomidi2.ck",
+        "https://chuck.stanford.edu/doc/examples/midi/polyfony.ck",
+        "https://chuck.stanford.edu/doc/examples/midi/polyfony2.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "MidiMsg",
+          "arguments": [],
+          "description": "Default constructor for MidiMsg."
+        }
+      ],
+      "member variables": [
+        {
+          "name": "data1",
+          "type": "int",
+          "description": "First byte of a Midi message, usually a status byte or command byte."
+        },
+        {
+          "name": "data2",
+          "type": "int",
+          "description": "Second byte of a Midi message, usually a note value."
+        },
+        {
+          "name": "data3",
+          "type": "int",
+          "description": "Third byte of a Midi message, usually a velocity value."
+        },
+        {
+          "name": "when",
+          "type": "dur",
+          "description": "Time when the MidiMsg occurred, relative to the start of the file (only valid for MidiFileIn)."
+        }
+      ]
+    },
+    {
+      "name": "MidiFileIn",
+      "description": "Class for reading data from a MIDI file.",
+      "inherits": ["Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/midi/midifile-play.ck",
+        "https://chuck.stanford.edu/doc/examples/midi/bwv772.mid"
+      ],
+      "constructors": [
+        {
+          "constructor": "MidiFileIn",
+          "arguments": [],
+          "description": "Default constructor for MidiFileIn."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "close",
+          "return type": "void",
+          "arguments": [],
+          "description": "Close the MIDI file."
+        },
+        {
+          "member function": "numTracks",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the number of tracks in the open MIDI file."
+        },
+        {
+          "member function": "open",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "path"
+            }
+          ],
+          "description": "Open a MIDI file."
+        },
+        {
+          "member function": "read",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "MidiMsg",
+              "name": "msg"
+            }
+          ],
+          "description": "Read next MIDI Event (on default track 0); return contents in 'msg'."
+        },
+        {
+          "member function": "read",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "MidiMsg",
+              "name": "msg"
+            },
+            {
+              "type": "int",
+              "name": "track"
+            }
+          ],
+          "description": "Read next MIDI Event on track 'track'; return contents in 'msg'."
+        },
+        {
+          "member function": "rewind",
+          "return type": "void",
+          "arguments": [],
+          "description": "Rewind MIDI reader to beginning of default track 0."
+        },
+        {
+          "member function": "rewind",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "track"
+            }
+          ],
+          "description": "Rewind MIDI reader to beginning of track 'track'."
+        }
+      ]
+    }
+  ]
+}

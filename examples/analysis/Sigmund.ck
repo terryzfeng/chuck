@@ -52,7 +52,7 @@
 // must connect to blackhole to perform DSP
 TriOsc foo => Sigmund siggy => blackhole;
 
-4096 => siggy.npts;
+1024 => siggy.npts;
 20 => siggy.npeak;
 1000 => siggy.maxfreq;
 25 => siggy.minpower;

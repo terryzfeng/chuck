@@ -1,0 +1,1183 @@
+{
+  "title": "Advanced Unit Generators",
+  "groups": [
+    {
+      "name": "LiSa",
+      "description": "LiSa provides basic live sampling functionality,  and is also often used for granular synthesis.  An internal buffer stores samples chucked to LiSa's input.  Segments of this buffer can be played back, with ramping and  speed/direction control.  Multiple voice facility is built in, allowing for a single  LiSa object to serve as a source for sample layering and  granular textures.  by Dan Trueman (2007)   See also: a slowly growing <a target=\"_blank\" href=\"../program/lisa/tutorial-1.html\">tutorial</a>  | <a target=\"_blank\" href=\"../examples/#lisa\">LiSa examples</a> in the ChucK distribution | <a target=\"_blank\" href=\"https://www.youtube.com/watch?v=7F75v_73pF4\">video tutorial</a> by Clint Hoagland.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/special/LiSa-munger1.ck",
+        "https://chuck.stanford.edu/doc/examples/special/LiSa-munger2.ck",
+        "https://chuck.stanford.edu/doc/examples/special/LiSa-munger3.ck",
+        "https://chuck.stanford.edu/doc/examples/special/LiSa-load.ck",
+        "https://chuck.stanford.edu/doc/examples/special/LiSa-simplelooping.ck",
+        "https://chuck.stanford.edu/doc/examples/special/LiSa-trigger.ck",
+        "https://chuck.stanford.edu/doc/examples/special/LiSa-track1.ck",
+        "https://chuck.stanford.edu/doc/examples/special/LiSa-track2.ck",
+        "https://chuck.stanford.edu/doc/examples/special/LiSa-track3.ck",
+        "https://chuck.stanford.edu/doc/examples/special/LiSa-track4.ck",
+        "https://chuck.stanford.edu/doc/examples/special/LiSa-track5.ck",
+        "https://chuck.stanford.edu/doc/examples/special/LiSa-stereo.ck",
+        "https://chuck.stanford.edu/doc/examples/special/scream-o-matic/scream-o-matic.ck",
+        "https://chuck.stanford.edu/doc/examples/special/twilight/twilight-granular-kb.ck",
+        "https://chuck.stanford.edu/doc/examples/special/twilight/twilight-granular-kb-interp.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "LiSa",
+          "arguments": [],
+          "description": "Default constructor for LiSa."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "bi",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "voice"
+            },
+            {
+              "type": "int",
+              "name": "val"
+            }
+          ],
+          "description": "For particular voice (arg 1), turn on/off bidirectional playback."
+        },
+        {
+          "member function": "bi",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "val"
+            }
+          ],
+          "description": "For particular voice (arg 1), get bidirectional playback status."
+        },
+        {
+          "member function": "bi",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get birectional playback status."
+        },
+        {
+          "member function": "clear",
+          "return type": "void",
+          "arguments": [],
+          "description": "Clear recording buffer."
+        },
+        {
+          "member function": "duration",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "val"
+            }
+          ],
+          "description": "Set buffer size; required to allocate memory, also resets all parameter values to default."
+        },
+        {
+          "member function": "duration",
+          "return type": "dur",
+          "arguments": [],
+          "description": "Get buffer size."
+        },
+        {
+          "member function": "feedback",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "val"
+            }
+          ],
+          "description": "Set feedback amount when overdubbing (loop recording; how much to retain)."
+        },
+        {
+          "member function": "feedback",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get feedback amount when overdubbing (loop recording; how much to retain)."
+        },
+        {
+          "member function": "getVoice",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return an available voice (one that is not currently playing). Return -1 if no voice is available."
+        },
+        {
+          "member function": "getbi",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "voice"
+            }
+          ],
+          "description": "Turn on/off bidirectional playback (voice 0)."
+        },
+        {
+          "member function": "loop0",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "val"
+            }
+          ],
+          "description": "Turn on/off looping (voice 0)."
+        },
+        {
+          "member function": "loop0",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get looping status (voice 0)."
+        },
+        {
+          "member function": "loop",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "voice"
+            },
+            {
+              "type": "int",
+              "name": "val"
+            }
+          ],
+          "description": "For particular voice (arg 1), turn on/off looping."
+        },
+        {
+          "member function": "loop",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "voice"
+            }
+          ],
+          "description": "For particular voice (arg 1), get looping status."
+        },
+        {
+          "member function": "loopEnd",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "voice"
+            },
+            {
+              "type": "dur",
+              "name": "val"
+            }
+          ],
+          "description": "For particular voice (arg 1), set loop ending point for playback. only applicable when .loop(voice, 1)."
+        },
+        {
+          "member function": "loopEnd",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "voice"
+            }
+          ],
+          "description": "For particular voice (arg 1), get loop ending point for playback. only applicable when .loop(voice, 1)."
+        },
+        {
+          "member function": "loopEnd",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "val"
+            }
+          ],
+          "description": "Set loop ending point for playback (voice 0). only applicable when 1 => loop."
+        },
+        {
+          "member function": "loopEnd",
+          "return type": "dur",
+          "arguments": [],
+          "description": "Get loop ending point for playback (voice 0). only applicable when 1 => loop."
+        },
+        {
+          "member function": "loopEndRec",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "val"
+            }
+          ],
+          "description": "Set end point in buffer for loop recording."
+        },
+        {
+          "member function": "loopEndRec",
+          "return type": "dur",
+          "arguments": [],
+          "description": "Get end point in buffer for loop recording."
+        },
+        {
+          "member function": "loopRec",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "val"
+            }
+          ],
+          "description": "Turn on/off loop recording."
+        },
+        {
+          "member function": "loopRec",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get loop recording status."
+        },
+        {
+          "member function": "loopStart",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "voice"
+            },
+            {
+              "type": "dur",
+              "name": "val"
+            }
+          ],
+          "description": "For particular voice (arg 1), set loop starting point for playback. only applicable when .loop(voice, 1)."
+        },
+        {
+          "member function": "loopStart",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "voice"
+            }
+          ],
+          "description": "For particular voice (arg 1), get loop starting point for playback. only applicable when .loop(voice, 1)."
+        },
+        {
+          "member function": "loopStart",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "val"
+            }
+          ],
+          "description": "Set loop starting point for playback (voice 0). only applicable when 1 => loop."
+        },
+        {
+          "member function": "loopStart",
+          "return type": "dur",
+          "arguments": [],
+          "description": "Get loop starting point for playback (voice 0). only applicable when 1 => loop."
+        },
+        {
+          "member function": "maxVoices",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "val"
+            }
+          ],
+          "description": "Set the maximum number of voices allowable; 10 by default (256 is the current hardwired internal limit)."
+        },
+        {
+          "member function": "maxVoices",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the maximum number of voices allowable; 10 by default (256 is the current hardwired internal limit)."
+        },
+        {
+          "member function": "pan",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "voice"
+            },
+            {
+              "type": "float",
+              "name": "val"
+            }
+          ],
+          "description": "For particular voice (arg 1), set panning value [0.0, number of channels - 1.0]."
+        },
+        {
+          "member function": "pan",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "voice"
+            }
+          ],
+          "description": "For particular voice (arg 1), get panning value."
+        },
+        {
+          "member function": "pan",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "val"
+            }
+          ],
+          "description": "For voice 0, set panning value [0.0, number of channels - 1.0]."
+        },
+        {
+          "member function": "pan",
+          "return type": "float",
+          "arguments": [],
+          "description": "For voice 0, get panning value."
+        },
+        {
+          "member function": "play",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "voice"
+            },
+            {
+              "type": "int",
+              "name": "toggle"
+            }
+          ],
+          "description": "For particular voice (arg 1), turn on/off sample playback."
+        },
+        {
+          "member function": "play",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "toggle"
+            }
+          ],
+          "description": "Turn on/off sample playback (voice 0)"
+        },
+        {
+          "member function": "playPos",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "voice"
+            },
+            {
+              "type": "dur",
+              "name": "val"
+            }
+          ],
+          "description": "For particular voice (arg 1), set playback position."
+        },
+        {
+          "member function": "playPos",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "voice"
+            }
+          ],
+          "description": "For particular voice (arg 1), get playback position."
+        },
+        {
+          "member function": "playPos",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "val"
+            }
+          ],
+          "description": "Set playback position (voice 0)."
+        },
+        {
+          "member function": "playPos",
+          "return type": "dur",
+          "arguments": [],
+          "description": "Get playback position (voice 0)."
+        },
+        {
+          "member function": "playing",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "val"
+            }
+          ],
+          "description": "Get playing status."
+        },
+        {
+          "member function": "rampDown",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "voice"
+            },
+            {
+              "type": "dur",
+              "name": "val"
+            }
+          ],
+          "description": "For particular voice (arg 1), turn off sample playback, with ramp."
+        },
+        {
+          "member function": "rampDown",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "val"
+            }
+          ],
+          "description": "Turn off sample playback, with ramp (voice 0)."
+        },
+        {
+          "member function": "rampUp",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "voice"
+            },
+            {
+              "type": "dur",
+              "name": "val"
+            }
+          ],
+          "description": "For particular voice (arg 1), turn on sample playback, with ramp."
+        },
+        {
+          "member function": "rampUp",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "val"
+            }
+          ],
+          "description": "Turn on sample playback, with ramp (voice 0)."
+        },
+        {
+          "member function": "rate",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "voice"
+            },
+            {
+              "type": "float",
+              "name": "val"
+            }
+          ],
+          "description": "For particular voice (arg 1), set playback rate."
+        },
+        {
+          "member function": "rate",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "voice"
+            }
+          ],
+          "description": "For particular voice (arg 1), get playback rate."
+        },
+        {
+          "member function": "rate",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "val"
+            }
+          ],
+          "description": "Set playback rate (voice 0). Note that the int/float type for this method will determine whether the rate is being set (float, for voice 0) or read (int, for voice number)."
+        },
+        {
+          "member function": "rate",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get playback rate (voice 0)."
+        },
+        {
+          "member function": "recPos",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "val"
+            }
+          ],
+          "description": "Set record position."
+        },
+        {
+          "member function": "recPos",
+          "return type": "dur",
+          "arguments": [],
+          "description": "Get record position."
+        },
+        {
+          "member function": "recRamp",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "val"
+            }
+          ],
+          "description": "Set ramping when recording (from 0 to loopEndRec)."
+        },
+        {
+          "member function": "record",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "toggle"
+            }
+          ],
+          "description": "Turn recording on and off."
+        },
+        {
+          "member function": "sync",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "val"
+            }
+          ],
+          "description": "Set input mode; (0) input is recorded to internal buffer, (1) input sets playback position [0,1] (phase value between loopStart and loopEnd for all active voices), (2) input sets playback position, interpreted as a time value in samples (only works with voice 0)"
+        },
+        {
+          "member function": "sync",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get input mode; (0) input is recorded to internal buffer, (1) input sets playback position [0,1] (phase value between loopStart and loopEnd for all active voices), (2) input sets playback position, interpreted as a time value in samples (only works with voice 0)"
+        },
+        {
+          "member function": "track",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "val"
+            }
+          ],
+          "description": "Identical to sync."
+        },
+        {
+          "member function": "track",
+          "return type": "int",
+          "arguments": [],
+          "description": "Identical to sync."
+        },
+        {
+          "member function": "value",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "voice"
+            },
+            {
+              "type": "dur",
+              "name": "val"
+            }
+          ],
+          "description": "For particular voice (arg 1), get value from the voice."
+        },
+        {
+          "member function": "value",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "val"
+            }
+          ],
+          "description": "Get value from voice 0."
+        },
+        {
+          "member function": "valueAt",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "val"
+            },
+            {
+              "type": "dur",
+              "name": "index"
+            }
+          ],
+          "description": "Set value directly in record buffer."
+        },
+        {
+          "member function": "valueAt",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "index"
+            }
+          ],
+          "description": "Get value directly from record buffer."
+        },
+        {
+          "member function": "voiceGain",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "voice"
+            },
+            {
+              "type": "float",
+              "name": "val"
+            }
+          ],
+          "description": "For particular voice (arg 1), set gain."
+        },
+        {
+          "member function": "voiceGain",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "voice"
+            }
+          ],
+          "description": "Set playback gain (voice 0)."
+        },
+        {
+          "member function": "voicePan",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "voice"
+            },
+            {
+              "type": "float",
+              "name": "val"
+            }
+          ],
+          "description": "For particular voice (arg 1), set panning value [0.0, number of channels - 1.0]."
+        },
+        {
+          "member function": "voicePan",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "voice"
+            }
+          ],
+          "description": "For particular voice (arg 1), get panning value."
+        }
+      ]
+    },
+    {
+      "name": "LiSa2",
+      "description": "A (li)ve (sa)mpling unit generator (stereo edition); also popularly used for granular synthesis.",
+      "inherits": ["LiSa", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/special/LiSa-stereo.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "LiSa2",
+          "arguments": [],
+          "description": "Default constructor for LiSa2."
+        }
+      ]
+    },
+    {
+      "name": "LiSa6",
+      "description": "A (li)ve (sa)mpling unit generator (6-channel edition); also popularly used for granular synthesis.",
+      "inherits": ["LiSa", "UGen", "Object"],
+      "constructors": [
+        {
+          "constructor": "LiSa6",
+          "arguments": [],
+          "description": "Default constructor for LiSa6."
+        }
+      ]
+    },
+    {
+      "name": "LiSa8",
+      "description": "A (li)ve (sa)mpling unit generator (8-channel edition); also popularly used for granular synthesis.",
+      "inherits": ["LiSa", "UGen", "Object"],
+      "constructors": [
+        {
+          "constructor": "LiSa8",
+          "arguments": [],
+          "description": "Default constructor for LiSa8."
+        }
+      ]
+    },
+    {
+      "name": "LiSa10",
+      "description": "A (li)ve (sa)mpling unit generator (10-channel edition); also popularly used for granular synthesis.",
+      "inherits": ["LiSa", "UGen", "Object"],
+      "constructors": [
+        {
+          "constructor": "LiSa10",
+          "arguments": [],
+          "description": "Default constructor for LiSa10."
+        }
+      ]
+    },
+    {
+      "name": "LiSa16",
+      "description": "A (li)ve (sa)mpling unit generator (16-channel edition); also popularly used for granular synthesis.",
+      "inherits": ["LiSa", "UGen", "Object"],
+      "constructors": [
+        {
+          "constructor": "LiSa16",
+          "arguments": [],
+          "description": "Default constructor for LiSa16."
+        }
+      ]
+    },
+    {
+      "name": "GenX",
+      "description": "Ported from rtcmix. See <a href=\"https://web.archive.org/web/20160628032324/http://www.music.columbia.edu/cmix/makegens.html\">  makegens documentation</a>   for more information on the GenX family of UGens. Currently coefficients past   the 100th are ignored.    Lookup can either be done using the lookup() function, or by driving the   table with an input UGen, typically a Phasor. For an input signal between   [ -1, 1 ], using the absolute value for [ -1, 0 ), GenX will output the   table value indexed by the current input.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/special/readme-GenX.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "GenX",
+          "arguments": [],
+          "description": "Default constructor for GenX."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "coefs",
+          "return type": "float[]",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "v"
+            }
+          ],
+          "description": "Set lookup table coefficients; meaning is dependent on subclass."
+        },
+        {
+          "member function": "lookup",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "which"
+            }
+          ],
+          "description": "Get lookup table value at index i [ -1, 1 ]; absolute value is used in the range [ -1, 0 )"
+        }
+      ]
+    },
+    {
+      "name": "Gen5",
+      "description": "Constructs a lookup table composed of sequential exponential curves. For a table with N curves, starting value of y', and value yn for lookup index xn, set the coefficients to [ y', y0, x0, ..., yN-1, xN-1 ]. Note that there must be an odd number of coefficients. If an even number of coefficients is specified, behavior is undefined. The sum of xn for 0 &le; n < N must be 1. yn = 0 is approximated as 0.000001 to avoid strange results arising from the nature of exponential curves.",
+      "inherits": ["GenX", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/special/Gen5-test.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Gen5",
+          "arguments": [],
+          "description": "Default constructor for Gen5."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "coefs",
+          "return type": "float[]",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "v"
+            }
+          ],
+          "description": "Set lookup table coefficients."
+        }
+      ]
+    },
+    {
+      "name": "Gen7",
+      "description": "Constructs a lookup table composed of sequential line segments. For a table with N lines, starting value of y', and value yn for lookupindex xn, set the coefficients to [ y', y0, x0, ..., yN-1, xN-1 ]. Note that there must be an odd number of coefficients. If an even number of coefficients is specified, behavior is undefined. The sum of xn for 0 &le; n < N must be 1.",
+      "inherits": ["GenX", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/special/Gen7-test.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Gen7",
+          "arguments": [],
+          "description": "Default constructor for Gen7."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "coefs",
+          "return type": "float[]",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "v"
+            }
+          ],
+          "description": "Set lookup table coefficients."
+        }
+      ]
+    },
+    {
+      "name": "Gen9",
+      "description": "Constructs a lookup table of partials with specified amplitudes, phases, and harmonic ratios to the fundamental. Coefficients are specified in triplets of [ ratio, amplitude, phase ] arranged in a single linear array.",
+      "inherits": ["GenX", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/special/Gen9-test.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Gen9",
+          "arguments": [],
+          "description": "Default constructor for Gen9."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "coefs",
+          "return type": "float[]",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "v"
+            }
+          ],
+          "description": "Set lookup table coefficients."
+        }
+      ]
+    },
+    {
+      "name": "Gen10",
+      "description": "Constructs a lookup table of harmonic partials with specified amplitudes. The amplitude of partial n is specified by the nth element of the coefficients. For example, setting coefs to [ 1 ] will produce a sine wave.",
+      "inherits": ["GenX", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/special/Gen10-test.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Gen10",
+          "arguments": [],
+          "description": "Default constructor for Gen10."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "coefs",
+          "return type": "float[]",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "v"
+            }
+          ],
+          "description": "Set lookup table coefficients."
+        }
+      ]
+    },
+    {
+      "name": "Gen17",
+      "description": "Constructs a Chebyshev polynomial wavetable with harmonic partials of specified weights. The weight of partial n is specified by the nth element of the coefficients. Primarily used for waveshaping, driven by a SinOsc instead of a Phasor. See <a href=\"http://crca.ucsd.edu/~msp/techniques/v0.08/book-html/node74.html\">http://crca.ucsd.edu/~msp/techniques/v0.08/book-html/node74.html</a> and <a href=\"http://en.wikipedia.org/wiki/Distortion_synthesis\">http://en.wikipedia.org/wiki/Distortion_synthesis</a> for more information.",
+      "inherits": ["GenX", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/special/Gen17-test.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Gen17",
+          "arguments": [],
+          "description": "Default constructor for Gen17."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "coefs",
+          "return type": "float[]",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "v"
+            }
+          ],
+          "description": "Set lookup table coefficients."
+        }
+      ]
+    },
+    {
+      "name": "CurveTable",
+      "description": "Constructs a wavetable composed of segments of variable times, values, and curvatures. Coefficients are specified as a single linear array of triplets of [ time, value, curvature ] followed by a final duple of [ time, value ] to specify the final value of the table. time values are expressed in unitless, ascending values. For curvature equal to 0, the segment is a line; for curvature less than 0, the segment is a convex curve; for curvature greater than 0, the segment is a concave curve.",
+      "inherits": ["GenX", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/special/GenX-CurveTable-test.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "CurveTable",
+          "arguments": [],
+          "description": "Default constructor for CurveTable."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "coefs",
+          "return type": "float[]",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "v"
+            }
+          ],
+          "description": "Set lookup table coefficients."
+        }
+      ]
+    },
+    {
+      "name": "WarpTable",
+      "description": "An end-constrained mapping table, mostly useful for conditioning control signals.",
+      "inherits": ["GenX", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/special/GenX-WarpTable-test.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "WarpTable",
+          "arguments": [],
+          "description": "Default constructor for WarpTable."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "coefs",
+          "return type": "float[]",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "v"
+            }
+          ],
+          "description": "Set lookup table coefficients."
+        }
+      ]
+    },
+    {
+      "name": "Dyno",
+      "description": "A dynamics processor. Includes presets for limiter, compressor, expander, noise gate, and ducker.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/special/Dyno-compress.ck",
+        "https://chuck.stanford.edu/doc/examples/special/Dyno-duck.ck",
+        "https://chuck.stanford.edu/doc/examples/special/Dyno-limit.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Dyno",
+          "arguments": [],
+          "description": "Default constructor for Dyno."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "attackTime",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "aTime"
+            }
+          ],
+          "description": "Set duration for the envelope to move linearly from current value to the absolute value of the signal's amplitude."
+        },
+        {
+          "member function": "attackTime",
+          "return type": "dur",
+          "arguments": [],
+          "description": "Get duration for the envelope to move linearly from current value to the absolute value of the signal's amplitude."
+        },
+        {
+          "member function": "compress",
+          "return type": "void",
+          "arguments": [],
+          "description": "Set parameters to default compressor values: slopeAbove = 0.5, slopeBelow = 1.0, thresh = 0.5, attackTime = 5 ms, releaseTime = 500 ms, externalSideInput = 0 (false)"
+        },
+        {
+          "member function": "duck",
+          "return type": "void",
+          "arguments": [],
+          "description": "Set parameters to default ducker values: slopeAbove = 0.5, slopeBelow = 1.0, thresh = 0.5, attackTime = 10 ms, releaseTime = 1000 ms, externalSideInput = 1 (true)"
+        },
+        {
+          "member function": "expand",
+          "return type": "void",
+          "arguments": [],
+          "description": "Set parameters to default expander values: slopeAbove = 2.0, slopeBelow = 1.0, thresh = 0.5, attackTime = 20 ms, releaseTime = 400 ms, externalSideInput = 0 (false)"
+        },
+        {
+          "member function": "externalSideInput",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "externalSideInput"
+            }
+          ],
+          "description": "Set to true to cue the amplitude envelope off sideInput instead of the input signal. Note that this means you will need to manually set sideInput every so often."
+        },
+        {
+          "member function": "externalSideInput",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get externalSideInput state. If set to true, the amplitude envelope will be cued off sideInput instead of the input signal. Note that this means you will need to manually set sideInput every so often."
+        },
+        {
+          "member function": "gate",
+          "return type": "void",
+          "arguments": [],
+          "description": "Set parameters to default noise gate values: slopeAbove = 1.0, slopeBelow = 1.0E08, thresh = 0.1, attackTime = 11 ms, releaseTime = 100 ms, externalSideInput = 0 (false)"
+        },
+        {
+          "member function": "limit",
+          "return type": "void",
+          "arguments": [],
+          "description": "Set parameters to default limiter values: slopeAbove = 0.1, slopeBelow = 1.0, thresh = 0.5, attackTime = 5 ms, releaseTime = 300 ms, externalSideInput = 0 (false)"
+        },
+        {
+          "member function": "ratio",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "ratio"
+            }
+          ],
+          "description": "An alternate way of setting slopeAbove and slopeBelow; sets slopeBelow to 1.0 and slopeAbove to 1.0 / ratio."
+        },
+        {
+          "member function": "ratio",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get the ratio set by .ratio(float); slopeBelow to 1.0 and slopeAbove to 1.0 / ratio."
+        },
+        {
+          "member function": "releaseTime",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "rTime"
+            }
+          ],
+          "description": "Set duration for the envelope to decay down to around 1/10 of its current amplitude, if not brought back up by the signal."
+        },
+        {
+          "member function": "releaseTime",
+          "return type": "dur",
+          "arguments": [],
+          "description": "Get duration for the envelope to decay down to around 1/10 of its current amplitude, if not brought back up by the signal."
+        },
+        {
+          "member function": "sideInput",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "sideInput"
+            }
+          ],
+          "description": "If externalSideInput is set to true, replace the signal being processed as the input to the amplitude envelope."
+        },
+        {
+          "member function": "sideInput",
+          "return type": "float",
+          "arguments": [],
+          "description": "If externalSideInput is set to true, replaces the signal being processed as the input to the amplitude envelope."
+        },
+        {
+          "member function": "slopeAbove",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "slopeAbove"
+            }
+          ],
+          "description": "Set the slope of the output gain vs the input envelope's level when the envelope is above thresh."
+        },
+        {
+          "member function": "slopeAbove",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get the slope of the output gain vs the input envelope's level when the envelope is above thresh."
+        },
+        {
+          "member function": "slopeBelow",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "slopeBelow"
+            }
+          ],
+          "description": "Set the slope of the output gain vs the input envelope's level when the envelope is below thresh."
+        },
+        {
+          "member function": "slopeBelow",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get the slope of the output gain vs the input envelope's level when the envelope is below thresh."
+        },
+        {
+          "member function": "thresh",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "thresh"
+            }
+          ],
+          "description": "Set threshold, above which to stop using slopeBelow and start using slopeAbove to determine output gain vs input gain."
+        },
+        {
+          "member function": "thresh",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get threshold, above which to stop using slopeBelow and start using slopeAbove to determine output gain vs input gain."
+        }
+      ]
+    }
+  ]
+}

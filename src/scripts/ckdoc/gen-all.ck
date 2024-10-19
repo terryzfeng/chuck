@@ -163,10 +163,10 @@ doc.addGroup(
 );
 
 // to generate JSON
-// doc.outputFormat(CKDoc.JSON);
+doc.outputFormat(CKDoc.JSON);
 
 // generate
-doc.outputToDir( ".", "ChucK Class Library Reference" );
+doc.outputToDir( "./json", "ChucK Class Library Reference" );
 
 // print
 <<< "API reference files generated in 'src/scripts/ckdoc/'", "" >>>;

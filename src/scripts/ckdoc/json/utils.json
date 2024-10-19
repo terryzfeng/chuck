@@ -1,0 +1,659 @@
+{
+  "title": "Utilities",
+  "groups": [
+    {
+      "name": "CKDoc",
+      "description": "A ChucK documentation generator. Based on Spencer Salazar's ckdoc utility.",
+      "inherits": ["Object"],
+      "constructors": [
+        {
+          "constructor": "CKDoc",
+          "arguments": [],
+          "description": "Default constructor for CKDoc."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "addGroup",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "Type[]",
+              "name": "types"
+            },
+            {
+              "type": "string",
+              "name": "name"
+            },
+            {
+              "type": "string",
+              "name": "shortName"
+            },
+            {
+              "type": "string",
+              "name": "description"
+            }
+          ],
+          "description": "Add a group of types to be documented, including group 'name', a 'shortName' to be used for any files, and a group 'description'."
+        },
+        {
+          "member function": "addGroup",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "string[]",
+              "name": "typeNames"
+            },
+            {
+              "type": "string",
+              "name": "name"
+            },
+            {
+              "type": "string",
+              "name": "shortName"
+            },
+            {
+              "type": "string",
+              "name": "description"
+            }
+          ],
+          "description": "Add a group of types (by type name) to be documented, including group 'name', a 'shortName' to be used for any files, and a group 'description'."
+        },
+        {
+          "member function": "addGroupExternal",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "name"
+            },
+            {
+              "type": "string",
+              "name": "URL"
+            },
+            {
+              "type": "string",
+              "name": "description"
+            },
+            {
+              "type": "string",
+              "name": "longDesc"
+            }
+          ],
+          "description": "Add a group documention at an external URL location."
+        },
+        {
+          "member function": "clear",
+          "return type": "void",
+          "arguments": [],
+          "description": "Clear all added groups."
+        },
+        {
+          "member function": "examplesRoot",
+          "return type": "string",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "path"
+            }
+          ],
+          "description": "Set the examples directory root path; returns what was set."
+        },
+        {
+          "member function": "examplesRoot",
+          "return type": "string",
+          "arguments": [],
+          "description": "Get the current examples directory root path."
+        },
+        {
+          "member function": "genCSS",
+          "return type": "string",
+          "arguments": [],
+          "description": "Generate CSS; return as string."
+        },
+        {
+          "member function": "genGroups",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "string[]",
+              "name": "results"
+            }
+          ],
+          "description": "Generate documentation for all added groups, return each in a separate entry."
+        },
+        {
+          "member function": "genIndex",
+          "return type": "string",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "indexTitle"
+            }
+          ],
+          "description": "Generate top-level index; return as string."
+        },
+        {
+          "member function": "genType",
+          "return type": "string",
+          "arguments": [
+            {
+              "type": "Type",
+              "name": "type"
+            }
+          ],
+          "description": "Generate documentation for a single Type."
+        },
+        {
+          "member function": "genType",
+          "return type": "string",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "typeName"
+            }
+          ],
+          "description": "Generate documentation for a single Type (by name)."
+        },
+        {
+          "member function": "numGroups",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the number of groups added."
+        },
+        {
+          "member function": "outputFormat",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "which"
+            }
+          ],
+          "description": "Set which output format to use; see CKDoc.HTML, CKDoc.TEXT, CKDoc.MARKDOWN, CKDoc.JSON."
+        },
+        {
+          "member function": "outputFormat",
+          "return type": "int",
+          "arguments": [],
+          "description": "Set which output format is selected; see CKDoc.HTML, CKDoc.TEXT, CKDoc.MARKDOWN, CKDoc.JSON."
+        },
+        {
+          "member function": "outputToDir",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "path"
+            },
+            {
+              "type": "string",
+              "name": "indexTitle"
+            }
+          ],
+          "description": "Generate everything as files into the output directory."
+        },
+        {
+          "member function": "sort",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "toggle"
+            }
+          ],
+          "description": "Enable or disable alphabetical sorting of functions and variables."
+        },
+        {
+          "member function": "sort",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the current status of alphabetical sorting."
+        }
+      ],
+      "static member variables": [
+        {
+          "name": "HTML",
+          "type": "int",
+          "description": "Output HTML format."
+        },
+        {
+          "name": "JSON",
+          "type": "int",
+          "description": "Output JSON format (not implemented)."
+        },
+        {
+          "name": "MARKDOWN",
+          "type": "int",
+          "description": "Output MARKDOWN format (not implemented)."
+        },
+        {
+          "name": "NONE",
+          "type": "int",
+          "description": "No output format."
+        },
+        {
+          "name": "TEXT",
+          "type": "int",
+          "description": "Output TEXT format (not implemented)."
+        }
+      ]
+    },
+    {
+      "name": "Type",
+      "description": "A representation of a ChucK type.",
+      "inherits": ["Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/type/type_type.ck",
+        "https://chuck.stanford.edu/doc/examples/type/type_query.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Type",
+          "arguments": [],
+          "description": "Default constructor for Type."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "arrayDepth",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return the number of array dimensions associated with this Type (e.g., 'int[][]' has 2; 'int' has 0)."
+        },
+        {
+          "member function": "baseName",
+          "return type": "string",
+          "arguments": [],
+          "description": "Return the base name of this Type. The base of name of an array Type is the type without the array dimensions (e.g., base name of 'int[][]' is 'int')"
+        },
+        {
+          "member function": "children",
+          "return type": "Type[]",
+          "arguments": [],
+          "description": "Retrieve this Type's children Types."
+        },
+        {
+          "member function": "equals",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "Type",
+              "name": "another"
+            }
+          ],
+          "description": "Return whether this Type is same as 'another'."
+        },
+        {
+          "member function": "isArray",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return whether this Type is some kind of an array."
+        },
+        {
+          "member function": "isPrimitive",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return whether this is a primitive Type (e.g., 'int' and 'dur' are primitives types; 'Object' and its children Types are not)."
+        },
+        {
+          "member function": "isa",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "Type",
+              "name": "another"
+            }
+          ],
+          "description": "Return whether this Type is a kind of 'another'."
+        },
+        {
+          "member function": "isa",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "another"
+            }
+          ],
+          "description": "Return whether this Type is a kind of 'another'."
+        },
+        {
+          "member function": "name",
+          "return type": "string",
+          "arguments": [],
+          "description": "Return the name of this Type."
+        },
+        {
+          "member function": "origin",
+          "return type": "string",
+          "arguments": [],
+          "description": "Return a string describing where this Type was defined (e.g., \"builtin\", \"chugin\", \"cklib\", \"user\")."
+        },
+        {
+          "member function": "parent",
+          "return type": "Type",
+          "arguments": [],
+          "description": "Return this Type's parent Type; returns null if this Type is 'Object'."
+        }
+      ],
+      "static member functions": [
+        {
+          "static member function": "find",
+          "return type": "Type",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "typeName"
+            }
+          ],
+          "description": "Find and return the Type associated with 'typeName'; returns null if no Types currently in the VM with that name."
+        },
+        {
+          "static member function": "getTypes",
+          "return type": "Type[]",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "attributes"
+            },
+            {
+              "type": "int",
+              "name": "origins"
+            }
+          ],
+          "description": "Retrieve all top-level Types in the ChucK runtime type system that fit the attributes and origins flags. Flags that can bitwise-OR'ed for attributes: Type.ATTRIB_OBJECT, Type.ATTRIB_PRIMITIVE, TYPE_SPECIAL -- and for origins: Type.ORIGIN_BUILTIN, Type.ORIGIN_CHUGIN, Type.ORIGIN_CKLIB, Type.ORIGIN_USER."
+        },
+        {
+          "static member function": "getTypes",
+          "return type": "Type[]",
+          "arguments": [],
+          "description": "Retrieves all top-level Types currently in the type system."
+        },
+        {
+          "static member function": "of",
+          "return type": "Type",
+          "arguments": [
+            {
+              "type": "Object",
+              "name": "obj"
+            }
+          ],
+          "description": "Return the Type of 'obj'"
+        },
+        {
+          "static member function": "of",
+          "return type": "Type",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "val"
+            }
+          ],
+          "description": "Return the Type associated with 'int'."
+        },
+        {
+          "static member function": "of",
+          "return type": "Type",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "val"
+            }
+          ],
+          "description": "Return the Type associated with 'float'."
+        },
+        {
+          "static member function": "of",
+          "return type": "Type",
+          "arguments": [
+            {
+              "type": "time",
+              "name": "val"
+            }
+          ],
+          "description": "Return the Type associated with 'time'."
+        },
+        {
+          "static member function": "of",
+          "return type": "Type",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "val"
+            }
+          ],
+          "description": "Return the Type associated with 'dur'."
+        },
+        {
+          "static member function": "of",
+          "return type": "Type",
+          "arguments": [
+            {
+              "type": "complex",
+              "name": "val"
+            }
+          ],
+          "description": "Return the Type associated with 'complex'."
+        },
+        {
+          "static member function": "of",
+          "return type": "Type",
+          "arguments": [
+            {
+              "type": "polar",
+              "name": "val"
+            }
+          ],
+          "description": "Return the Type associated with 'polar'."
+        },
+        {
+          "static member function": "of",
+          "return type": "Type",
+          "arguments": [
+            {
+              "type": "vec3",
+              "name": "val"
+            }
+          ],
+          "description": "Return the Type associated with 'vec3'."
+        },
+        {
+          "static member function": "of",
+          "return type": "Type",
+          "arguments": [
+            {
+              "type": "vec4",
+              "name": "val"
+            }
+          ],
+          "description": "Return the Type associated with 'vec4'."
+        }
+      ],
+      "static member variables": [
+        {
+          "name": "BUILTIN",
+          "type": "int",
+          "description": "Origin bit for \"builtin\"."
+        },
+        {
+          "name": "CHUGIN",
+          "type": "int",
+          "description": "Origin bit for \"chugin\"."
+        },
+        {
+          "name": "CKLIB",
+          "type": "int",
+          "description": "Origin bit for \"cklib\"."
+        },
+        {
+          "name": "OBJECT",
+          "type": "int",
+          "description": "Attribute bit for non-primitive Object types."
+        },
+        {
+          "name": "PRIMITIVE",
+          "type": "int",
+          "description": "Attribute bit for primitive types."
+        },
+        {
+          "name": "SPECIAL",
+          "type": "int",
+          "description": "Attribute bit for special types (e.g., @array and @function)."
+        },
+        {
+          "name": "USER",
+          "type": "int",
+          "description": "Origin bit for \"user\"."
+        }
+      ]
+    },
+    {
+      "name": "StringTokenizer",
+      "description": "Break a string into tokens. This uses whitespace as the delimiter.",
+      "inherits": ["Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/string/token.ck",
+        "https://chuck.stanford.edu/doc/examples/string/readline.ck",
+        "https://chuck.stanford.edu/doc/examples/io/read-tokens.ck",
+        "https://chuck.stanford.edu/doc/examples/io/jabberwocky.txt",
+        "https://chuck.stanford.edu/doc/examples/ai/word2vec/word2vec-prompt.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "StringTokenizer",
+          "arguments": [],
+          "description": "Default constructor for StringTokenizer."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "get",
+          "return type": "string",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "index"
+            }
+          ],
+          "description": "Return the i-th token in the set string."
+        },
+        {
+          "member function": "get",
+          "return type": "string",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "index"
+            },
+            {
+              "type": "string",
+              "name": "out"
+            }
+          ],
+          "description": "Return the i-th token in the set string. Additionally, write the token string to the `out` string variable."
+        },
+        {
+          "member function": "more",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return true (1) if there are still more tokens, false (0) if no more tokens."
+        },
+        {
+          "member function": "next",
+          "return type": "string",
+          "arguments": [],
+          "description": "Return the next token string."
+        },
+        {
+          "member function": "next",
+          "return type": "string",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "out"
+            }
+          ],
+          "description": "Return the next token string. Additionally, write the token string to the 'out' string variable."
+        },
+        {
+          "member function": "reset",
+          "return type": "void",
+          "arguments": [],
+          "description": "Reset token iteration back to the beginning of the set string."
+        },
+        {
+          "member function": "set",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "line"
+            }
+          ],
+          "description": "Set the string to be tokenized."
+        },
+        {
+          "member function": "size",
+          "return type": "int",
+          "arguments": [],
+          "description": "Returns the number of token strings that the set string can be broken into."
+        }
+      ]
+    },
+    {
+      "name": "ConsoleInput",
+      "description": "(Terminal only) a utility for prompting user input on the command line.",
+      "inherits": ["Event", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/string/readline.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/word2vec/word2vec-prompt.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/word2vec/poem-ungenerate.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "ConsoleInput",
+          "arguments": [],
+          "description": "Default constructor for ConsoleInput."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "can_wait",
+          "return type": "int",
+          "arguments": [],
+          "description": "(internal) used by virtual machine for synthronization."
+        },
+        {
+          "member function": "getLine",
+          "return type": "string",
+          "arguments": [],
+          "description": "Return the next line of input as a string."
+        },
+        {
+          "member function": "more",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return whether there is more input to read."
+        },
+        {
+          "member function": "prompt",
+          "return type": "Event",
+          "arguments": [],
+          "description": "Return an Event to wait on."
+        },
+        {
+          "member function": "prompt",
+          "return type": "Event",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "what"
+            }
+          ],
+          "description": "Print a prompt text and return an Event to wait on."
+        }
+      ]
+    }
+  ]
+}

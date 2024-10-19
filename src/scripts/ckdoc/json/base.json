@@ -1,0 +1,2368 @@
+{
+  "title": "Base Classes",
+  "groups": [
+    {
+      "name": "Object",
+      "description": "Base class for all class types in ChucK.",
+      "constructors": [
+        {
+          "constructor": "Object",
+          "arguments": [],
+          "description": "Default constructor for Object."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "toString",
+          "return type": "string",
+          "arguments": [],
+          "description": "Get a textual description of this object."
+        }
+      ],
+      "static member functions": [
+        {
+          "static member function": "help",
+          "return type": "void",
+          "arguments": [],
+          "description": "Output helpful information about a class or an instance thereof."
+        },
+        {
+          "static member function": "typeOf",
+          "return type": "Type",
+          "arguments": [],
+          "description": "Get the type of this object (or class)."
+        }
+      ]
+    },
+    {
+      "name": "Event",
+      "description": "A mechanism for precise synchronization across shreds.",
+      "inherits": ["Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/event/broadcast.ck",
+        "https://chuck.stanford.edu/doc/examples/event/signal.ck",
+        "https://chuck.stanford.edu/doc/examples/event/signal4.ck",
+        "https://chuck.stanford.edu/doc/examples/event/event-extend.ck",
+        "https://chuck.stanford.edu/doc/examples/event/event-extend2.ck",
+        "https://chuck.stanford.edu/doc/examples/event/event-x-bpm-1.ck",
+        "https://chuck.stanford.edu/doc/examples/event/event-x-bpm-2.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Event",
+          "arguments": [],
+          "description": "Default constructor for Event."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "broadcast",
+          "return type": "void",
+          "arguments": [],
+          "description": "Signal all shreds that are waiting on this event."
+        },
+        {
+          "member function": "can_wait",
+          "return type": "int",
+          "arguments": [],
+          "description": "Can the event can be waited on? (internal) used by virtual machine for synchronization."
+        },
+        {
+          "member function": "signal",
+          "return type": "void",
+          "arguments": [],
+          "description": "Signal one shred that is waiting on this event."
+        },
+        {
+          "member function": "waiting_on",
+          "return type": "void",
+          "arguments": [],
+          "description": "(internal) used by virtual machine to be notified when a shred starts waiting on this Event."
+        }
+      ]
+    },
+    {
+      "name": "Shred",
+      "description": "A strongly-timed ChucK thread of execution.",
+      "inherits": ["Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/shred/spork.ck",
+        "https://chuck.stanford.edu/doc/examples/shred/spork2.ck",
+        "https://chuck.stanford.edu/doc/examples/shred/spork2-exit.ck",
+        "https://chuck.stanford.edu/doc/examples/shred/spork2-remove.ck",
+        "https://chuck.stanford.edu/doc/examples/shred/powerup.ck",
+        "https://chuck.stanford.edu/doc/examples/event/broadcast.ck",
+        "https://chuck.stanford.edu/doc/examples/event/signal.ck",
+        "https://chuck.stanford.edu/doc/examples/event/signal4.ck",
+        "https://chuck.stanford.edu/doc/examples/shred/parent.ck",
+        "https://chuck.stanford.edu/doc/examples/shred/ancestor.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Shred",
+          "arguments": [],
+          "description": "Default constructor for Shred."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "arg",
+          "return type": "string",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "index"
+            }
+          ],
+          "description": "Get the Shred argument at the specified index."
+        },
+        {
+          "member function": "args",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the number of arguments provided to the Shred."
+        },
+        {
+          "member function": "childMemSize",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "sizeInBytes"
+            }
+          ],
+          "description": "Set size hint of per-shred call stack (\"mem\") for children shreds subsequently sporked from the calling shred (NOTE this size hint does not affect the calling shred--only its descendants); if sizeInBytes <= 0, the size hint is set to the VM default. (FYI This is an arcane functionality that most programmers never need to worry about. Advanced usage: set size hint to small values (e.g., 1K) to support A LOT (e.g., >10000) of simultaneous shreds; set size hint to large values (e.g., >65K) to spork functions with extremely deep recursion, or to support A LOT (>10000) of declared local variables. Use with care.)"
+        },
+        {
+          "member function": "childMemSize",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the memory stack size hint (in bytes) for shreds sporked from this one."
+        },
+        {
+          "member function": "childRegSize",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "sizeInBytes"
+            }
+          ],
+          "description": "Set size hint of per-shred operand stack (\"reg\") for children shreds subsequently sporked from the calling shred (NOTE this size hint does not affect the calling shred--only its descendants); if sizeInBytes <= 0, the size hint is set to the VM default. (FYI This is an arcane functionality that most programmers never need to worry about. Advanced usage: set size hint to small values (e.g., 256 bytes) to support A LOT (>10000) of simultaneous shreds; set size hint to large values (e.g., >20K) to spork functions with extremely lengthy (>10000) statements, including array initializer lists. Use with care.)"
+        },
+        {
+          "member function": "childRegSize",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the operand stack size hint (in bytes) for shreds sporked from this one."
+        },
+        {
+          "member function": "dir",
+          "return type": "string",
+          "arguments": [],
+          "description": "Get the enclosing directory of the source file from which this Shred's code is derived (same as .sourceDir())."
+        },
+        {
+          "member function": "dir",
+          "return type": "string",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "levelsUp"
+            }
+          ],
+          "description": "Get the enclosing directory, the specified number of parent directories up."
+        },
+        {
+          "member function": "done",
+          "return type": "int",
+          "arguments": [],
+          "description": "Has the Shred reached the end of its execution?"
+        },
+        {
+          "member function": "exit",
+          "return type": "void",
+          "arguments": [],
+          "description": "Halt the shred's operation and remove it from the virtual machine."
+        },
+        {
+          "member function": "id",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the unique numeric id of the Shred."
+        },
+        {
+          "member function": "path",
+          "return type": "string",
+          "arguments": [],
+          "description": "Get the path of the source file from which this Shred's code is derived (same as .sourcePath())."
+        },
+        {
+          "member function": "running",
+          "return type": "int",
+          "arguments": [],
+          "description": "Is the Shred currently actively running in the VM?"
+        },
+        {
+          "member function": "sourceDir",
+          "return type": "string",
+          "arguments": [],
+          "description": "Get the enclosing directory of the source file from which this Shred's code is derived (same as .dir())."
+        },
+        {
+          "member function": "sourcePath",
+          "return type": "string",
+          "arguments": [],
+          "description": "Get the path of the source file from which this Shred's code is derived (same as .path())."
+        },
+        {
+          "member function": "yield",
+          "return type": "void",
+          "arguments": [],
+          "description": "Cause the current Shred to temporarily suspend without advancing time, allowing other simultaneously schreduled shreds to run as needed. NOTE: yield() is equivalent to '0::second +=> now;'"
+        }
+      ],
+      "static member functions": [
+        {
+          "static member function": "ancestor",
+          "return type": "Shred",
+          "arguments": [],
+          "description": "Get the calling shred's \"ancestor\" shred (i.e., the top-level shred). Returns itself if the calling shred is the top-level shred. (Related: see Shred.parent())"
+        },
+        {
+          "static member function": "fromId",
+          "return type": "Shred",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "id"
+            }
+          ],
+          "description": "Get Shred corresponding to a Shred ID."
+        },
+        {
+          "static member function": "parent",
+          "return type": "Shred",
+          "arguments": [],
+          "description": "Get the calling shred's parent shred (i.e., the shred that sporked the calling shred). Returns null if there is no parent Shred. (Related: see Shred.ancestor())"
+        }
+      ]
+    },
+    {
+      "name": "Math",
+      "description": "Math class library.",
+      "inherits": ["Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/basic/blit2.ck",
+        "https://chuck.stanford.edu/doc/examples/stk/mand-o-matic.ck",
+        "https://chuck.stanford.edu/doc/examples/math/randomize.ck",
+        "https://chuck.stanford.edu/doc/examples/math/maybe.ck",
+        "https://chuck.stanford.edu/doc/examples/math/int-dist.ck",
+        "https://chuck.stanford.edu/doc/examples/math/map.ck"
+      ],
+      "static member functions": [
+        {
+          "static member function": "abs",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "value"
+            }
+          ],
+          "description": "Return absolute value of an integer value."
+        },
+        {
+          "static member function": "acos",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            }
+          ],
+          "description": "Compute arccosine of x; result in [0, pi]."
+        },
+        {
+          "static member function": "asin",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            }
+          ],
+          "description": "Compute arcsine of x; result in [-pi/2, +pi/2]."
+        },
+        {
+          "static member function": "atan2",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "y"
+            },
+            {
+              "type": "float",
+              "name": "x"
+            }
+          ],
+          "description": "Compute arc tangent of two variables (y/x)."
+        },
+        {
+          "static member function": "atan",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            }
+          ],
+          "description": "Compute arctangent of x; result in [-pi/2, +pi/2]."
+        },
+        {
+          "static member function": "ceil",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            }
+          ],
+          "description": "Return the smallest integer value (returned as float) not less than x."
+        },
+        {
+          "static member function": "clampf",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            },
+            {
+              "type": "float",
+              "name": "min"
+            },
+            {
+              "type": "float",
+              "name": "max"
+            }
+          ],
+          "description": "Clamp a float to range [min,max]."
+        },
+        {
+          "static member function": "clampi",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "value"
+            },
+            {
+              "type": "int",
+              "name": "min"
+            },
+            {
+              "type": "int",
+              "name": "max"
+            }
+          ],
+          "description": "Clamp an integer to range [min,max]."
+        },
+        {
+          "static member function": "cos",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            }
+          ],
+          "description": "Compute cosine of x (measured in radians)."
+        },
+        {
+          "static member function": "cosh",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            }
+          ],
+          "description": "Compute the hyperbolic cosine of x."
+        },
+        {
+          "static member function": "cossim",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "a"
+            },
+            {
+              "type": "float[]",
+              "name": "b"
+            }
+          ],
+          "description": "Compute the cosine similarity between arrays a and b."
+        },
+        {
+          "static member function": "cossim",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "vec3",
+              "name": "a"
+            },
+            {
+              "type": "vec3",
+              "name": "b"
+            }
+          ],
+          "description": "Compute the cosine similarity between 3D vectors a and b."
+        },
+        {
+          "static member function": "cossim",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "vec4",
+              "name": "a"
+            },
+            {
+              "type": "vec4",
+              "name": "b"
+            }
+          ],
+          "description": "Compute the cosine similarity between 4D vectors a and b."
+        },
+        {
+          "static member function": "dbtopow",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Convert decibels (dB) to signal power ratio."
+        },
+        {
+          "static member function": "dbtorms",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Convert decibles (dB) to linear amplitude."
+        },
+        {
+          "static member function": "ensurePow2",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "x"
+            }
+          ],
+          "description": "Return the smallest power-of-2 greater than or equal to the value of x."
+        },
+        {
+          "static member function": "equal",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            },
+            {
+              "type": "float",
+              "name": "y"
+            }
+          ],
+          "description": "Return whether two floats are considered equal."
+        },
+        {
+          "static member function": "euclidean",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "a"
+            },
+            {
+              "type": "float[]",
+              "name": "b"
+            }
+          ],
+          "description": "Compute the euclidean distance between arrays a and b."
+        },
+        {
+          "static member function": "euclidean",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "vec2",
+              "name": "a"
+            },
+            {
+              "type": "vec2",
+              "name": "b"
+            }
+          ],
+          "description": "Compute the euclidean distance between 2D vectors a and b."
+        },
+        {
+          "static member function": "euclidean",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "vec3",
+              "name": "a"
+            },
+            {
+              "type": "vec3",
+              "name": "b"
+            }
+          ],
+          "description": "Compute the euclidean distance between 3D vectors a and b."
+        },
+        {
+          "static member function": "euclidean",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "vec4",
+              "name": "a"
+            },
+            {
+              "type": "vec4",
+              "name": "b"
+            }
+          ],
+          "description": "Compute the euclidean distance between 4D vectors a and b."
+        },
+        {
+          "static member function": "exp2",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            }
+          ],
+          "description": "Compute 2^x, the base-2 exponential of x."
+        },
+        {
+          "static member function": "exp",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            }
+          ],
+          "description": "Compute e^x, the base-e exponential of x."
+        },
+        {
+          "static member function": "fabs",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Return absolute value of a floating point value."
+        },
+        {
+          "static member function": "floor",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            }
+          ],
+          "description": "Return the largest integer value (returned as float) not greater than x."
+        },
+        {
+          "static member function": "fmod",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            },
+            {
+              "type": "float",
+              "name": "y"
+            }
+          ],
+          "description": "Compute the floating-point remainder of x / y."
+        },
+        {
+          "static member function": "ftom",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Convert frequency (Hz) to MIDI note number space."
+        },
+        {
+          "static member function": "gauss",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            },
+            {
+              "type": "float",
+              "name": "mean"
+            },
+            {
+              "type": "float",
+              "name": "sd"
+            }
+          ],
+          "description": "Compute gaussian function at x, given mean and SD."
+        },
+        {
+          "static member function": "hypot",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            },
+            {
+              "type": "float",
+              "name": "y"
+            }
+          ],
+          "description": "Compute the euclidean distance sqrt(x*x+y*y)."
+        },
+        {
+          "static member function": "im",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "complex",
+              "name": "v"
+            }
+          ],
+          "description": "Return the imaginary component of complex value v."
+        },
+        {
+          "static member function": "isinf",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            }
+          ],
+          "description": "Return true if x is infinity, else return false."
+        },
+        {
+          "static member function": "isnan",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            }
+          ],
+          "description": "Return true if x is not a number, else return false."
+        },
+        {
+          "static member function": "log10",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            }
+          ],
+          "description": "Compute the logarithm of x to base 10."
+        },
+        {
+          "static member function": "log2",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            }
+          ],
+          "description": "Compute the logarithm of x to base 2."
+        },
+        {
+          "static member function": "log",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            }
+          ],
+          "description": "Compute the natural logarithm of x."
+        },
+        {
+          "static member function": "mag",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "polar",
+              "name": "v"
+            }
+          ],
+          "description": "Return the magnitude component of polar value v."
+        },
+        {
+          "static member function": "map2",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            },
+            {
+              "type": "float",
+              "name": "x1"
+            },
+            {
+              "type": "float",
+              "name": "y1"
+            },
+            {
+              "type": "float",
+              "name": "x2"
+            },
+            {
+              "type": "float",
+              "name": "y2"
+            }
+          ],
+          "description": "Map 'value' from range [x1,y1] into range [x2,y2]; 'value' will be clamped to [x1,y1] if outside range. (see also: Math.map())"
+        },
+        {
+          "static member function": "map",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            },
+            {
+              "type": "float",
+              "name": "x1"
+            },
+            {
+              "type": "float",
+              "name": "y1"
+            },
+            {
+              "type": "float",
+              "name": "x2"
+            },
+            {
+              "type": "float",
+              "name": "y2"
+            }
+          ],
+          "description": "Map 'value' from range [x1,y1] into range [x2,y2]; 'value' can be outside range[x1,y1]. (see also: Math.map2())"
+        },
+        {
+          "static member function": "max",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "x"
+            },
+            {
+              "type": "int",
+              "name": "y"
+            }
+          ],
+          "description": "Return the greater of x and y (integer)."
+        },
+        {
+          "static member function": "max",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            },
+            {
+              "type": "float",
+              "name": "y"
+            }
+          ],
+          "description": "Return the greater of x and y (float)."
+        },
+        {
+          "static member function": "min",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "x"
+            },
+            {
+              "type": "int",
+              "name": "y"
+            }
+          ],
+          "description": "Return the lesser of x and y (int)."
+        },
+        {
+          "static member function": "min",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            },
+            {
+              "type": "float",
+              "name": "y"
+            }
+          ],
+          "description": "Return the lesser of x and y (float)."
+        },
+        {
+          "static member function": "mtof",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Convert a MIDI note number to frequency (Hz). Note that the input value is of type float and supports fractional note numbers."
+        },
+        {
+          "static member function": "nextpow2",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "x"
+            }
+          ],
+          "description": "Compute the smallest power-of-2 greater than x."
+        },
+        {
+          "static member function": "phase",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "polar",
+              "name": "v"
+            }
+          ],
+          "description": "Return the phase component of polar value v."
+        },
+        {
+          "static member function": "pow",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            },
+            {
+              "type": "float",
+              "name": "y"
+            }
+          ],
+          "description": "Compute x raised to the y-th power."
+        },
+        {
+          "static member function": "powtodb",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Convert signal power ratio to decibels (dB)."
+        },
+        {
+          "static member function": "ptor",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "polar[]",
+              "name": "from"
+            },
+            {
+              "type": "complex[]",
+              "name": "to"
+            }
+          ],
+          "description": "Convert polar values to complex values; returns number of values converted."
+        },
+        {
+          "static member function": "random2",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "min"
+            },
+            {
+              "type": "int",
+              "name": "max"
+            }
+          ],
+          "description": "Return successive pseudo-random numbers in the range [min, max]."
+        },
+        {
+          "static member function": "random2f",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "min"
+            },
+            {
+              "type": "float",
+              "name": "max"
+            }
+          ],
+          "description": "Return successive pseudo-random floating-point numbers in the range [min, max]."
+        },
+        {
+          "static member function": "random",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return successive pseudo-random integer numbers in the range [0, Math.RANDOM_MAX]]."
+        },
+        {
+          "static member function": "randomf",
+          "return type": "float",
+          "arguments": [],
+          "description": "Return successive pseudo-random floating-point numbers in the range [0,1]."
+        },
+        {
+          "static member function": "randomize",
+          "return type": "void",
+          "arguments": [],
+          "description": "Randomize the seed of the random number generator (RNG), using an non-deterministic mechanism. Whereas srandom() explicitly seeds the RNG and will produce a deterministic sequence of pseudo-random numbers, randomize() \"shakes things up\" and causes RNG to start generating from a practically unpredicable seed. The quality of randomize() depends on the underlying implementation."
+        },
+        {
+          "static member function": "re",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "complex",
+              "name": "v"
+            }
+          ],
+          "description": "Return the real component of complex value v."
+        },
+        {
+          "static member function": "remainder",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            },
+            {
+              "type": "float",
+              "name": "y"
+            }
+          ],
+          "description": "Compute the value r such that r=x-n*y, where n is the integer nearest the exact value of x / y. If there are two integers closest to x / y, n shall be the even one. If r is zero, it is given the same sign as x."
+        },
+        {
+          "static member function": "remap",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            },
+            {
+              "type": "float",
+              "name": "x1"
+            },
+            {
+              "type": "float",
+              "name": "y1"
+            },
+            {
+              "type": "float",
+              "name": "x2"
+            },
+            {
+              "type": "float",
+              "name": "y2"
+            }
+          ],
+          "description": "Same as Math.map2()."
+        },
+        {
+          "static member function": "rmstodb",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Convert linear amplitude to decibels (dB)."
+        },
+        {
+          "static member function": "round",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            }
+          ],
+          "description": "Return the integer value (returned as float) nearest to x (rounding halfway cases away from zero)."
+        },
+        {
+          "static member function": "rtop",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "complex[]",
+              "name": "from"
+            },
+            {
+              "type": "polar[]",
+              "name": "to"
+            }
+          ],
+          "description": "Convert complex values to polar values; returns number of values converted."
+        },
+        {
+          "static member function": "sgn",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Return sign of 'value' as -1.0 (negative), 0.0, or 1.0 (positive)."
+        },
+        {
+          "static member function": "sin",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            }
+          ],
+          "description": "Compute sine of x (measured in radians)."
+        },
+        {
+          "static member function": "sinh",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            }
+          ],
+          "description": "Compute the hyperbolic sine of x."
+        },
+        {
+          "static member function": "sqrt",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            }
+          ],
+          "description": "Compute the non-negative square root of x."
+        },
+        {
+          "static member function": "srandom",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "seed"
+            }
+          ],
+          "description": "Seed the random number generator (RNG). Different seeds will generate very different sequences of random numbers even if the seeds are close together. Alternatively, a deterministic sequence of pseudo-random numbers can repeatably generated by setting the same seed."
+        },
+        {
+          "static member function": "tan",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            }
+          ],
+          "description": "Compute tangent of x (measured in radians)."
+        },
+        {
+          "static member function": "tanh",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            }
+          ],
+          "description": "Compute the hyperbolic tangent of x."
+        },
+        {
+          "static member function": "trunc",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "x"
+            }
+          ],
+          "description": "Return the integer value nearest to but no greater in magnitude than x."
+        }
+      ],
+      "static member variables": [
+        {
+          "name": "e",
+          "type": "float",
+          "description": "Euler's number; base of the natural logarithm."
+        },
+        {
+          "name": "E",
+          "type": "float",
+          "description": "Euler's number; base of the natural logarithm."
+        },
+        {
+          "name": "FLOAT_MAX",
+          "type": "float",
+          "description": "Largest representable floating-point value."
+        },
+        {
+          "name": "FLOAT_MIN_MAG",
+          "type": "float",
+          "description": "Smallest representable non-negative floating-point value."
+        },
+        {
+          "name": "i",
+          "type": "complex",
+          "description": "The complex number sqrt(-1)."
+        },
+        {
+          "name": "I",
+          "type": "complex",
+          "description": "The complex number sqrt(-1)."
+        },
+        {
+          "name": "INFINITY",
+          "type": "float",
+          "description": "Like, infinity."
+        },
+        {
+          "name": "INT_MAX",
+          "type": "int",
+          "description": "Largest representable integer value."
+        },
+        {
+          "name": "j",
+          "type": "complex",
+          "description": "The complex number sqrt(-1)."
+        },
+        {
+          "name": "J",
+          "type": "complex",
+          "description": "The complex number sqrt(-1)."
+        },
+        {
+          "name": "pi",
+          "type": "float",
+          "description": "An approximation of pi. (Same as global keyword 'pi'.)"
+        },
+        {
+          "name": "PI",
+          "type": "float",
+          "description": "An approximation of pi. (Same as global keyword 'pi'.)"
+        },
+        {
+          "name": "RANDOM_MAX",
+          "type": "int",
+          "description": "The largest possible value returned by random()."
+        },
+        {
+          "name": "two_pi",
+          "type": "float",
+          "description": "An approximation of 2*pi."
+        },
+        {
+          "name": "TWO_PI",
+          "type": "float",
+          "description": "An approximation of 2*pi."
+        }
+      ]
+    },
+    {
+      "name": "Machine",
+      "description": "Machine is the runtime interface to the ChucK Virtual Machine (Ck.VM or simply VM). This interface can be used to manage shreds, evaluate code, set log levels, etc. Machine's shred commands (add, replace, remove, etc.) are similar to the on-the-fly programming commands, except these are invoked from within a ChucK program, and benefit from ChucK's strongly-timed mechanics.",
+      "inherits": ["Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/machine/eval.ck",
+        "https://chuck.stanford.edu/doc/examples/machine/eval-global.ck",
+        "https://chuck.stanford.edu/doc/examples/machine/intsize.ck",
+        "https://chuck.stanford.edu/doc/examples/machine/is-realtime.ck",
+        "https://chuck.stanford.edu/doc/examples/machine/machine-help.ck",
+        "https://chuck.stanford.edu/doc/examples/machine/machine-shred.ck",
+        "https://chuck.stanford.edu/doc/examples/machine/version.ck",
+        "https://chuck.stanford.edu/doc/examples/book/digital-artists/chapter9/DrumMachine",
+        "https://chuck.stanford.edu/doc/examples/book/digital-artists/chapter9/SmartMandolin/initialize.ck"
+      ],
+      "static member functions": [
+        {
+          "static member function": "add",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "path"
+            }
+          ],
+          "description": "Compile and spork a new shred from file at 'path' into the VM; returns the new shred ID. It is possible to include arguments with the file being added, e.g., `Machine.add( \"foo.ck:bar:3:5.0\" )`."
+        },
+        {
+          "static member function": "clearVM",
+          "return type": "void",
+          "arguments": [],
+          "description": "Reset the type system, removing all user-defined types and all global variables; removes all shreds in the VM (including the shred calling this function); use with care."
+        },
+        {
+          "static member function": "crash",
+          "return type": "void",
+          "arguments": [],
+          "description": "Explicitly crash the virtual machine. The very last resort; or an emphatic gesture. Use with care."
+        },
+        {
+          "static member function": "eval",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "code"
+            }
+          ],
+          "description": "Evaluate a string as ChucK code, compile it and immediately spork it as a new independent shred, and automatically yield the current shred to give the new shred a chance to run, without advancing time."
+        },
+        {
+          "static member function": "eval",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "code"
+            },
+            {
+              "type": "string",
+              "name": "args"
+            }
+          ],
+          "description": "Evaluate a string as ChucK code, with arguments (bundled in 'args' as \"ARG1:ARG2:...\", compile it and immediately spork it as a new independent shred, and automatically yield the current shred to give the new shred a chance to run, without advancing time."
+        },
+        {
+          "static member function": "eval",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "code"
+            },
+            {
+              "type": "string",
+              "name": "args"
+            },
+            {
+              "type": "int",
+              "name": "count"
+            }
+          ],
+          "description": "Evaluate a string as ChucK code, with optional arguments (bundled in 'args' as \"ARG1:ARG2:...\", compile it and immediately spork 'count' independent shreds; and automatically yield the current shred to give all new shreds a chance to run, without advancing time."
+        },
+        {
+          "static member function": "intsize",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return the bit size of an integer."
+        },
+        {
+          "static member function": "loglevel",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "level"
+            }
+          ],
+          "description": "Set log level    |- 0: NONE    |- 1: CORE    |- 2: SYSTEM    |- 3: HERALD    |- 4: WARNING    |- 5: INFO    |- 6: DEBUG    |- 7: FINE    |- 8: FINER    |- 9: FINEST    |- 10: ALL."
+        },
+        {
+          "static member function": "loglevel",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get log level."
+        },
+        {
+          "static member function": "numShreds",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the number of shreds currently in the VM."
+        },
+        {
+          "static member function": "printStatus",
+          "return type": "void",
+          "arguments": [],
+          "description": "Print (to terminal or console) the current status of the VM."
+        },
+        {
+          "static member function": "printTimeCheck",
+          "return type": "void",
+          "arguments": [],
+          "description": "Print (to terminal or console) the current time information in the VM."
+        },
+        {
+          "static member function": "realtime",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return true if the shred is in realtime mode, false if it's in silent mode (i.e. --silent is enabled)"
+        },
+        {
+          "static member function": "refcount",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "Object",
+              "name": "obj"
+            }
+          ],
+          "description": "Get an object's current internal reference count; this is intended for testing or curiosity; NOTE: this function intentionally does not take into account any reference counting related to the calling of this function (normally all functions increments the reference count for objects passed as arguments and decrements upon returning)"
+        },
+        {
+          "static member function": "remove",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "id"
+            }
+          ],
+          "description": "Remove shred from VM by shred ID (returned by Machine.add)."
+        },
+        {
+          "static member function": "removeAllShreds",
+          "return type": "void",
+          "arguments": [],
+          "description": "Remove all shreds in the VM (including the shred calling this function)."
+        },
+        {
+          "static member function": "removeLastShred",
+          "return type": "int",
+          "arguments": [],
+          "description": "Remove the most recently added shred in the VM (could be the shred calling this function); returns the ID of the removed shred."
+        },
+        {
+          "static member function": "replace",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "id"
+            },
+            {
+              "type": "string",
+              "name": "path"
+            }
+          ],
+          "description": "Replace shred with new shred from file. Returns new shred ID, or 0 on error. It is possible to include arguments, e.g., `Machine.replace( outID, \"foo.ck:bar:3:5.0\" )`."
+        },
+        {
+          "static member function": "resetOperators",
+          "return type": "void",
+          "arguments": [],
+          "description": "Reset operator overloading state to default startup state; removes all public @operator overloads; use with care."
+        },
+        {
+          "static member function": "resetShredID",
+          "return type": "int",
+          "arguments": [],
+          "description": "Reset shred IDs to 1 + the highest current shred ID in the VM; can be used as shred management to keep shred IDs low, after a lot of sporks; returns what the next shred ID would be."
+        },
+        {
+          "static member function": "shreds",
+          "return type": "int[]",
+          "arguments": [],
+          "description": "Retrieve an array of active shred ids."
+        },
+        {
+          "static member function": "silent",
+          "return type": "int",
+          "arguments": [],
+          "description": "Return false if the shred is in realtime mode, true if it's in silent mode (i.e. --silent is enabled)"
+        },
+        {
+          "static member function": "sp_mem",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the calling shred's memory (aka \"mem\") stack pointer; intended for either debugging or curiosity."
+        },
+        {
+          "static member function": "sp_reg",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the calling shred's operand (aka \"reg\"/register) stack pointer; intended for either debugging or curiosity."
+        },
+        {
+          "static member function": "status",
+          "return type": "int",
+          "arguments": [],
+          "description": "Print the current status of the VM; legacy version of printStatus()."
+        },
+        {
+          "static member function": "version",
+          "return type": "string",
+          "arguments": [],
+          "description": "Return language and VM version string."
+        }
+      ]
+    },
+    {
+      "name": "Std",
+      "description": "A standard library in ChucK, which includes utility functions for random number generation, unit conversions, and absolute value.",
+      "inherits": ["Object"],
+      "static member functions": [
+        {
+          "static member function": "abs",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "value"
+            }
+          ],
+          "description": "Return absolute value of integer."
+        },
+        {
+          "static member function": "atof",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "value"
+            }
+          ],
+          "description": "Converts ascii (string) to floating point value (float)."
+        },
+        {
+          "static member function": "atoi",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "value"
+            }
+          ],
+          "description": "Convert ascii (string) to integer (int)."
+        },
+        {
+          "static member function": "clamp",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "value"
+            },
+            {
+              "type": "int",
+              "name": "min"
+            },
+            {
+              "type": "int",
+              "name": "max"
+            }
+          ],
+          "description": "Clamp integer to range [min, max]."
+        },
+        {
+          "static member function": "clampf",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            },
+            {
+              "type": "float",
+              "name": "min"
+            },
+            {
+              "type": "float",
+              "name": "max"
+            }
+          ],
+          "description": "Clamp float to range [min, max]."
+        },
+        {
+          "static member function": "dbtolin",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Convert decibels (dB) to linear amplitude."
+        },
+        {
+          "static member function": "dbtopow",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Convert decibels (dB) to signal power ratio."
+        },
+        {
+          "static member function": "dbtorms",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Convert decibels (dB) to rms."
+        },
+        {
+          "static member function": "fabs",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Return absolute value of float."
+        },
+        {
+          "static member function": "ftoa",
+          "return type": "string",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "f"
+            },
+            {
+              "type": "int",
+              "name": "precision"
+            }
+          ],
+          "description": "Converts floating point value (float) to ascii (string) with specified precision (number of decimal digits)."
+        },
+        {
+          "static member function": "ftoi",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "f"
+            }
+          ],
+          "description": "Convert float to integer."
+        },
+        {
+          "static member function": "ftom",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Convert frequency (Hz) to MIDI note number space."
+        },
+        {
+          "static member function": "getenv",
+          "return type": "string",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "key"
+            }
+          ],
+          "description": "Get the value of an environment variable (e.g., PATH)."
+        },
+        {
+          "static member function": "getenv",
+          "return type": "string",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "key"
+            },
+            {
+              "type": "string",
+              "name": "default"
+            }
+          ],
+          "description": "Get the value of an environment variable, returning the provided default if unset."
+        },
+        {
+          "static member function": "itoa",
+          "return type": "string",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "i"
+            }
+          ],
+          "description": "Converts integer (int) to ascii (string)."
+        },
+        {
+          "static member function": "lintodb",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Convert linear amplitude to decibels (dB)."
+        },
+        {
+          "static member function": "mtof",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Convert a MIDI note number to frequency (Hz). Note the input value is of type float (supports fractional note number). For reference, MIDI note number 60 is Middle C; each whole number is one semitone."
+        },
+        {
+          "static member function": "powtodb",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Convert signal power ratio to decibels (dB)."
+        },
+        {
+          "static member function": "rand2",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "min"
+            },
+            {
+              "type": "int",
+              "name": "max"
+            }
+          ],
+          "description": "Generate a random integer in range [min, max]. (NOTE: this is deprecated; use Math.random2())."
+        },
+        {
+          "static member function": "rand2f",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "min"
+            },
+            {
+              "type": "float",
+              "name": "max"
+            }
+          ],
+          "description": "Generate random floating point number in the range [min, max]. (NOTE: this is deprecated; use Math.random2f())"
+        },
+        {
+          "static member function": "rand",
+          "return type": "int",
+          "arguments": [],
+          "description": "Generate a random integer between 0 and Std.RAND_MAX. (NOTE: this is deprecated; use Math.random())."
+        },
+        {
+          "static member function": "randf",
+          "return type": "float",
+          "arguments": [],
+          "description": "Generate random floating point number in the range [-1, 1]. (Note: this is deprecated; use Math.randomf())"
+        },
+        {
+          "static member function": "range",
+          "return type": "int[]",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "stop"
+            }
+          ],
+          "description": "Return array containing the range [0,stop)."
+        },
+        {
+          "static member function": "range",
+          "return type": "int[]",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "start"
+            },
+            {
+              "type": "int",
+              "name": "stop"
+            }
+          ],
+          "description": "Return array containing the range [start,stop)."
+        },
+        {
+          "static member function": "range",
+          "return type": "int[]",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "start"
+            },
+            {
+              "type": "int",
+              "name": "stop"
+            },
+            {
+              "type": "int",
+              "name": "step"
+            }
+          ],
+          "description": "Return array containing values from start up to (but not including) stop, hopping by step."
+        },
+        {
+          "static member function": "rmstodb",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Convert rms to decibels (dB)."
+        },
+        {
+          "static member function": "scalef",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            },
+            {
+              "type": "float",
+              "name": "srcmin"
+            },
+            {
+              "type": "float",
+              "name": "srcmax"
+            },
+            {
+              "type": "float",
+              "name": "dstmin"
+            },
+            {
+              "type": "float",
+              "name": "dstmax"
+            }
+          ],
+          "description": "Scale a float from source range to destination range."
+        },
+        {
+          "static member function": "setenv",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "key"
+            },
+            {
+              "type": "string",
+              "name": "value"
+            }
+          ],
+          "description": "Set the value of environment variable named 'key'"
+        },
+        {
+          "static member function": "sgn",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "value"
+            }
+          ],
+          "description": "Get sign of value as -1 (negative), 0, or 1 (positive)."
+        },
+        {
+          "static member function": "srand",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "seed"
+            }
+          ],
+          "description": "Seed the random number generator. Different seeds will likely generate different sequences of random numbers even if the seeds are close together; alternatively, a sequence of random numbers can be repeated by setting the same seed. (NOTE: this is deprecated; use Math.srandom())"
+        },
+        {
+          "static member function": "system",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "cmd"
+            }
+          ],
+          "description": "Pass a command to be executed in the shell (requires --caution-to-the-wind flag to be set)."
+        }
+      ],
+      "static member variables": [
+        {
+          "name": "RAND_MAX",
+          "type": "int",
+          "description": "The largest possible value returned by Std.rand()."
+        }
+      ]
+    },
+    {
+      "name": "string",
+      "description": "Textual data as a sequence of characters, along with functions for manipulating text.",
+      "inherits": ["Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/string/strops.ck",
+        "https://chuck.stanford.edu/doc/examples/string/strops2.ck",
+        "https://chuck.stanford.edu/doc/examples/string/replace.ck",
+        "https://chuck.stanford.edu/doc/examples/string/token.ck",
+        "https://chuck.stanford.edu/doc/examples/string/escape.ck",
+        "https://chuck.stanford.edu/doc/examples/string/tostr.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "string",
+          "arguments": [],
+          "description": "Default constructor for string."
+        },
+        {
+          "constructor": "string",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "str"
+            }
+          ],
+          "description": "Construct a string as a copy of another string."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "charAt",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "index"
+            }
+          ],
+          "description": "Get a character at the specified index."
+        },
+        {
+          "member function": "erase",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "start"
+            },
+            {
+              "type": "int",
+              "name": "length"
+            }
+          ],
+          "description": "Erase length characters of the string from start position."
+        },
+        {
+          "member function": "find",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "theChar"
+            }
+          ],
+          "description": "Get the index of the first occurrence of theChar, or -1 if theChar is not found."
+        },
+        {
+          "member function": "find",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "theChar"
+            },
+            {
+              "type": "int",
+              "name": "start"
+            }
+          ],
+          "description": "Get the index of the first occurrence of theChar at or after the start position, or -1 if theChar is not found."
+        },
+        {
+          "member function": "find",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "str"
+            }
+          ],
+          "description": "Get the index of the first occurrence of str, or -1 if str is not found."
+        },
+        {
+          "member function": "find",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "str"
+            },
+            {
+              "type": "int",
+              "name": "start"
+            }
+          ],
+          "description": "Get the index of the first occurrence of str at or after the start position, or -1 if str is not found."
+        },
+        {
+          "member function": "insert",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "position"
+            },
+            {
+              "type": "string",
+              "name": "str"
+            }
+          ],
+          "description": "Insert a string at the specified position."
+        },
+        {
+          "member function": "length",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the number of characters of the string."
+        },
+        {
+          "member function": "lower",
+          "return type": "string",
+          "arguments": [],
+          "description": "Get a new string in which the uppercase characters of the original string have been converted to lowercase."
+        },
+        {
+          "member function": "ltrim",
+          "return type": "string",
+          "arguments": [],
+          "description": "Get a new string in which leading whitespace has been removed."
+        },
+        {
+          "member function": "replace",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "position"
+            },
+            {
+              "type": "string",
+              "name": "str"
+            }
+          ],
+          "description": "Replace characters from 'position' with contents of 'str'."
+        },
+        {
+          "member function": "replace",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "position"
+            },
+            {
+              "type": "int",
+              "name": "length"
+            },
+            {
+              "type": "string",
+              "name": "str"
+            }
+          ],
+          "description": "Replace 'length' characters from 'position' with contents of 'str'."
+        },
+        {
+          "member function": "replace",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "from"
+            },
+            {
+              "type": "string",
+              "name": "to"
+            }
+          ],
+          "description": "Replace all instances of 'from' in the string with 'to'."
+        },
+        {
+          "member function": "rfind",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "theChar"
+            }
+          ],
+          "description": "Get the index of the last occurrence of theChar, or -1 if theChar is not found."
+        },
+        {
+          "member function": "rfind",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "theChar"
+            },
+            {
+              "type": "int",
+              "name": "start"
+            }
+          ],
+          "description": "Get the index of the last occurrence of theChar at or before the start position, or -1 if theChar is not found."
+        },
+        {
+          "member function": "rfind",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "str"
+            }
+          ],
+          "description": "Get the index of the last occurrence of str, or -1 if str is not found."
+        },
+        {
+          "member function": "rfind",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "str"
+            },
+            {
+              "type": "int",
+              "name": "start"
+            }
+          ],
+          "description": "Get the index of the last occurrence of str at or before the start position, or -1 if str is not found."
+        },
+        {
+          "member function": "rtrim",
+          "return type": "string",
+          "arguments": [],
+          "description": "Get a new string in which trailing whitespace has been removed."
+        },
+        {
+          "member function": "setCharAt",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "index"
+            },
+            {
+              "type": "int",
+              "name": "theChar"
+            }
+          ],
+          "description": "Set the character at the specified index."
+        },
+        {
+          "member function": "substring",
+          "return type": "string",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "start"
+            }
+          ],
+          "description": "Get a new string containing the substring from the start index to the end of the string."
+        },
+        {
+          "member function": "substring",
+          "return type": "string",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "start"
+            },
+            {
+              "type": "int",
+              "name": "length"
+            }
+          ],
+          "description": "Get a new string containing the substring from the start index of the specified length."
+        },
+        {
+          "member function": "toFloat",
+          "return type": "float",
+          "arguments": [],
+          "description": "Attempt to convert the contents of the string to an float and return the result, or 0 if conversion failed."
+        },
+        {
+          "member function": "toInt",
+          "return type": "int",
+          "arguments": [],
+          "description": "Attempt to convert the contents of the string to an integer and return the result, or 0 if conversion failed."
+        },
+        {
+          "member function": "toString",
+          "return type": "string",
+          "arguments": [],
+          "description": "Return the reference of calling string."
+        },
+        {
+          "member function": "trim",
+          "return type": "string",
+          "arguments": [],
+          "description": "Get a new string in which leading and trailing whitespace has been removed."
+        },
+        {
+          "member function": "upper",
+          "return type": "string",
+          "arguments": [],
+          "description": "Get a new string in which the lowercase characters of the original string have been converted to uppercase."
+        }
+      ]
+    },
+    {
+      "name": "@array",
+      "description": "Storage construct for sequential data of the same type; can also be used as an associative map data structure; also can be used as a stack with << operator to append/push and popBack to pop.",
+      "inherits": ["Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/array/array_append.ck",
+        "https://chuck.stanford.edu/doc/examples/array/array_argument.ck",
+        "https://chuck.stanford.edu/doc/examples/array/array_assign.ck",
+        "https://chuck.stanford.edu/doc/examples/array/array_associative.ck",
+        "https://chuck.stanford.edu/doc/examples/array/array_capacity.ck",
+        "https://chuck.stanford.edu/doc/examples/array/array_dynamic.ck",
+        "https://chuck.stanford.edu/doc/examples/array/array_erase.ck",
+        "https://chuck.stanford.edu/doc/examples/array/array_erase2.ck",
+        "https://chuck.stanford.edu/doc/examples/array/array_mdim.ck",
+        "https://chuck.stanford.edu/doc/examples/array/array_mmixed.ck",
+        "https://chuck.stanford.edu/doc/examples/array/array_negative.ck",
+        "https://chuck.stanford.edu/doc/examples/array/array_range.ck",
+        "https://chuck.stanford.edu/doc/examples/array/array_resize.ck",
+        "https://chuck.stanford.edu/doc/examples/array/array_reverse.ck",
+        "https://chuck.stanford.edu/doc/examples/array/array_shuffle.ck",
+        "https://chuck.stanford.edu/doc/examples/array/array_sort.ck",
+        "https://chuck.stanford.edu/doc/examples/array/array_storage.ck",
+        "https://chuck.stanford.edu/doc/examples/array/array_sub_assign.ck",
+        "https://chuck.stanford.edu/doc/examples/array/array_zero.ck"
+      ],
+      "member functions": [
+        {
+          "member function": "cap",
+          "return type": "int",
+          "arguments": [],
+          "description": "(deprecated) For historical/compatibilty reasons, .cap() is always equal to .size(); instead of using .cap(), it is recommended to explicitly use .size() or .capacity()."
+        },
+        {
+          "member function": "capacity",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "val"
+            }
+          ],
+          "description": "Ensure capacity of the array (number of addressable elements)."
+        },
+        {
+          "member function": "capacity",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get current capacity of the array (number of addressable elements)."
+        },
+        {
+          "member function": "clear",
+          "return type": "void",
+          "arguments": [],
+          "description": "Clear the contents of the array."
+        },
+        {
+          "member function": "erase",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "position"
+            }
+          ],
+          "description": "Remove element at 'position' from the array (same as popOut(int))."
+        },
+        {
+          "member function": "erase",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "begin"
+            },
+            {
+              "type": "int",
+              "name": "end"
+            }
+          ],
+          "description": "Remove element(s) in the range [begin,end)."
+        },
+        {
+          "member function": "erase",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "key"
+            }
+          ],
+          "description": "(map only) Erase all elements with the specified key."
+        },
+        {
+          "member function": "getKeys",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "string[]",
+              "name": "keys"
+            }
+          ],
+          "description": "Return all keys found in associative array in keys."
+        },
+        {
+          "member function": "isInMap",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "key"
+            }
+          ],
+          "description": "(map only) test if 'key' is in the map; (historical) this was renamed from .find() to avoid confusion with the vector part of array."
+        },
+        {
+          "member function": "popBack",
+          "return type": "void",
+          "arguments": [],
+          "description": "Remove the last element of the array."
+        },
+        {
+          "member function": "popFront",
+          "return type": "void",
+          "arguments": [],
+          "description": "Remove the first element of the array."
+        },
+        {
+          "member function": "popOut",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "position"
+            }
+          ],
+          "description": "Remove the element at 'position' from the array (same as erase(int))."
+        },
+        {
+          "member function": "reset",
+          "return type": "void",
+          "arguments": [],
+          "description": "Reset array size to 0, set capacity to (at least) 8."
+        },
+        {
+          "member function": "reverse",
+          "return type": "void",
+          "arguments": [],
+          "description": "Reverses the array in-place."
+        },
+        {
+          "member function": "shuffle",
+          "return type": "void",
+          "arguments": [],
+          "description": "Shuffle the contents of the array."
+        },
+        {
+          "member function": "size",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the number of elements in the array."
+        },
+        {
+          "member function": "size",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "newSize"
+            }
+          ],
+          "description": "Set the size of the array. If the new size is less than the current size, elements will be deleted from the end; if the new size is larger than the current size, 0 or null elements will be added to the end."
+        },
+        {
+          "member function": "sort",
+          "return type": "void",
+          "arguments": [],
+          "description": "Sort the contents of the array in ascending order."
+        },
+        {
+          "member function": "zero",
+          "return type": "void",
+          "arguments": [],
+          "description": "Zero out the contents of the array; size is unchanged."
+        }
+      ]
+    }
+  ]
+}

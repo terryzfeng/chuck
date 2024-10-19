@@ -1,0 +1,2515 @@
+{
+  "title": "Chugins Library",
+  "groups": [
+    {
+      "name": "ABSaturator",
+      "description": "Soft clip saturating distortion, based on examples from Abel/Berners' Music 424 course at Stanford.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/effects/ABSaturator.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "ABSaturator",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "dcOffset",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Constant linear offset applied to the signal. A small offset will introduce odd harmonics into the distoration spectrum, whereas a zero offset will have only even harmonics."
+        },
+        {
+          "member function": "dcOffset",
+          "return type": "float",
+          "arguments": [],
+          "description": "Constant linear offset applied to the signal. A small offset will introduce odd harmonics into the distoration spectrum, whereas a zero offset will have only even harmonics."
+        },
+        {
+          "member function": "drive",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Input gain into the distortion section, in decibels. Controls overall amount of distortion."
+        },
+        {
+          "member function": "drive",
+          "return type": "float",
+          "arguments": [],
+          "description": "Input gain into the distortion section, in decibels. Controls overall amount of distortion."
+        }
+      ]
+    },
+    {
+      "name": "AmbPan3",
+      "description": "Third-order ambisonics panner (https://en.wikipedia.org/wiki/Ambisonics)",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/spatial/AmbPan3-CCRMA.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "AmbPan3",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "azimuth",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Set horizontal angle of point source."
+        },
+        {
+          "member function": "azimuth",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get horizontal angle of point source."
+        },
+        {
+          "member function": "channelMap",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int[]",
+              "name": "arg"
+            }
+          ],
+          "description": "Set the mapping of channels for the amibsonic system."
+        },
+        {
+          "member function": "elevation",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Set vertical angle of point source."
+        },
+        {
+          "member function": "elevation",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get vertical angle of point source."
+        }
+      ]
+    },
+    {
+      "name": "Bitcrusher",
+      "description": "Applies aliased downsampling and sample-width reduction to create a variety of distortion effects.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/effects/Bitcrusher.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Bitcrusher",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "bits",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "arg"
+            }
+          ],
+          "description": "Number of bits to reduce signal to [1-32]."
+        },
+        {
+          "member function": "bits",
+          "return type": "int",
+          "arguments": [],
+          "description": "Number of bits to reduce signal to [1-32]."
+        },
+        {
+          "member function": "downsample",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "arg"
+            }
+          ],
+          "description": "Factor by which to downsample signal by decimation [&ge;1]."
+        },
+        {
+          "member function": "downsample",
+          "return type": "int",
+          "arguments": [],
+          "description": "Factor by which to downsample signal by decimation [&ge;1]."
+        },
+        {
+          "member function": "downsampleFactor",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "arg"
+            }
+          ],
+          "description": "Factor by which to downsample signal by decimation [&ge;1]."
+        },
+        {
+          "member function": "downsampleFactor",
+          "return type": "int",
+          "arguments": [],
+          "description": "Factor by which to downsample signal by decimation [&ge;1]."
+        }
+      ]
+    },
+    {
+      "name": "Elliptic",
+      "description": "Elliptic implements cascaded IIR filters and a built-in elliptical filter design. It is capable of low-pass, high-pass, or bandpass filtering with very steep slopes. The atten determines how much of the signal is attenuated outside the passband. Elliptic filters come with a trade-off for their steep slopes: they have a certain amount of ripple outside the passbands. A very small ripple (0.1 or 0.2 dB) produces very little ringing, whereas a large ripple (eg. 20 dB) produces a very strong harmonic ring. The filter design algorithm sometimes can't fulfill the design criteria -- a particular combination of cutoff frequencies, ripple, and attenuation. If that happens, the user is warned that the filter is not initialized, and the filter is bypassed. This may happen, for instance, if you ask for a very steep attenuation with very low ripple.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/filter/Elliptic-help.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Elliptic",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "atten",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Set filter attenuation in dB. Default 90.0."
+        },
+        {
+          "member function": "atten",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter attenuation in dB."
+        },
+        {
+          "member function": "bpf",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "stop"
+            },
+            {
+              "type": "float",
+              "name": "hip"
+            },
+            {
+              "type": "float",
+              "name": "lop"
+            }
+          ],
+          "description": "Create a band-pass filter."
+        },
+        {
+          "member function": "bypass",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "arg"
+            }
+          ],
+          "description": "Set switch bypass. 1 is on, 0 is off. Default 0."
+        },
+        {
+          "member function": "bypass",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get switch bypass. 1 is on, 0 is off."
+        },
+        {
+          "member function": "hpf",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "stop"
+            },
+            {
+              "type": "float",
+              "name": "pass"
+            }
+          ],
+          "description": "Create a high-pass filter."
+        },
+        {
+          "member function": "lpf",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "stop"
+            },
+            {
+              "type": "float",
+              "name": "pass"
+            }
+          ],
+          "description": "Create a low-pass filter."
+        },
+        {
+          "member function": "ripple",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Set filter ripple in dB. Default 0.2."
+        },
+        {
+          "member function": "ripple",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get filter ripple in dB."
+        }
+      ]
+    },
+    {
+      "name": "ExpDelay",
+      "description": "Feedback delay at exponentially changing delay times.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/effects/ExpDelay.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "ExpDelay",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "ampcurve",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "ampcurve"
+            }
+          ],
+          "description": "Set steepness of amplitude decay [0.0001-inf]."
+        },
+        {
+          "member function": "ampcurve",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get steepness of amplitude decay [0.0001-inf]."
+        },
+        {
+          "member function": "delay",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "delay"
+            }
+          ],
+          "description": "Set duration of delay."
+        },
+        {
+          "member function": "delay",
+          "return type": "dur",
+          "arguments": [],
+          "description": "Get duration of delay."
+        },
+        {
+          "member function": "durcurve",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "durcurve"
+            }
+          ],
+          "description": "Set steepness of delay curve [0.0001-inf]:    1 = steady    <1 = starts fast and slows down    >1 = starts slow and speeds up."
+        },
+        {
+          "member function": "durcurve",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get steepness of delay curve [0.0001-inf]."
+        },
+        {
+          "member function": "max",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "max"
+            }
+          ],
+          "description": "Set maximum possible delay duration."
+        },
+        {
+          "member function": "max",
+          "return type": "dur",
+          "arguments": [],
+          "description": "Get maximum possible delay duration."
+        },
+        {
+          "member function": "mix",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "mix"
+            }
+          ],
+          "description": "Set dry/wet mix [0-1]."
+        },
+        {
+          "member function": "mix",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get dry/wet mix [0-1]."
+        },
+        {
+          "member function": "reps",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "reps"
+            }
+          ],
+          "description": "Set number of repetitions."
+        },
+        {
+          "member function": "reps",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get number of repetitions."
+        }
+      ]
+    },
+    {
+      "name": "ExpEnv",
+      "description": "ChucK Simple Decaying Exponential Envelope UGen Simple single time constant exponential decay, applied to any signal passed through it. Obeys: value, T60, radius, and keyOn Especially useful for Modal synthesis. One of these for each mode: SinOsc s => ExpEnv e => dac; Also useful for noise excitation pulse, using it like: Noise n => ExpEnv e => dac;.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/effects/ExpEnv.ck",
+        "https://chuck.stanford.edu/doc/examples/effects/ExpEnv-modes.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "ExpEnv",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "T60",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "arg"
+            }
+          ],
+          "description": "Set T60 delay time (time for sounds to decay by 60dB."
+        },
+        {
+          "member function": "T60",
+          "return type": "dur",
+          "arguments": [],
+          "description": "Get T60 delay time (time for sounds to decay by 60dB."
+        },
+        {
+          "member function": "keyOn",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "arg"
+            }
+          ],
+          "description": ""
+        },
+        {
+          "member function": "radius",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": ""
+        },
+        {
+          "member function": "radius",
+          "return type": "float",
+          "arguments": [],
+          "description": ""
+        },
+        {
+          "member function": "value",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": ""
+        },
+        {
+          "member function": "value",
+          "return type": "float",
+          "arguments": [],
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "FIR",
+      "description": "Yo! This here is a ChugIn for ChucK. It's a general-purpose FIR filter. You make a new one: FIR myFilter; Then specify order: N => myFilter.order;.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/filter/FIR-convolve-homer.ck",
+        "https://chuck.stanford.edu/doc/examples/filter/FIR-greyhole-down-up-decimate.ck",
+        "https://chuck.stanford.edu/doc/examples/filter/FIR-sinc-explicit.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "FIR",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "bpHetero",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "freq"
+            }
+          ],
+          "description": "Cosine modulate lowpass filter to freq."
+        },
+        {
+          "member function": "coeff",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "idx"
+            },
+            {
+              "type": "float",
+              "name": "coeff"
+            }
+          ],
+          "description": "Set filter idx's coefficient to coeff."
+        },
+        {
+          "member function": "coeff",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "idx"
+            }
+          ],
+          "description": "Set filter idx's coefficient."
+        },
+        {
+          "member function": "gaussian",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "cutoff_freq"
+            }
+          ],
+          "description": "Create a gaussian lowpass filter with cutoff cutoff_freq."
+        },
+        {
+          "member function": "hpHetero",
+          "return type": "int",
+          "arguments": [],
+          "description": "Cosine modulate lowpass filter to 1/2 the sample rate."
+        },
+        {
+          "member function": "order",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "arg"
+            }
+          ],
+          "description": "Set filter's order."
+        },
+        {
+          "member function": "order",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get filter's order."
+        },
+        {
+          "member function": "sinc",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "cutoff_freq"
+            }
+          ],
+          "description": "Create a sinc lowpass filter with cutoff cutoff_freq."
+        }
+      ]
+    },
+    {
+      "name": "FoldbackSaturator",
+      "description": "Foldback saturator that inverts a signal and multiplies it by an index as it passes a threshold.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/effects/FoldbackSaturator-index.ck",
+        "https://chuck.stanford.edu/doc/examples/effects/FoldbackSaturator-threshold.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "FoldbackSaturator",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "index",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "The index that the signal is multiplied by after it is inverted against the threshold. Defaults to 2.0."
+        },
+        {
+          "member function": "index",
+          "return type": "float",
+          "arguments": [],
+          "description": "The index that the signal is multiplied by after it is inverted against the threshold. Defaults to 2.0."
+        },
+        {
+          "member function": "makeupGain",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "The amount of makeup gain applied to the signal after processing, multiplied against the reciprocal of the threshold. Defaults to 1.0."
+        },
+        {
+          "member function": "makeupGain",
+          "return type": "float",
+          "arguments": [],
+          "description": "The amount of makeup gain applied to the signal after processing, multiplied against the reciprocal of the threshold. Defaults to 1.0."
+        },
+        {
+          "member function": "threshold",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "The threshold (positive and negative) that the signal is inverted against as it is passed. Defaults to 0.6."
+        },
+        {
+          "member function": "threshold",
+          "return type": "float",
+          "arguments": [],
+          "description": "The threshold (positive and negative) that the signal is inverted against as it is passed. Defaults to 0.6."
+        }
+      ]
+    },
+    {
+      "name": "GVerb",
+      "description": "GVerb is a very smooth reverberator with the ability to produce very long reverb times. GVERB is based on the original \"gverb/gigaverb\" by Juhana Sadeharju (kouhia at nic.funet.fi). The code for this version was adapted from RTcmix (http:rtcmix.org), which in turn adapted it from the Max/MSP version by Olaf Mtthes (olaf.matthes at gmx.de).",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/effects/GVerb.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "GVerb",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "bandwidth",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get the input bandwidth [0 - 1]. Same as damping control, but on the input signal. Default 0.5."
+        },
+        {
+          "member function": "bandwidth",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Set the input bandwidth [0 - 1]. Same as damping control, but on the input signal. Default 0.5."
+        },
+        {
+          "member function": "damping",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get high frequency rolloff [0 - 1]. 0 damps the reverb signal completely, 1 not at all. Default 0."
+        },
+        {
+          "member function": "damping",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Set high frequency rolloff [0 - 1]. 0 damps the reverb signal completely, 1 not at all. Default 0."
+        },
+        {
+          "member function": "dry",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get the amount of dry signal [0 - 1]. Default 0.5."
+        },
+        {
+          "member function": "dry",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Set the amount of dry signal [0 - 1]. Default 0.5."
+        },
+        {
+          "member function": "early",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get the early reflection level [0 - 1]. Default 0.4."
+        },
+        {
+          "member function": "early",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Set the early reflection level [0 - 1]. Default 0.4."
+        },
+        {
+          "member function": "revtime",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "arg"
+            }
+          ],
+          "description": "Set reverberation time. Default 5::second."
+        },
+        {
+          "member function": "revtime",
+          "return type": "dur",
+          "arguments": [],
+          "description": "Get reverberation time."
+        },
+        {
+          "member function": "roomsize",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Set room size [1.0 - 300.0]. Default 30.0."
+        },
+        {
+          "member function": "roomsize",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get room size [1.0 - 300.0]."
+        },
+        {
+          "member function": "tail",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get the tail level [0 - 1]. Default 0.5."
+        },
+        {
+          "member function": "tail",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Set the tail level [0 - 1]. Default 0.5."
+        }
+      ]
+    },
+    {
+      "name": "KasFilter",
+      "description": "Under-sampling-based resonant lowpass filter, based on two sample & holds with a cosine crossfading between them. Each S&H samples at the moment it's faded out. The frequency of the crossfading and sampling of the input sets the cutoff. This leads to a infinitely steep cutoff, at the price of aliasing. Negative feedback is used for resonance at the cutoff frequency, a technique that I believe is new here. In addition to the traditional modulation options waveshaping of the crossfading signal is provided. This leads to distortion at the cutoff frequency. At extreme values (and assuming no feedback is used) that makes the effect closer to traditional under-sampling. Linear interpolation is used on the input signal to avoid the S&Hs being quantised to ChucK's sample rate; This technique causes quite a few interesting artifacts that result from the ratio between the frequency of the input and the cutoff frequency. To emphasise those it makes sense to try to minimise artifacts induced by the digital environment itself. Thanks to Rob Hordijk for sharing his insights there.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/filter/KasFilter.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "KasFilter",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "accent",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Sets the amount of waveshaping on the crossfading sine [0 - 1]. 1 is close to regular under-sampling (if no resonance is used)."
+        },
+        {
+          "member function": "accent",
+          "return type": "float",
+          "arguments": [],
+          "description": "Gets the amount of waveshaping on the crossfading sine [0 - 1]. 1 is close to regular under-sampling (if no resonance is used)."
+        },
+        {
+          "member function": "freq",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Sets the cutoff frequency. This sets both the frequency at which the two sample & holds sample the input signal and the frequency of the sine that crossfades between them."
+        },
+        {
+          "member function": "freq",
+          "return type": "float",
+          "arguments": [],
+          "description": "Gets the cutoff frequency. This sets both the frequency at which the two sample & holds sample the input signal and the frequency of the sine that crossfades between them."
+        },
+        {
+          "member function": "resonance",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Sets the resonance, which is implemented as negative feedback [0 - 0.95]."
+        },
+        {
+          "member function": "resonance",
+          "return type": "float",
+          "arguments": [],
+          "description": "Gets the resonance, which is implemented as negative feedback [0 - 0.95]."
+        }
+      ]
+    },
+    {
+      "name": "MagicSine",
+      "description": "Fast, recursive sine wave generator using the so-called &quot;magic circle&quot; algorithm (see <a href=\"https://ccrma.stanford.edu/~jos/pasp/Digital_Sinusoid_Generators.html\">https://ccrma.stanford.edu/~jos/pasp/Digital_Sinusoid_Generators.html</a>). Can be 30-40% faster than regular SinOsc. Frequency modulation will negate this performance benefit; most useful when pure sine tones are desired or for additive synthesis.",
+      "inherits": ["UGen", "Object"],
+      "constructors": [
+        {
+          "constructor": "MagicSine",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "freq",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Oscillator frequency [Hz]."
+        },
+        {
+          "member function": "freq",
+          "return type": "float",
+          "arguments": [],
+          "description": "Oscillator frequency [Hz]."
+        }
+      ]
+    },
+    {
+      "name": "Mesh2D",
+      "description": "This class implements a rectilinear, two-dimensional digital waveguide mesh structure. For details, see Van Duyne and Smith, &quot;Physical Modeling with the 2-D Digital Waveguide Mesh,&quot; <i>Proceedings of the 1993 International Computer Music Conference</i>. <br/><br/>This is a digital waveguide model, making its use possibly subject to patents held by Stanford University, Yamaha, and others.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/special/Mesh2D.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Mesh2D",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "decay",
+          "return type": "float",
+          "arguments": [],
+          "description": "Decay constant (0 = instant decay, 1.0 = long decay time)."
+        },
+        {
+          "member function": "decay",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Decay constant (0 = instant decay, 1.0 = long decay time)."
+        },
+        {
+          "member function": "noteOff",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Release the model."
+        },
+        {
+          "member function": "noteOn",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Trigger the mesh with given amplitude."
+        },
+        {
+          "member function": "x",
+          "return type": "int",
+          "arguments": [],
+          "description": "X dimension of &quot;plate&quot; (max 12)."
+        },
+        {
+          "member function": "x",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "arg"
+            }
+          ],
+          "description": "X dimension of &quot;plate&quot; (max 12)."
+        },
+        {
+          "member function": "xpos",
+          "return type": "float",
+          "arguments": [],
+          "description": "Strike x position (appears to be on range (0.0, 2.0))."
+        },
+        {
+          "member function": "xpos",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Strike x position (appears to be on range (0.0, 2.0))."
+        },
+        {
+          "member function": "y",
+          "return type": "int",
+          "arguments": [],
+          "description": "Y dimension of &quot;plate&quot; (max 12)."
+        },
+        {
+          "member function": "y",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "arg"
+            }
+          ],
+          "description": "Y dimension of &quot;plate&quot; (max 12)."
+        },
+        {
+          "member function": "ypos",
+          "return type": "float",
+          "arguments": [],
+          "description": "Strike y position (appears to be on range (0.0, 2.0))."
+        },
+        {
+          "member function": "ypos",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Strike y position (appears to be on range (0.0, 2.0))."
+        }
+      ]
+    },
+    {
+      "name": "Multicomb",
+      "description": "Multiple simultaneous comb filters randomly chosen within a specified frequency range and spread across the stereo field.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/filter/Multicomb.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Multicomb",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "maxfreq",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "maxfreq"
+            }
+          ],
+          "description": "Set max frequency. Default 880."
+        },
+        {
+          "member function": "maxfreq",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get max frequency. Default 880."
+        },
+        {
+          "member function": "minfreq",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "minfreq"
+            }
+          ],
+          "description": "Set low frequency. Default 220."
+        },
+        {
+          "member function": "minfreq",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get low frequency. Default 220."
+        },
+        {
+          "member function": "num",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "num"
+            }
+          ],
+          "description": "Set number of comb filters. Default 5."
+        },
+        {
+          "member function": "num",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get number of comb filters. Default 5."
+        },
+        {
+          "member function": "revtime",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "revtime"
+            }
+          ],
+          "description": "Set total ring time. Default 1::second."
+        },
+        {
+          "member function": "revtime",
+          "return type": "dur",
+          "arguments": [],
+          "description": "Get total ring time. Default 1::second."
+        },
+        {
+          "member function": "set",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "minfreq"
+            },
+            {
+              "type": "float",
+              "name": "maxfreq"
+            }
+          ],
+          "description": "Set both low and high frequencies."
+        }
+      ]
+    },
+    {
+      "name": "Pan4",
+      "description": "Four-channel equal-power panner.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/spatial/Pan4.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Pan4",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "pan",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Set pan position [0-4]."
+        },
+        {
+          "member function": "pan",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get pan position [0-4]."
+        }
+      ]
+    },
+    {
+      "name": "Pan8",
+      "description": "Eight-channel equal-power panner.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/spatial/Pan8.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Pan8",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "pan",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Set pan position [0-8]."
+        },
+        {
+          "member function": "pan",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get pan position [0-8]."
+        }
+      ]
+    },
+    {
+      "name": "Pan16",
+      "description": "Sixteen-channel equal-power panner.",
+      "inherits": ["UGen", "Object"],
+      "constructors": [
+        {
+          "constructor": "Pan16",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "pan",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Set pan position [0-16]."
+        },
+        {
+          "member function": "pan",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get pan position [0-16]."
+        }
+      ]
+    },
+    {
+      "name": "PitchTrack",
+      "description": "PitchTrack is a monophonic autocorrelation pitch tracker with a fast response and extremely high accuracy, even at low frequencies. It is adapted from [helmholtz~] for Pd by Katja, documented at http://www.katjaas.nl/helmholtz/helmholtz.html.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/effects/autotune.ck",
+        "https://chuck.stanford.edu/doc/examples/analysis/PitchTrack.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "PitchTrack",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "bias",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Set the bias. Katja's pitch tracker introduces a small bias to help with the tracking. See the link above."
+        },
+        {
+          "member function": "bias",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get the bias. Katja's pitch tracker introduces a small bias to help with the tracking. See the link above."
+        },
+        {
+          "member function": "fidelity",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Set the threshold for certainty about the result. A highly periodic signal (i.e. one that has a strong pitch center) should produce a result with a high fidelity, which a non-periodic signal (eg noise) will have a very low fidelity. Setting this parameter close to 1 should reduce the number of inaccurate reports. [0-1], default 0.95."
+        },
+        {
+          "member function": "fidelity",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get the threshold for certainty about the result. A highly periodic signal (i.e. one that has a strong pitch center) should produce a result with a high fidelity, which a non-periodic signal (eg noise) will have a very low fidelity. Setting this parameter close to 1 should reduce the number of inaccurate reports. [0-1], default 0.95."
+        },
+        {
+          "member function": "frame",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "arg"
+            }
+          ],
+          "description": "Set size of FFT frame for analysis. Smaller values result in lower latency and high responsiveness but less accuracy. Higher values result in considerably greater CPU load. Values that aren't powers of 2 get rounded up to the next power of 2. Recommend 512, 1024, or 2048. [128-?], default 2048."
+        },
+        {
+          "member function": "frame",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get size of FFT frame for analysis. Smaller values result in lower latency and high responsiveness but less accuracy. Higher values result in considerably greater CPU load. Values that aren't powers of 2 get rounded up to the next power of 2. Recommend 512, 1024, or 2048. [128-?], default 2048."
+        },
+        {
+          "member function": "get",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get calculated frequency."
+        },
+        {
+          "member function": "overlap",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "arg"
+            }
+          ],
+          "description": "Set how much to overlap successive analysis frames. Higher values should produce smoother values, at the cost of an increase of CPU load. [1-?], default 2."
+        },
+        {
+          "member function": "overlap",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get how much to overlap successive analysis frames. Higher values should produce smoother values, at the cost of an increase of CPU load. [1-?], default 2."
+        },
+        {
+          "member function": "sensitivity",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Set the minimum RMS value to trigger a pitch calculation. Setting this parameter low forces PitchTrack to attempt to find the pitch of even very quiet sounds. Higher values will cause it to trigger only on louder notes. [0-1], default 0.003."
+        },
+        {
+          "member function": "sensitivity",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get the minimum RMS value to trigger a pitch calculation. Setting this parameter low forces PitchTrack to attempt to find the pitch of even very quiet sounds. Higher values will cause it to trigger only on louder notes. [0-1], default 0.003."
+        }
+      ]
+    },
+    {
+      "name": "PowerADSR",
+      "description": "ADSR envelope that uses a power function to create curved envelope phases. In general, curves under 1.0 are sharp, while curves over 1.0 are soft.",
+      "inherits": ["Envelope", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/effects/PowerADSR-feedback-beatings.ck",
+        "https://chuck.stanford.edu/doc/examples/effects/PowerADSR.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "PowerADSR",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "attack",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "attackDuration"
+            }
+          ],
+          "description": "Sets duration of the attack phase."
+        },
+        {
+          "member function": "attackCurve",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "attackCurve"
+            }
+          ],
+          "description": "Sets envelope curve of the attack phase."
+        },
+        {
+          "member function": "attackCurve",
+          "return type": "float",
+          "arguments": [],
+          "description": "Gets the attack curve."
+        },
+        {
+          "member function": "attackTime",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "attackDuration"
+            }
+          ],
+          "description": "Sets duration of the attack phase."
+        },
+        {
+          "member function": "attackTime",
+          "return type": "dur",
+          "arguments": [],
+          "description": "Gets the attack duration."
+        },
+        {
+          "member function": "decay",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "decayDuration"
+            }
+          ],
+          "description": "Sets duration of the decay phase."
+        },
+        {
+          "member function": "decayCurve",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "decayCurve"
+            }
+          ],
+          "description": "Sets envelope curve of the decay phase."
+        },
+        {
+          "member function": "decayCurve",
+          "return type": "float",
+          "arguments": [],
+          "description": "Gets the decay curve."
+        },
+        {
+          "member function": "decayTime",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "decayDuration"
+            }
+          ],
+          "description": "Sets duration of the decay phase."
+        },
+        {
+          "member function": "decayTime",
+          "return type": "dur",
+          "arguments": [],
+          "description": "Gets the decay duration."
+        },
+        {
+          "member function": "keyOff",
+          "return type": "int",
+          "arguments": [],
+          "description": "Begins the release phase of the envelope."
+        },
+        {
+          "member function": "keyOff",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "keyOff"
+            }
+          ],
+          "description": "Begins the release phase of the envelope."
+        },
+        {
+          "member function": "keyOn",
+          "return type": "int",
+          "arguments": [],
+          "description": "Begins the attack phase of the envelope."
+        },
+        {
+          "member function": "keyOn",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "keyOn"
+            }
+          ],
+          "description": "Begins the attack phase of the envelope."
+        },
+        {
+          "member function": "release",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "releaseDuration"
+            }
+          ],
+          "description": "Sets duration of the release phase."
+        },
+        {
+          "member function": "releaseCurve",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "releaseCurve"
+            }
+          ],
+          "description": "Sets envelope curve of the release phase."
+        },
+        {
+          "member function": "releaseCurve",
+          "return type": "float",
+          "arguments": [],
+          "description": "Gets the release curve."
+        },
+        {
+          "member function": "releaseTime",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "releaseDuration"
+            }
+          ],
+          "description": "Sets duration of the release phase."
+        },
+        {
+          "member function": "releaseTime",
+          "return type": "dur",
+          "arguments": [],
+          "description": "Gets the release duration."
+        },
+        {
+          "member function": "set",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "attackDuration"
+            },
+            {
+              "type": "dur",
+              "name": "decayDuration"
+            },
+            {
+              "type": "float",
+              "name": "sustainLevel"
+            },
+            {
+              "type": "dur",
+              "name": "releaseDuration"
+            }
+          ],
+          "description": "Sets duration of the attack, decay, and release phases; as well as the sustain level (ADSR order)."
+        },
+        {
+          "member function": "setCurves",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "attackCurve"
+            },
+            {
+              "type": "float",
+              "name": "decayCurve"
+            },
+            {
+              "type": "float",
+              "name": "releaseCurve"
+            }
+          ],
+          "description": "Sets envelope curves of the attack, decay, and release phases."
+        },
+        {
+          "member function": "state",
+          "return type": "int",
+          "arguments": [],
+          "description": "Gets current state."
+        },
+        {
+          "member function": "sustainLevel",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "sustainLevel"
+            }
+          ],
+          "description": "Sets sustain level."
+        },
+        {
+          "member function": "sustainLevel",
+          "return type": "float",
+          "arguments": [],
+          "description": "Gets sustain level."
+        },
+        {
+          "member function": "value",
+          "return type": "float",
+          "arguments": [],
+          "description": "Gets current envelope value."
+        }
+      ]
+    },
+    {
+      "name": "RegEx",
+      "description": "Class for regular expression matching and replacing in strings. Regex style is POSIX-extended.",
+      "inherits": ["Object"],
+      "static member functions": [
+        {
+          "static member function": "match",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "pattern"
+            },
+            {
+              "type": "string",
+              "name": "str"
+            }
+          ],
+          "description": "Return true if match for pattern is found in str, false otherwise."
+        },
+        {
+          "static member function": "match",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "pattern"
+            },
+            {
+              "type": "string",
+              "name": "str"
+            },
+            {
+              "type": "string[]",
+              "name": "matches"
+            }
+          ],
+          "description": "Return the match and sub-patterns in matches. matches[0] in the entire matched pattern, matches[1] is the first sub-pattern (if any), and so on."
+        },
+        {
+          "static member function": "replace",
+          "return type": "string",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "pattern"
+            },
+            {
+              "type": "string",
+              "name": "replacement"
+            },
+            {
+              "type": "string",
+              "name": "str"
+            }
+          ],
+          "description": "Replace the first instance of pattern in str with replacement, returning the result."
+        },
+        {
+          "static member function": "replaceAll",
+          "return type": "string",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "pattern"
+            },
+            {
+              "type": "string",
+              "name": "replacement"
+            },
+            {
+              "type": "string",
+              "name": "str"
+            }
+          ],
+          "description": "Replace all instances of pattern in str with replacement, returning the result."
+        }
+      ]
+    },
+    {
+      "name": "Sigmund",
+      "description": "Sinusoidal analysis & pitch tracking. Adapted from Miller Puckette’s sigmund~ Max object.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/analysis/Sigmund.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Sigmund",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "amp",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "amp"
+            }
+          ],
+          "description": "Report amplitude of nth sinusoundal peak sorting depends on parameter \"tracks.\""
+        },
+        {
+          "member function": "clear",
+          "return type": "void",
+          "arguments": [],
+          "description": "Clear buffers and reset."
+        },
+        {
+          "member function": "env",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get reported RMS value (in dB) of input signal."
+        },
+        {
+          "member function": "freq",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get reported frequency of input signal."
+        },
+        {
+          "member function": "maxfreq",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Set maximum frequency of sinusoidal peaks to look for. This can be useful in situations where background noise creates high-frequency, spurious peaks..."
+        },
+        {
+          "member function": "minpower",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Set the minimum dB level to report a pitch. Signals quieter than this will be assumed to be crosstalk and ignored. default: 50."
+        },
+        {
+          "member function": "npeak",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "npeak"
+            }
+          ],
+          "description": "Set the maximum number of sinusoidal peaks to look for. The computation time is quadratic in the number of peaks actually found (this number only sets an upper limit). Use it to balance CPU time with quality of results."
+        },
+        {
+          "member function": "npts",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "npts"
+            }
+          ],
+          "description": "Set the number of points used in analysis. Must be a power of 2, at least 128. The minimum frequency that can be tracked is about 2 * samplerate / npts. Default: 1024."
+        },
+        {
+          "member function": "param1",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Mysterious setting..."
+        },
+        {
+          "member function": "param2",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Mysterious setting..."
+        },
+        {
+          "member function": "param3",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Mysterious setting..."
+        },
+        {
+          "member function": "peak",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "peak"
+            }
+          ],
+          "description": "Report freq of nth sinusoundal peak sorting. Depends on parameter \"tracks.\""
+        },
+        {
+          "member function": "stabletime",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "stabletime"
+            }
+          ],
+          "description": "Set period of stability needed for note. Not implemented."
+        },
+        {
+          "member function": "tracks",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "tracks"
+            }
+          ],
+          "description": "Toggle whether peak and amp are sorted in order of amplitude or organized into tracks. Default false."
+        }
+      ]
+    },
+    {
+      "name": "Spectacle",
+      "description": "FFT-based spectral delay and EQ by John Gibson. Inspired by the totally awesome Spektral Delay plug-in by Native Instruments.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/effects/Spectacle.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Spectacle",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "bands",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "arg"
+            }
+          ],
+          "description": "Set number of frequency bands, [1 - 512], default 64."
+        },
+        {
+          "member function": "bands",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get number of frequency bands, [1 - 512], default 64."
+        },
+        {
+          "member function": "clear",
+          "return type": "void",
+          "arguments": [],
+          "description": "Reset Spectacle."
+        },
+        {
+          "member function": "delay",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "delay"
+            }
+          ],
+          "description": "Set the same delay duration for all bands."
+        },
+        {
+          "member function": "delayMax",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "delay"
+            }
+          ],
+          "description": "Set maximum delay time."
+        },
+        {
+          "member function": "delayMax",
+          "return type": "dur",
+          "arguments": [],
+          "description": "Get maximum delay time."
+        },
+        {
+          "member function": "delayMin",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "delay"
+            }
+          ],
+          "description": "Set minimum delay time."
+        },
+        {
+          "member function": "delayMin",
+          "return type": "dur",
+          "arguments": [],
+          "description": "Get minimum delay time."
+        },
+        {
+          "member function": "eq",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "eq"
+            }
+          ],
+          "description": "Set the same EQ value for all bands (value is +/- dB)."
+        },
+        {
+          "member function": "feedback",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "feedback"
+            }
+          ],
+          "description": "Set the same feedback value for all bands [-1.0 - 1.0]."
+        },
+        {
+          "member function": "fftlen",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "arg"
+            }
+          ],
+          "description": "Set FFT frame size (power of 2)."
+        },
+        {
+          "member function": "fftlen",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get FFT frame size (power of 2)."
+        },
+        {
+          "member function": "freqMax",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Set maximum frequency processed by Spectacle."
+        },
+        {
+          "member function": "freqMax",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get maximum frequency processed by Spectacle."
+        },
+        {
+          "member function": "freqMin",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Set minimum frequency processed by Spectacle."
+        },
+        {
+          "member function": "freqMin",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get minimum frequency processed by Spectacle."
+        },
+        {
+          "member function": "hold",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "arg"
+            }
+          ],
+          "description": "Set hold. True to suppress input, false disables."
+        },
+        {
+          "member function": "hold",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get hold. True to suppress input, false disables."
+        },
+        {
+          "member function": "mix",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "mix"
+            }
+          ],
+          "description": "Set mix of processed and unprocessed signal [0 - 1]."
+        },
+        {
+          "member function": "mix",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get mix of processed and unprocessed signal [0 - 1]."
+        },
+        {
+          "member function": "overlap",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "arg"
+            }
+          ],
+          "description": "Set frame overlap; best between 2 and 6."
+        },
+        {
+          "member function": "overlap",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get frame overlap; best between 2 and 6."
+        },
+        {
+          "member function": "posteq",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "arg"
+            }
+          ],
+          "description": "Set posteq to true to apply EQ after delay, rather than before."
+        },
+        {
+          "member function": "posteq",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get posteq. True applies EQ after delay, rather than before."
+        },
+        {
+          "member function": "range",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg1"
+            },
+            {
+              "type": "float",
+              "name": "arg2"
+            }
+          ],
+          "description": "Set both min and max freqs in one command."
+        },
+        {
+          "member function": "table",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "table"
+            },
+            {
+              "type": "string",
+              "name": "type"
+            }
+          ],
+          "description": "Set \"delay\", “eq”, or \"feedback\" tables to the types \"random\", \"ascending\", or \"descending.\" Example: table(\"delay\", \"random\");."
+        }
+      ]
+    },
+    {
+      "name": "WinFuncEnv",
+      "description": "WinFunEnv is an Attack/Release envelope built around window functions!",
+      "inherits": ["Envelope", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/effects/WinFuncEnv.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "WinFuncEnv",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "attackTime",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "attackDuration"
+            }
+          ],
+          "description": "Set duration of the attack phase."
+        },
+        {
+          "member function": "keyOff",
+          "return type": "int",
+          "arguments": [],
+          "description": "Start release phase."
+        },
+        {
+          "member function": "keyOff",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "keyOff"
+            }
+          ],
+          "description": "Start release phase."
+        },
+        {
+          "member function": "keyOn",
+          "return type": "int",
+          "arguments": [],
+          "description": "Start attack phase."
+        },
+        {
+          "member function": "keyOn",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "keyOn"
+            }
+          ],
+          "description": "Start attack phase."
+        },
+        {
+          "member function": "releaseTime",
+          "return type": "dur",
+          "arguments": [
+            {
+              "type": "dur",
+              "name": "releaseDuration"
+            }
+          ],
+          "description": "Set duration of the release phase."
+        },
+        {
+          "member function": "setBlackman",
+          "return type": "void",
+          "arguments": [],
+          "description": "Set Blackman Window Envelope with default value (0.16)."
+        },
+        {
+          "member function": "setBlackman",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "a"
+            }
+          ],
+          "description": "Set Blackman Window Envelope with a custom value."
+        },
+        {
+          "member function": "setBlackmanDerivative",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "a0"
+            },
+            {
+              "type": "float",
+              "name": "a1"
+            },
+            {
+              "type": "float",
+              "name": "a2"
+            },
+            {
+              "type": "float",
+              "name": "a3"
+            }
+          ],
+          "description": "Set a custom Blackman Derivative Envelope with custom values."
+        },
+        {
+          "member function": "setBlackmanHarris",
+          "return type": "void",
+          "arguments": [],
+          "description": "Set BlackmanHarris Window Envelope."
+        },
+        {
+          "member function": "setBlackmanNutall",
+          "return type": "void",
+          "arguments": [],
+          "description": "Set BlackmanNutall Window Envelope."
+        },
+        {
+          "member function": "setExponential",
+          "return type": "void",
+          "arguments": [],
+          "description": "Set Exponential Function Envelope with default value (8.69/60.0)."
+        },
+        {
+          "member function": "setExponential",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "a"
+            }
+          ],
+          "description": "Set Exponential Function Envleope with a custom value."
+        },
+        {
+          "member function": "setHann",
+          "return type": "void",
+          "arguments": [],
+          "description": "Set Hann (Hanning) Window Envelope."
+        },
+        {
+          "member function": "setHannPoisson",
+          "return type": "void",
+          "arguments": [],
+          "description": "Set Hann-Poisson Window Envelope with default value (0.5)."
+        },
+        {
+          "member function": "setHannPoisson",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "a"
+            }
+          ],
+          "description": "Set Hann-Poisson Window Envelope with a custom value."
+        },
+        {
+          "member function": "setNutall",
+          "return type": "void",
+          "arguments": [],
+          "description": "Set Nutall Window Envelope."
+        },
+        {
+          "member function": "setParzen",
+          "return type": "void",
+          "arguments": [],
+          "description": "Set Parzen Window Envelope."
+        },
+        {
+          "member function": "setPoisson",
+          "return type": "void",
+          "arguments": [],
+          "description": "Set Poisson Window Envelope with default value (6.0)."
+        },
+        {
+          "member function": "setPoisson",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "a"
+            }
+          ],
+          "description": "Set Poisson Window Envelope with a custom value."
+        },
+        {
+          "member function": "setSigmoid",
+          "return type": "void",
+          "arguments": [],
+          "description": "Set Sigmoid Window Envelope with default value (2.0)."
+        },
+        {
+          "member function": "setSigmoid",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "k"
+            }
+          ],
+          "description": "Set Sigmoid Window Envelope with a custom value."
+        },
+        {
+          "member function": "setTukey",
+          "return type": "void",
+          "arguments": [],
+          "description": "Set Tukey Window Envelope with default value (0.5)."
+        },
+        {
+          "member function": "setTukey",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "a"
+            }
+          ],
+          "description": "Set Tukey Window Envelope with a custom value."
+        },
+        {
+          "member function": "setWelch",
+          "return type": "void",
+          "arguments": [],
+          "description": "Set Welch Window Window."
+        },
+        {
+          "member function": "windowValue",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get current window value."
+        }
+      ]
+    },
+    {
+      "name": "WPDiodeLadder",
+      "description": "Virtual analog low pass filter based on Will Pirkle's Diode Ladder application notes.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/filter/WPDiodeLadder.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "WPDiodeLadder",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "cutoff",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Cuttoff is in Hz [0..Nyquist)."
+        },
+        {
+          "member function": "cutoff",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get cuttoff frequency in Hz [0..Nyquist)."
+        },
+        {
+          "member function": "nlp_type",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "arg"
+            }
+          ],
+          "description": "Set to 1 to normalize non-linear output."
+        },
+        {
+          "member function": "nlp_type",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get non-linear output setting. 1 is normalized."
+        },
+        {
+          "member function": "nonlinear",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "arg"
+            }
+          ],
+          "description": "Enable non linear saturator."
+        },
+        {
+          "member function": "nonlinear",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get non-linear saturator setting. 1 is enabled."
+        },
+        {
+          "member function": "resonance",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Resonance goes between [0...17]."
+        },
+        {
+          "member function": "resonance",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get resonance [0 - 17]."
+        },
+        {
+          "member function": "saturation",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Saturation is a scalar gain, and can be used to drive the non-linearity."
+        },
+        {
+          "member function": "saturation",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get saturation. Saturation is a scalar gain, and can be used to drive the non-linearity."
+        }
+      ]
+    },
+    {
+      "name": "WPKorg35",
+      "description": "Virtual analog low pass filter based on Will Pirkle's Korg35 application notes.",
+      "inherits": ["UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/filter/WPKorg35.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "WPKorg35",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "cutoff",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Cuttoff is in Hz [0..Nyquist)."
+        },
+        {
+          "member function": "cutoff",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get cutoff in Hz [0..Nyquist)."
+        },
+        {
+          "member function": "nonlinear",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "arg"
+            }
+          ],
+          "description": "Enable non linear saturator."
+        },
+        {
+          "member function": "nonlinear",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get non-linear saturator setting. 1 is enabled."
+        },
+        {
+          "member function": "resonance",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Resonance goes between [0...2)."
+        },
+        {
+          "member function": "resonance",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get resonance [0 - 2)."
+        },
+        {
+          "member function": "saturation",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "arg"
+            }
+          ],
+          "description": "Saturation is a scalar gain, and can be used to drive the non-linearity."
+        },
+        {
+          "member function": "saturation",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get saturation. Saturation is a scalar gain, and can be used to drive the non-linearity."
+        }
+      ]
+    }
+  ]
+}
