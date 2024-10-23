@@ -110,10 +110,9 @@ struct Chuck_CompileTarget
 public:
     // constructor
     Chuck_CompileTarget( te_HowMuch extent = te_do_all )
-        : state(te_compile_inprogress),
-          howMuch(extent), timestamp(0), fd2parse(NULL),
-          lineNum(1), tokPos(0), AST(NULL),
-          the_chuck(NULL)
+        : state(te_compile_inprogress), howMuch(extent), isSystemImport(FALSE),
+          timestamp(0), fd2parse(NULL), chugin(NULL), lineNum(1), tokPos(0),
+          AST(NULL), the_chuck(NULL)
     {
         // initialize
         the_linePos = intList( 0, NULL );
@@ -130,16 +129,6 @@ public:
     void cleanupAST();
 
 public:
-    // resolve and set filename and absolutePath for a compile target
-    // * set as filename (possibly with modifications, e.g., with .ck appended)
-    // * if `importer` is non-empty, will use it as the base of the filename (unless filename is already an absolute path)
-    // * if file is unresolved locally and `expandSearchToGlobal` is true, expand search to global search paths
-    // * the file is resolved this will open a FILE descriptor in fd2parse
-    // * wherePos can be provided to indiciate parser position in containing file (e.g., @import)
-    t_CKBOOL resolveFilename( const std::string & theFilename,
-                              Chuck_CompileTarget * importer,
-                              t_CKBOOL expandSearchToGlobal,
-                              t_CKINT wherePos = 0 );
     // get filename
     std::string getFilename() const { return filename; }
     // set absolute path
@@ -148,6 +137,8 @@ public:
     std::string getAbsolutePath() const { return absolutePath; }
     // hash key
     std::string key() const { return absolutePath; }
+    // is chugin?
+    t_CKBOOL isChugin() const { return chugin != NULL; }
 
 public:
     // filename for reading from file
@@ -160,15 +151,20 @@ public:
     te_CompileState state;
     // all or import-only or no-import
     te_HowMuch howMuch;
+    // is this a system or user import?
+    t_CKBOOL isSystemImport;
+
+    // file descriptor to parse
+    FILE * fd2parse;
     // code literal (alternative to reading from file)
     std::string codeLiteral;
+    // loaded chugin
+    Chuck_DLL * chugin;
 
     // line number (should be at end of file; used for error reporting)
     t_CKINT lineNum;
     // token position (used for error reporting)
     t_CKINT tokPos;
-    // file descriptor to parse
-    FILE * fd2parse;
     // file source info (for better error reporting)
     CompileFileSource fileSource;
     // pointer to abstract syntax tree
@@ -178,15 +174,12 @@ public:
 
     // targets this target depends on
     std::vector<ImportTargetNode> dependencies;
+
     // timestamp of target file when target was compiled
     // used to detect and potentially warn of modified files
     time_t timestamp;
-
     // reference to ChucK instance
     ChucK * the_chuck;
-
-public: // ONLY USED for topology
-    t_CKBOOL mark;
 };
 
 
@@ -201,13 +194,15 @@ struct Chuck_ImportRegistry
 public:
     // constructor
     Chuck_ImportRegistry();
-    virtual ~Chuck_ImportRegistry() { clearAll(); }
+    virtual ~Chuck_ImportRegistry() { shutdown(); }
 
 public:
     // clear in-progress list
     void clearInProgress();
-    // clear all contents (in-progress and done); this is for when VM is cleared
-    void clearAll();
+    // clear all user-imported contents (in-progress and imported)
+    // NOTE: system-imports are not removed; chugin imports are all system-level
+    // NOTE: this is for when VM is cleared
+    void clearAllUserImports();
 
 public:
     // look up a compile target by path
@@ -216,14 +211,22 @@ public:
     t_CKBOOL addInProgress( Chuck_CompileTarget * target );
     // remove a compile target by path
     t_CKBOOL remove( const std::string & path );
-    // mark a target as complete
-    void markComplete( Chuck_CompileTarget * target );
+    // move target from in progress to imported list
+    void commit( Chuck_CompileTarget * target );
+    // add a chugin
+    Chuck_CompileTarget * commit( Chuck_DLL * chugin );
+
+protected:
+    // clear everything (system and user)
+    void shutdown();
 
 protected:
     // map of targets being compiled (not yet completed)
-    std::map<std::string, Chuck_CompileTarget *> m_inProgress;
-    // map of successfully compiled targets
-    std::map<std::string, Chuck_CompileTarget *> m_done;
+    std::map<std::string, Chuck_CompileTarget *> m_inProgressCKFiles;
+    // map of successfully compiled (ck) targets
+    std::map<std::string, Chuck_CompileTarget *> m_importedTargets;
+    // map of successfully imported chugins
+    std::map<std::string, Chuck_DLL *> m_importedChugins;
 };
 
 
@@ -264,11 +267,8 @@ public: // data
     // recent map
     std::map<std::string, Chuck_Context *> m_recent;
 
-    // chugins
-    std::list<Chuck_DLL *> m_dlls;
     // libraries (ck code) to import
     std::list<std::string> m_cklibs_to_preload;
-
     // origin hint; this flag is set to different ckte_Origin values
     // to denote where new entities originate | 1.5.0.0 (ge) added
     ckte_Origin m_originHint;
@@ -284,35 +284,48 @@ public: // to all
     // shutdown
     void shutdown();
 
-public: // additional binding
-    // bind a new type system module, via query function
-    t_CKBOOL bind( f_ck_query query_func, const std::string & name,
-                   const std::string & nspc = "global" );
-
-public: // compile
-    // set auto depend
-    void set_auto_depend( t_CKBOOL v );
+public: // compile from file or code
     // parse, type-check, and emit a program from file
     t_CKBOOL compileFile( const std::string & filename );
     // parse, type-check, and emit a program from code string
     t_CKBOOL compileCode( const std::string & codeLiteral );
+    // get the code generated from the last compile()
+    Chuck_VM_Code * output();
+
+public: // import while observing semantics of chuck @import
+    // import a .ck module by file path
+    t_CKBOOL importFile( const std::string & filename );
+    // import from ChucK code
+    t_CKBOOL importCode( const std::string & codeLiteral );
+    // import a chugin by path (and optional short-hand name)
+    t_CKBOOL importChugin( const std::string & path, const std::string & name = "" );
+
+public:
     // compile a target | 1.5.3.5 (ge)
     // NOTE: this function will memory-manage `target`
-    //       (do not access or delete `target` afterwards)
+    // (do not access or delete `target` after function call)
     t_CKBOOL compile( Chuck_CompileTarget * target );
-    // resolve a type automatically, if auto_depend is on
-    t_CKBOOL resolve( const std::string & type );
-    // get the code generated from the last compile()
-    Chuck_VM_Code * output( );
 
-public: // replace-dac | added 1.4.1.0 (jack)
-    // sets a "replacement dac": one global UGen is secretly used
-    // as a stand-in for "dac" for this compilation;
-    // for example, ChuckSubInstances in Chunity use a global Gain as a
-    // replacement dac, then use the global getUGenSamples() function to
-    // get the samples of the gain. this enables the creation
-    // of a new sample sucker.
-    void setReplaceDac( t_CKBOOL shouldReplaceDac, const std::string & replacement );
+public:
+    // opens file for compilation...
+    // * resolves and set filename and absolutePath for a compile target
+    // * set as filename (possibly with modifications, e.g., with .ck appended)
+    // * if `importer` is non-empty, will use it as the base of the filename (unless filename is already an absolute path)
+    // * if file is unresolved locally and `expandSearchToGlobal` is true, expand search to global search paths
+    // * the file is resolved this will open a FILE descriptor in fd2parse
+    // * wherePos can be provided to indiciate parser position in containing file (e.g., @import)
+    t_CKBOOL openFile( Chuck_CompileTarget * target,
+                       const std::string & theFilename,
+                       Chuck_CompileTarget * importer,
+                       t_CKBOOL expandSearchToGlobal,
+                       t_CKINT wherePos = 0 );
+    // resolve filename into absolute path...
+    // * possibly with modifications, e.g., with .ck appended)
+    // * if `importerAbsolutePath` is non-empty, will use it as the base of the filename (unless filename is already an absolute path)
+    // * if file is unresolved locally and `expandSearchToGlobal` is true, expand search to global search paths
+    std::string resolveFilename( const std::string & filename,
+                                 const std::string & importerAbsolutePath,
+                                 t_CKBOOL expandSearchToGlobal );
 
 public:
     // .chug and .ck modules pre-load sequence | 1.4.1.0 (ge) refactored
@@ -324,10 +337,6 @@ public:
     t_CKBOOL load_external_modules_in_directory( const std::string & directory,
                                                  const std::string & extension,
                                                  t_CKBOOL recursiveSearch );
-    // load a chugin by path | 1.5.2.5 (ge) exposed API for more dynamic loading
-    t_CKBOOL load_external_chugin( const std::string & path, const std::string & name = "" );
-    // load a ck module by file path | 1.5.2.5 (ge) exposed API for more dynamic loading
-    t_CKBOOL load_external_cklib( const std::string & path, const std::string & name = "" );
 
 public:
     // chugin probe | 1.5.0.4 (ge) added
@@ -344,7 +353,31 @@ public:
     // probe external chugin by file path
     static t_CKBOOL probe_external_chugin( const std::string & path, const std::string & name = "" );
 
+public: // built-in binding mechanism
+    // bind a new type system module, via query function
+    t_CKBOOL bind( f_ck_query query_func, const std::string & name,
+                   const std::string & nspc = "global" );
+
+public: // replace-dac | added 1.4.1.0 (jack)
+    // sets a "replacement dac": one global UGen is secretly used
+    // as a stand-in for "dac" for this compilation;
+    // for example, ChuckSubInstances in Chunity use a global Gain as a
+    // replacement dac, then use the global getUGenSamples() function to
+    // get the samples of the gain. this enables the creation
+    // of a new sample sucker.
+    void setReplaceDac( t_CKBOOL shouldReplaceDac, const std::string & replacement );
+
+public: // un-used / un-implemented auto-depend stubs
+    // set auto depend
+    void setAutoDepend( t_CKBOOL v );
+    // resolve a type automatically, if auto_depend is on
+    t_CKBOOL resolve( const std::string & type );
+
 protected: // internal
+    // parse, type-check, and emit a program from file (with option on extent)
+    t_CKBOOL compile_file_opt( const std::string & filename, te_HowMuch extent );
+    // parse, type-check, and emit a program from code string (with option on extent)
+    t_CKBOOL compile_code_opt( const std::string & codeLiteral, te_HowMuch extent );
     // compile a single target
     t_CKBOOL compile_single( Chuck_CompileTarget * target );
     // compile entire file
@@ -354,18 +387,20 @@ protected: // internal
     // all except import
     t_CKBOOL compile_all_except_import( Chuck_Context * context );
 
-public: // import
+protected: // import
     // scan for @import statements; builds a list of dependencies in the target
     t_CKBOOL scan_imports( Chuck_CompileTarget * target );
     // scan for @import statements, and return a list of resulting import targets
-    t_CKBOOL scan_imports( Chuck_Env * env, Chuck_CompileTarget * target, Chuck_ImportRegistry * registery );
+    t_CKBOOL scan_imports( Chuck_Env * env, Chuck_CompileTarget * target );
+    // import chugin
+    t_CKBOOL import_chugin_opt( const std::string & path, const std::string & name );
 
 protected: // internal import dependency helpers
     // produce a compilation sequences of targets from a import dependency graph
     static t_CKBOOL generate_compile_sequence( ImportTargetNode * head,
                                                std::vector<ImportTargetNode *> & sequence,
                                                std::vector<ImportTargetNode *> & problems );
-    // visit
+    // visit -- recursive function as part of topological sort for dependency serialization
     static t_CKBOOL visit( ImportTargetNode * node,
                            std::vector<ImportTargetNode *> & sequence,
                            std::set<Chuck_CompileTarget *> & permanent,
