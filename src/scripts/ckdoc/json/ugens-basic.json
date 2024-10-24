@@ -1408,6 +1408,7 @@
       "inherits": ["UGen", "Object"],
       "examples": [
         "https://chuck.stanford.edu/doc/examples/basic/wind.ck",
+        "https://chuck.stanford.edu/doc/examples/deep/smb.ck",
         "https://chuck.stanford.edu/doc/examples/shred/powerup.ck"
       ]
     },
@@ -1626,7 +1627,8 @@
       "inherits": ["Osc", "UGen", "Object"],
       "examples": [
         "https://chuck.stanford.edu/doc/examples/basic/oscillatronx.ck",
-        "https://chuck.stanford.edu/doc/examples/deep/shepard.ck"
+        "https://chuck.stanford.edu/doc/examples/deep/shepard.ck",
+        "https://chuck.stanford.edu/doc/examples/deep/smb.ck"
       ],
       "constructors": [
         {
@@ -1802,6 +1804,7 @@
       "inherits": ["PulseOsc", "Osc", "UGen", "Object"],
       "examples": [
         "https://chuck.stanford.edu/doc/examples/basic/oscillatronx.ck",
+        "https://chuck.stanford.edu/doc/examples/deep/smb.ck",
         "https://chuck.stanford.edu/doc/examples/filter/brf.ck",
         "https://chuck.stanford.edu/doc/examples/filter/rlpf.ck",
         "https://chuck.stanford.edu/doc/examples/filter/rhpf.ck"

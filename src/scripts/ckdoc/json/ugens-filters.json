@@ -70,7 +70,8 @@
       "inherits": ["FilterBasic", "UGen", "Object"],
       "examples": [
         "https://chuck.stanford.edu/doc/examples/filter/lpf.ck",
-        "https://chuck.stanford.edu/doc/examples/filter/rlpf.ck"
+        "https://chuck.stanford.edu/doc/examples/filter/rlpf.ck",
+        "https://chuck.stanford.edu/doc/examples/deep/smb.ck"
       ],
       "constructors": [
         {

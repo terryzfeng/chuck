@@ -3625,7 +3625,8 @@
       "inherits": ["FM", "StkInstrument", "UGen", "Object"],
       "examples": [
         "https://chuck.stanford.edu/doc/examples/stk/honkeytonk-algo1.ck",
-        "https://chuck.stanford.edu/doc/examples/stk/honkeytonk-algo3.ck"
+        "https://chuck.stanford.edu/doc/examples/stk/nylon-guitar-algo1.ck",
+        "https://chuck.stanford.edu/doc/examples/stk/jacobass-algo1.ck"
       ],
       "constructors": [
         {

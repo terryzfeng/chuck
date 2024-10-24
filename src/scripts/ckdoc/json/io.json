@@ -2036,7 +2036,7 @@
         {
           "name": "when",
           "type": "dur",
-          "description": "Time when the MidiMsg occurred, relative to the start of the file (only valid for MidiFileIn)."
+          "description": "Duration since the last MidiMsg (only valid for MidiFileIn)."
         }
       ]
     },
@@ -2056,6 +2056,18 @@
         }
       ],
       "member functions": [
+        {
+          "member function": "beatsPerMinute",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get the beats per minute (BPM) value from the MIDI file header."
+        },
+        {
+          "member function": "bpm",
+          "return type": "float",
+          "arguments": [],
+          "description": "Same as beatsPerMinute()."
+        },
         {
           "member function": "close",
           "return type": "void",
@@ -2121,6 +2133,18 @@
             }
           ],
           "description": "Rewind MIDI reader to beginning of track 'track'."
+        },
+        {
+          "member function": "ticksPerQuarter",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the ticks per quarter (TPQ) value from the MIDI file header."
+        },
+        {
+          "member function": "tpq",
+          "return type": "int",
+          "arguments": [],
+          "description": "Same as ticksPerQuarter()."
         }
       ]
     }
