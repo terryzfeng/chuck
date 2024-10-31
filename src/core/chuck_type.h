@@ -79,8 +79,8 @@ typedef enum { te_globalTypeNone,
 //-----------------------------------------------------------------------------
 typedef enum {
     te_do_all = 0,
-    te_do_import_only, // attend only to things to be imported | 1.5.3.5 (ge)
-    te_skip_import, // do everything except things to be imported | 1.5.3.5 (ge)
+    te_do_import_only, // attend only to things to be imported | 1.5.4.0 (ge)
+    te_skip_import, // do everything except things to be imported | 1.5.4.0 (ge)
 } te_HowMuch;
 
 // function to if a function matches a particular criteria
@@ -374,13 +374,11 @@ struct Chuck_Context : public Chuck_VM_Object
 
     // AST (does not persist past context unloading)
     a_Program parse_tree;
-    // AST public class def if any (does not persist past context unloading)
-    a_Class_Def public_class_def;
 
     // progress
-    enum { P_NONE = 0, P_IMPORTED, P_ALL_DONE };
+    enum ContextProgress { P_NONE = 0, P_IMPORTING, P_IMPORTED, P_ALL_DONE };
     // progress in scan / type check / emit
-    t_CKUINT progress;
+    ContextProgress progress;
 
     // things to release with the context
     std::vector<Chuck_VM_Object *> new_types;
@@ -396,8 +394,7 @@ public:
 public:
     // constructor
     Chuck_Context() { parse_tree = NULL; nspc = new Chuck_Namespace;
-                      public_class_def = NULL; has_error = FALSE;
-                      progress = P_NONE; }
+                      has_error = FALSE; progress = P_NONE; }
     // destructor
     virtual ~Chuck_Context();
 
@@ -653,6 +650,65 @@ public:
 
 
 //-----------------------------------------------------------------------------
+// name: struct Chuck_ArrayTypeKey
+// desc: a 4-tuple key | 1.5.4.0 (ge & nick) added
+//-----------------------------------------------------------------------------
+struct Chuck_ArrayTypeKey
+{
+    Chuck_Type * array_parent;
+    t_CKUINT depth;
+    Chuck_Type * base_type;
+
+    // constructor
+    Chuck_ArrayTypeKey( Chuck_Type * p, t_CKUINT d, Chuck_Type * t )
+    : array_parent(p), depth(d), base_type(t) { }
+
+    // comparator
+    bool operator<( const Chuck_ArrayTypeKey & rhs ) const;
+};
+struct Chuck_ArrayTypeKeyCmp
+{
+    // operator overload (for map)
+    bool operator()( const Chuck_ArrayTypeKey & a, const Chuck_ArrayTypeKey & b ) const;
+};
+
+
+
+
+//-----------------------------------------------------------------------------
+// name: struct Chuck_ArrayTypeCache
+// desc: cache for array types | 1.5.4.0 (ge & nick & andrew) added
+//-----------------------------------------------------------------------------
+struct Chuck_ArrayTypeCache
+{
+public:
+    // constructor
+    Chuck_ArrayTypeCache() : m_enabled(FALSE) { }
+    // destructor
+    virtual ~Chuck_ArrayTypeCache() { clear(); }
+    // clear it
+    void clear();
+    // enable or disable
+    void enable( t_CKBOOL yesOrNo ) { m_enabled = yesOrNo; }
+    // get whether enabled
+    t_CKBOOL isEnabled() const { return m_enabled; }
+    // lookup an array type; if not already cached, create and insert
+    Chuck_Type * getOrCreate( Chuck_Env * env,
+                              Chuck_Type * array_parent,
+                              t_CKUINT depth,
+                              Chuck_Type * base_type );
+
+protected:
+    // the cache
+    std::map<Chuck_ArrayTypeKey, Chuck_Type *, Chuck_ArrayTypeKeyCmp> cache;
+    // is the cache currently enabled?
+    t_CKBOOL m_enabled;
+};
+
+
+
+
+//-----------------------------------------------------------------------------
 // name: struct Chuck_Env
 // desc: chuck type environment; one per VM instance
 //-----------------------------------------------------------------------------
@@ -680,7 +736,7 @@ public:
     t_CKBOOL is_global();
     // global namespace
     Chuck_Namespace * global();
-    // user namespace, if there is one (if not, return global)
+    // user namespace
     Chuck_Namespace * user();
     // get namespace at top of stack
     Chuck_Namespace * nspc_top();
@@ -694,6 +750,14 @@ public:
     Chuck_VM * vm() const { return m_carrier ? m_carrier->vm : NULL; }
     Chuck_Compiler * compiler() const { return m_carrier ? m_carrier->compiler : NULL; }
 
+public:
+    // array type cache
+    Chuck_ArrayTypeCache * arrayTypeCache() { return &array_types; }
+    // retrieve array type based on parameters | 1.5.4.0 (ge, nick, andrew) added
+    Chuck_Type * get_array_type( Chuck_Type * array_parent,
+                                 t_CKUINT depth, Chuck_Type * base_type /*,
+                                 Chuck_Namespace * owner_nspc */ );
+
 protected:
     Chuck_Carrier * m_carrier;
 
@@ -704,6 +768,9 @@ protected:
     Chuck_Context global_context;
     // user-global namespace
     Chuck_Namespace * user_nspc;
+    // cache of various array types, which are created as needed by the type system
+    // e.g., int[] or float[][] or UGen[]; this cache reuses
+    Chuck_ArrayTypeCache array_types;
 
 public:
     // namespace stack
@@ -916,7 +983,7 @@ struct Chuck_Type : public Chuck_Object
     // size (in bytes)
     t_CKUINT size;
     // owner of the type
-    Chuck_Namespace * owner;
+    // Chuck_Namespace * owner;
     // array type
     union { Chuck_Type * array_type; Chuck_Type * actual_type; };
     // array size (equals 0 means not array, else dimension of array)
@@ -924,11 +991,13 @@ struct Chuck_Type : public Chuck_Object
     // object size (size in memory)
     t_CKUINT obj_size;
     // type info
-    Chuck_Namespace * info;
+    Chuck_Namespace * nspc;
     // func info
     Chuck_Func * func;
     // ugen
     Chuck_UGen_Info * ugen_info;
+    // is public class | 1.5.4.0 (ge) added
+    t_CKBOOL is_public;
     // copy
     t_CKBOOL is_copy;
     // defined
@@ -1352,13 +1421,6 @@ t_CKBOOL type_engine_has_implicit_def_ctor( Chuck_Type * type );
 t_CKUINT type_engine_next_offset( t_CKUINT current_offset, Chuck_Type * type );
 // array verify
 t_CKBOOL verify_array( a_Array_Sub array );
-// make array type
-Chuck_Type * new_array_type( Chuck_Env * env, Chuck_Type * array_parent,
-                             t_CKUINT depth, Chuck_Type * base_type,
-                             Chuck_Namespace * owner_nspc );
-// make type | 1.4.1.1 (nshaheed) added
-Chuck_Type * new_array_element_type( Chuck_Env * env, Chuck_Type * base_type,
-                                     t_CKUINT depth, Chuck_Namespace * owner_nspc);
 
 
 //-----------------------------------------------------------------------------

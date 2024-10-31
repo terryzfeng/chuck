@@ -47,15 +47,37 @@ using namespace std;
 
 
 
+//-----------------------------------------------------------------------------
+// three types of import search paths
+//-----------------------------------------------------------------------------
+// * system paths: for loading chugins/ck files on VM startup
+//   contents persists across clearVM
+// * user paths: user .ck and .chug files; not automatically loaded on startup;
+//   @import on demand to use; contents removed by clearVM
+// * packages path: packages installed and managed by ChuMP | 1.5.4.0 (ge & nshaheed)
+//   @import on demand to use; contents removed by clearVM
+//   (=v ChuMP =v ChucK Manager of Packages)
+//-----------------------------------------------------------------------------
 #if defined(__PLATFORM_APPLE__)
-char g_default_chugin_path[] = "/usr/local/lib/chuck:/Library/Application Support/ChucK/chugins:~/Library/Application Support/ChucK/chugins:~/.chuck/lib";
+char g_default_path_system[] = "/usr/local/lib/chuck:/Library/Application Support/ChucK/chugins";
+char g_default_path_packages[] = "~/.chuck/packages";
+char g_default_path_user[] = "~/Library/Application Support/ChucK/chugins:~/.chuck/lib";
 #elif defined(__PLATFORM_WINDOWS__)
-char g_default_chugin_path[] = "C:\\Windows\\system32\\ChucK;C:\\Program Files\\ChucK\\chugins;C:\\Program Files (x86)\\ChucK\\chugins;C:\\Users\\%USERNAME%\\Documents\\ChucK\\chugins";
+char g_default_path_system[] = "C:\\Windows\\system32\\ChucK;C:\\Program Files\\ChucK\\chugins;C:\\Program Files (x86)\\ChucK\\chugins;";
+char g_default_path_packages[] = "C:\\Users\\%USERNAME%\\Documents\\ChucK\\packages";
+char g_default_path_user[] = "C:\\Users\\%USERNAME%\\Documents\\ChucK\\chugins";
 #else // Linux / Cygwin
-char g_default_chugin_path[] = "/usr/local/lib/chuck:~/.chuck/lib";
+char g_default_path_system[] = "/usr/local/lib/chuck";
+char g_default_path_packages[] = "~/.chuck/packages";
+char g_default_path_user[] = "~/.chuck/lib";
 #endif
 
-char g_chugin_path_envvar[] = "CHUCK_CHUGIN_PATH";
+// environment variables
+char g_envvar_path_system[] = "CHUCK_IMPORT_PATH_SYSTEM";
+char g_envvar_path_packages[] = "CHUCK_IMPORT_PATH_PACKAGES";
+char g_envvar_path_user[] = "CHUCK_IMPORT_PATH_USER";
+// deprecated; should use the above
+char g_envvar_path_deprecated[] = "CHUCK_CHUGIN_PATH";
 
 
 
@@ -1817,7 +1839,7 @@ static t_CKBOOL CK_DLL_CALL ck_get_mvar(Chuck_DL_Api::Object o, const char * nam
     Chuck_Object* obj = (Chuck_Object*)o;
     Chuck_Type* type = obj->type_ref;
     // check type
-    if (type->info == NULL)
+    if (type->nspc == NULL)
     {
         // put error here
         EM_error2(0, "get mvar: ck_get_mvar: object has no type info");
@@ -1826,7 +1848,7 @@ static t_CKBOOL CK_DLL_CALL ck_get_mvar(Chuck_DL_Api::Object o, const char * nam
 
     vector<Chuck_Value*> vars;
     Chuck_Value* var = NULL;
-    type->info->get_values(vars);
+    type->nspc->get_values(vars);
     // iterate over retrieved functions
     for (vector<Chuck_Value*>::iterator v = vars.begin(); v != vars.end(); v++)
     {

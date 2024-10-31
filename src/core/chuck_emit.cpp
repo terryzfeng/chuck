@@ -225,9 +225,11 @@ Chuck_VM_Code * emit_engine_emit_prog( Chuck_Emitter * emit, a_Program prog,
             break;
 
         case ae_section_class: // class definition
-            // check the compilation criteria | 1.5.2.5 (ge) added
-            if( !howMuch_criteria_match( how_much, prog->section->class_def ) ) break;
-            // check class definition
+            // 1.5.2.5 (ge) check the compilation criteria
+            // if( !howMuch_criteria_match( how_much, prog->section->class_def ) ) break;
+            // 1.5.4.0 (ge) commented out (see type_engine_prog0_scan() for explanation)
+
+            // emit class definition
             ret = emit_engine_emit_class_def( emit, prog->section->class_def );
             break;
 
@@ -2631,6 +2633,7 @@ t_CKBOOL emit_engine_emit_op( Chuck_Emitter * emit, ae_Operator op, a_Exp lhs, a
         if( ( left == te_time && right == te_dur ) ) // time % dur = dur
         {
             emit->append( instr = new Chuck_Instr_Mod_double );
+            instr->set_linepos( rhs->line );
         }
         else // other types
         {
@@ -2638,10 +2641,12 @@ t_CKBOOL emit_engine_emit_op( Chuck_Emitter * emit, ae_Operator op, a_Exp lhs, a
             {
             case te_int:
                 emit->append( instr = new Chuck_Instr_Mod_int );
+                instr->set_linepos( rhs->line );
                 break;
             case te_float:
             case te_dur:
                 emit->append( instr = new Chuck_Instr_Mod_double );
+                instr->set_linepos( rhs->line );
                 break;
 
             default: break;
@@ -2654,6 +2659,7 @@ t_CKBOOL emit_engine_emit_op( Chuck_Emitter * emit, ae_Operator op, a_Exp lhs, a
         if( ( left == te_dur && right == te_time ) ) // time % dur = dur
         {
             emit->append( instr = new Chuck_Instr_Mod_double_Assign );
+            instr->set_linepos( lhs->line );
         }
         else // other types
         {
@@ -2661,10 +2667,12 @@ t_CKBOOL emit_engine_emit_op( Chuck_Emitter * emit, ae_Operator op, a_Exp lhs, a
             {
             case te_int:
                 emit->append( instr = new Chuck_Instr_Mod_int_Assign );
+                instr->set_linepos( lhs->line );
                 break;
             case te_float:
             case te_dur:
                 emit->append( instr = new Chuck_Instr_Mod_double_Assign );
+                instr->set_linepos( lhs->line );
                 break;
 
             default: break;
@@ -4269,7 +4277,11 @@ t_CKBOOL emit_engine_emit_exp_func_call( Chuck_Emitter * emit,
     // only check dependency violations if we are at a context-top-level
     // or class-top-level scope, i.e., not in a function definition
     // also, once sporked, it will be up the programmer to ensure intention
-    if( !emit->env->func && !spork )
+    // -------
+    // 1.5.4.0 (ge) sporked function calls now subject to same dependency verification
+    // this may be more stringent (due to potential timing behavior) but
+    // should help prevent confusing crashes; removing check for spork
+    if( !emit->env->func /* && !spork */ )
     {
         // dependency tracking: check if we invoke func before all its deps are initialized | 1.5.0.8 (ge) added
         // NOTE if func originates from another file, this should behave correctly and return NULL | 1.5.1.1 (ge) fixed
@@ -4279,8 +4291,8 @@ t_CKBOOL emit_engine_emit_exp_func_call( Chuck_Emitter * emit,
         if( unfulfilled )
         {
             EM_error2( where,
-                      "calling '%s()' at this point skips initialization of a needed variable:",
-                      func->base_name.c_str() );
+                      "%s '%s()' at this point %sskips initialization of a needed variable:",
+                      spork ? "sporking" : "calling", func->base_name.c_str(), spork ? "potentially " : "" );
             EM_error2( unfulfilled->where,
                       "...(note: this skipped variable initialization is needed by '%s')",
                       func->signature().c_str() );
@@ -4657,7 +4669,7 @@ t_CKBOOL emit_engine_emit_exp_dot_member( Chuck_Emitter * emit,
     t_base = base_static ? member->t_base->actual_type : member->t_base;
 
     // make sure that the base type is object
-    assert( t_base->info != NULL );
+    assert( t_base->nspc != NULL );
 
     // if base is static?
     if( !base_static )
@@ -4877,9 +4889,9 @@ t_CKBOOL emit_engine_pre_constructor( Chuck_Emitter * emit, Chuck_Type * type, a
     if( type->has_pre_ctor )
     {
         // make sure
-        assert( type->info->pre_ctor != NULL );
+        assert( type->nspc->pre_ctor != NULL );
         // append instruction
-        emit->append( new Chuck_Instr_Pre_Constructor( type->info->pre_ctor,
+        emit->append( new Chuck_Instr_Pre_Constructor( type->nspc->pre_ctor,
             emit->code->frame->curr_offset ) );
     }
 
@@ -5692,7 +5704,7 @@ t_CKBOOL emit_engine_emit_class_def( Chuck_Emitter * emit, a_Class_Def class_def
     a_Class_Body body = class_def->body;
 
     // make sure the code is empty
-    if( type->info->pre_ctor != NULL && type->info->pre_ctor->instr != NULL )
+    if( type->nspc->pre_ctor != NULL && type->nspc->pre_ctor->instr != NULL )
     {
         EM_error2( class_def->where,
             "(emit): class '%s' already emitted...",
@@ -5775,13 +5787,13 @@ t_CKBOOL emit_engine_emit_class_def( Chuck_Emitter * emit, a_Class_Def class_def
         // use CK_SAFE_REF_ASSIGN to add_ref RHS then releae LHS | 1.5.1.5
         // maintain refcount integrity whether type->info->pre_ctor==NULL or not
         // ----------------------
-        CK_SAFE_REF_ASSIGN( type->info->pre_ctor,
-                            emit_to_code( emit->code, type->info->pre_ctor, emit->dump ) );
+        CK_SAFE_REF_ASSIGN( type->nspc->pre_ctor,
+                            emit_to_code( emit->code, type->nspc->pre_ctor, emit->dump ) );
 
         // allocate static
-        type->info->class_data = new t_CKBYTE[type->info->class_data_size];
+        type->nspc->class_data = new t_CKBYTE[type->nspc->class_data_size];
         // verify
-        if( !type->info->class_data )
+        if( !type->nspc->class_data )
         {
             // we have a problem
             CK_FPRINTF_STDERR(
@@ -5792,7 +5804,7 @@ t_CKBOOL emit_engine_emit_class_def( Chuck_Emitter * emit, a_Class_Def class_def
         else
         {
             // zero it out
-            memset( type->info->class_data, 0, type->info->class_data_size );
+            memset( type->nspc->class_data, 0, type->nspc->class_data_size );
         }
     }
 
@@ -5800,7 +5812,7 @@ t_CKBOOL emit_engine_emit_class_def( Chuck_Emitter * emit, a_Class_Def class_def
     if( !ret )
     {
         // release | 1.5.1.5 (ge) changed from DELETE to RELEASE
-        CK_SAFE_RELEASE( type->info->pre_ctor );
+        CK_SAFE_RELEASE( type->nspc->pre_ctor );
     }
 
     // unset the class

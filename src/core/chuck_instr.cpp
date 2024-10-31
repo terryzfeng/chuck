@@ -294,13 +294,28 @@ void Chuck_Instr_Complement_int::execute( Chuck_VM * vm, Chuck_VM_Shred * shred 
 
 //-----------------------------------------------------------------------------
 // name: execute()
-// desc: ...
+// desc: module two ints
 //-----------------------------------------------------------------------------
 void Chuck_Instr_Mod_int::execute( Chuck_VM * vm, Chuck_VM_Shred * shred )
 {
     t_CKINT *& sp = (t_CKINT *&)shred->reg->sp;
     pop_( sp, 2 );
+    if( val_(sp+1) == 0 ) goto mod_zero;
     push_( sp, val_(sp) % val_(sp+1) );
+
+    return;
+
+ mod_zero:
+    // we have a problem | 1.5.4.0 (nshaheed) throw exception
+    EM_exception(
+        "ModuloByZero: on line[%lu] in shred[id=%lu:%s]",
+        m_linepos, shred->xid, shred->name.c_str());
+    goto done;
+
+ done:
+    // do something!
+    shred->is_running = FALSE;
+    shred->is_done = TRUE;
 }
 
 
@@ -308,13 +323,28 @@ void Chuck_Instr_Mod_int::execute( Chuck_VM * vm, Chuck_VM_Shred * shred )
 
 //-----------------------------------------------------------------------------
 // name: execute()
-// desc: ...
+// desc: module two ints (in reverse)
 //-----------------------------------------------------------------------------
 void Chuck_Instr_Mod_int_Reverse::execute( Chuck_VM * vm, Chuck_VM_Shred * shred )
 {
     t_CKINT *& sp = (t_CKINT *&)shred->reg->sp;
     pop_( sp, 2 );
+    if( val_(sp) == 0 ) goto mod_zero;
     push_( sp, val_(sp+1) % val_(sp) );
+
+    return;
+
+ mod_zero:
+    // we have a problem | 1.5.4.0 (nshaheed) throw exception
+    EM_exception(
+        "ModuloByZero: on line[%lu] in shred[id=%lu:%s]",
+        m_linepos, shred->xid, shred->name.c_str());
+    goto done;
+
+ done:
+    // do something!
+    shred->is_running = FALSE;
+    shred->is_done = TRUE;
 }
 
 
@@ -507,13 +537,28 @@ void Chuck_Instr_Divide_double_Reverse::execute( Chuck_VM * vm, Chuck_VM_Shred *
 
 //-----------------------------------------------------------------------------
 // name: execute()
-// desc: ...
+// desc: modulo two floats
 //-----------------------------------------------------------------------------
 void Chuck_Instr_Mod_double::execute( Chuck_VM * vm, Chuck_VM_Shred * shred )
 {
     t_CKFLOAT *& sp = (t_CKFLOAT *&)shred->reg->sp;
     pop_( sp, 2 );
+    if( val_(sp+1) == 0 ) goto mod_zero;
     push_( sp, ::fmod( val_(sp), val_(sp+1) ) );
+
+    return;
+
+ mod_zero:
+    // we have a problem | 1.5.4.0 (nshaheed) throw exception
+    EM_exception(
+        "ModuloByZero: on line[%lu] in shred[id=%lu:%s]",
+        m_linepos, shred->xid, shred->name.c_str());
+    goto done;
+
+ done:
+    // do something!
+    shred->is_running = FALSE;
+    shred->is_done = TRUE;
 }
 
 
@@ -521,13 +566,28 @@ void Chuck_Instr_Mod_double::execute( Chuck_VM * vm, Chuck_VM_Shred * shred )
 
 //-----------------------------------------------------------------------------
 // name: execute()
-// desc: ...
+// desc: modulo two floats (in reverse)
 //-----------------------------------------------------------------------------
 void Chuck_Instr_Mod_double_Reverse::execute( Chuck_VM * vm, Chuck_VM_Shred * shred )
 {
     t_CKFLOAT *& sp = (t_CKFLOAT *&)shred->reg->sp;
     pop_( sp, 2 );
+    if( val_(sp) == 0 ) goto mod_zero;
     push_( sp, ::fmod( val_(sp+1), val_(sp) ) );
+
+    return;
+
+ mod_zero:
+    // we have a problem
+    EM_exception(
+        "ModuloByZero: on line[%lu] in shred[id=%lu:%s]",
+        m_linepos, shred->xid, shred->name.c_str());
+    goto done;
+
+ done:
+    // do something!
+    shred->is_running = FALSE;
+    shred->is_done = TRUE;
 }
 
 
@@ -1239,14 +1299,29 @@ void Chuck_Instr_Add_int_Assign::execute( Chuck_VM * vm, Chuck_VM_Shred * shred 
 
 //-----------------------------------------------------------------------------
 // name: execute()
-// desc: ...
+// desc: modulo assign two ints
 //-----------------------------------------------------------------------------
 void Chuck_Instr_Mod_int_Assign::execute( Chuck_VM * vm, Chuck_VM_Shred * shred )
 {
     t_CKINT temp, *& sp = (t_CKINT *&)shred->reg->sp;
     pop_( sp, 2 );
+    if( val_(sp) == 0 ) goto mod_zero;
     temp = **(t_CKINT **)(sp+1) %= val_(sp);
     push_( sp, temp );
+
+    return;
+
+ mod_zero:
+    // we have a problem | 1.5.4.0 (nshaheed) throw exception
+    EM_exception(
+        "ModuloByZero: on line[%lu] in shred[id=%lu:%s]",
+        m_linepos, shred->xid, shred->name.c_str());
+    goto done;
+
+ done:
+    // do something!
+    shred->is_running = FALSE;
+    shred->is_done = TRUE;
 }
 
 
@@ -1388,7 +1463,7 @@ void Chuck_Instr_Divide_double_Assign::execute( Chuck_VM * vm, Chuck_VM_Shred * 
 
 //-----------------------------------------------------------------------------
 // name: execute()
-// desc: ...
+// desc: modulo assign two doubles
 //-----------------------------------------------------------------------------
 void Chuck_Instr_Mod_double_Assign::execute( Chuck_VM * vm, Chuck_VM_Shred * shred )
 {
@@ -1396,11 +1471,27 @@ void Chuck_Instr_Mod_double_Assign::execute( Chuck_VM * vm, Chuck_VM_Shred * shr
     t_CKBYTE *& sp = (t_CKBYTE *&)shred->reg->sp;
     // pop value + pointer
     pop_( sp, sz_FLOAT + sz_UINT );
+
+    if( val_((t_CKFLOAT *&)sp) == 0 ) goto mod_zero;
     // assign
     temp = ::fmod( **(t_CKFLOAT **)(sp+sz_FLOAT), val_((t_CKFLOAT *&)sp) );
     **(t_CKFLOAT **)(sp+sz_FLOAT) = temp;
     // push result
     push_( (t_CKFLOAT *&)sp, temp );
+
+    return;
+
+ mod_zero:
+    // we have a problem | 1.5.4.0 (nshaheed) throw exception
+    EM_exception(
+        "ModuloByZero: on line[%lu] in shred[id=%lu:%s]",
+        m_linepos, shred->xid, shred->name.c_str());
+    goto done;
+
+ done:
+    // do something!
+    shred->is_running = FALSE;
+    shred->is_done = TRUE;
 }
 
 
@@ -4080,7 +4171,7 @@ void call_all_parent_pre_constructors( Chuck_VM * vm, Chuck_VM_Shred * shred,
     // next, call my pre-ctor
     if( type->has_pre_ctor )
     {
-        call_pre_constructor( vm, shred, type->info->pre_ctor, stack_offset );
+        call_pre_constructor( vm, shred, type->nspc->pre_ctor, stack_offset );
     }
     // next, call my default ctor | 1.5.2.2 (ge)
     if( type->ctor_default && type->ctor_default->code )
@@ -4284,7 +4375,7 @@ t_CKBOOL initialize_object( Chuck_Object * object, Chuck_Type * type, Chuck_VM_S
 
     // sanity
     assert( type != NULL );
-    assert( type->info != NULL );
+    assert( type->nspc != NULL );
 
     // REFACTOR-2017: added | 1.5.1.5 (ge & andrew) moved here from instantiate_...
     object->setOriginVM( vm );
@@ -4295,7 +4386,7 @@ t_CKBOOL initialize_object( Chuck_Object * object, Chuck_Type * type, Chuck_VM_S
     object->vtable = new Chuck_VTable;
     if( !object->vtable ) goto out_of_memory;
     // copy the object's virtual table
-    object->vtable->funcs = type->info->obj_v_table.funcs;
+    object->vtable->funcs = type->nspc->obj_v_table.funcs;
     // set the type reference
     object->type_ref = type;
     // reference count
@@ -4417,7 +4508,7 @@ Chuck_Object * instantiate_and_initialize_object( Chuck_Type * type, Chuck_VM_Sh
 
     // sanity
     assert( type != NULL );
-    assert( type->info != NULL );
+    assert( type->nspc != NULL );
 
     // allocate the VM object
     if( !type->ugen_info )
@@ -6269,6 +6360,9 @@ void Chuck_Instr_Array_Init_Literal::execute( Chuck_VM * vm, Chuck_VM_Shred * sh
     // reg stack pointer
     t_CKUINT *& reg_sp = (t_CKUINT *&)shred->reg->sp;
 
+    // amalgamating array type | 1.5.4.0 (ge, nick, andrew) added after a wild yak hunt
+    Chuck_Type * arrayType = vm->env()->get_array_type( vm->env()->ckt_array, m_type_ref->array_depth+1, m_type_ref );
+
     // allocate the array
     // 1.4.2.0 (ge) | added: check for float explicitly
     if( m_type_ref->size == sz_INT && !m_is_float ) // ISSUE: 64-bit (fixed 1.3.1.0)
@@ -6280,9 +6374,13 @@ void Chuck_Instr_Array_Init_Literal::execute( Chuck_VM * vm, Chuck_VM_Shred * sh
         Chuck_ArrayInt * array = new Chuck_ArrayInt( m_is_obj, m_length );
         // problem
         if( !array ) goto out_of_memory;
+
         // initialize object
-        // TODO: should it be this??? initialize_object( array, m_type_ref );
-        initialize_object( array, vm->env()->ckt_array, shred, vm );
+        // should it be this??? initialize_object( array, m_type_ref );
+        // should it be this??? initialize_object( array, vm->env()->ckt_array, shred, vm );
+        // neither! behold -- the amalgamated array type... | 1.5.4.0 (ge, nick, andrew)
+        initialize_object( array, arrayType, shred, vm );
+
         // set size
         array->set_size( m_length );
         // fill array
@@ -6302,7 +6400,7 @@ void Chuck_Instr_Array_Init_Literal::execute( Chuck_VM * vm, Chuck_VM_Shred * sh
         // fill array
         t_CKFLOAT * sp = (t_CKFLOAT *)reg_sp;
         // intialize object
-        initialize_object( array, vm->env()->ckt_array, shred, vm );
+        initialize_object( array, arrayType, shred, vm );
         // set size
         array->set_size( m_length );
         // fill array
@@ -6322,7 +6420,7 @@ void Chuck_Instr_Array_Init_Literal::execute( Chuck_VM * vm, Chuck_VM_Shred * sh
         // fill array
         t_CKVEC2 * sp = (t_CKVEC2 *)reg_sp;
         // intialize object
-        initialize_object( array, vm->env()->ckt_array, shred, vm );
+        initialize_object( array, arrayType, shred, vm );
         // differentiate between complex and polar | 1.5.1.0 (ge) added, used for sorting Array16s
         if( isa(m_type_ref, vm->env()->ckt_polar) ) array->m_isPolarType = TRUE;
         // set size
@@ -6344,7 +6442,7 @@ void Chuck_Instr_Array_Init_Literal::execute( Chuck_VM * vm, Chuck_VM_Shred * sh
         // fill array
         t_CKVEC3 * sp = (t_CKVEC3 *)reg_sp;
         // intialize object
-        initialize_object( array, vm->env()->ckt_array, shred, vm );
+        initialize_object( array, arrayType, shred, vm );
         // set size
         array->set_size( m_length );
         // fill array
@@ -6364,7 +6462,7 @@ void Chuck_Instr_Array_Init_Literal::execute( Chuck_VM * vm, Chuck_VM_Shred * sh
         // fill array
         t_CKVEC4 * sp = (t_CKVEC4 *)reg_sp;
         // intialize object
-        initialize_object( array, vm->env()->ckt_array, shred, vm );
+        initialize_object( array, arrayType, shred, vm );
         // set size
         array->set_size( m_length );
         // fill array
@@ -7551,9 +7649,9 @@ void Chuck_Instr_Dot_Static_Data::execute( Chuck_VM * vm, Chuck_VM_Shred * shred
     // get the object pointer
     Chuck_Type * t_class = (Chuck_Type *)(*sp);
     // make sure
-    assert( (m_offset + m_size) <= t_class->info->class_data_size );
+    assert( (m_offset + m_size) <= t_class->nspc->class_data_size );
     // calculate the data pointer
-    data = (t_CKUINT)(t_class->info->class_data + m_offset);
+    data = (t_CKUINT)(t_class->nspc->class_data + m_offset);
 
     // emit addr or value
     if( m_emit_addr )
@@ -8712,7 +8810,7 @@ void Chuck_Instr_ForEach_Inc_And_Branch::execute( Chuck_VM * vm, Chuck_VM_Shred 
                 if( arr->contains_objects() && *pVar)
                 {
                     // add ref, as this will be cleaned up at end of scope, hopefully
-                    ((Chuck_VM_Object *)(*pVar))->add_ref(); 
+                    ((Chuck_VM_Object *)(*pVar))->add_ref();
                 }
                 break;
             }

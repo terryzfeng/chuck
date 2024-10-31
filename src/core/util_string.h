@@ -110,7 +110,7 @@ std::string extract_filepath_dir( const std::string & filepath );
 // get filename portion of a filepath (minus the directory portion) | 1.5.2.5 (ge) added
 std::string extract_filepath_file( const std::string & filepath );
 
-// get extension portion of a filepath (minus the directory and file portions) | 1.5.3.5 (ge) added
+// get extension portion of a filepath (minus the directory and file portions) | 1.5.4.0 (ge) added
 std::string extract_filepath_ext( const std::string & filepath );
 
 // desc: create absolute path using existing filepath and incoming path
@@ -129,7 +129,10 @@ std::string normalize_directory_name( const std::string & dir );
 t_CKBOOL is_absolute_path( const std::string & path );
 
 // split "x:y:z"-style path list into {"x","y","z"}
-void parse_path_list( std::string & str, std::list<std::string> & lst );
+void parse_path_list( const std::string & str, std::list<std::string> & lst );
+// append list to list
+void append_path_list( std::list<std::string> & list,
+                       const std::list<std::string> & appendMe );
 
 // generate auto filename (usually with date-time) with file prefix and extension
 std::string autoFilename( const std::string & prefix, const std::string & extension );
@@ -158,7 +161,7 @@ t_CKBOOL subdir_ok2recurse( const std::string & dirName,
 // get formatted timestamp of current system time; no new line
 std::string timestamp_formatted(); // e.g., "Sat Jun 24 04:18:42 2023"
 
-// unformatted last-write timestamp of a file | 1.5.3.5 (ge)
+// unformatted last-write timestamp of a file | 1.5.4.0 (ge)
 time_t file_last_write_time( const std::string & filename );
 
 // tokenize a string into a vector of strings, by delimiters

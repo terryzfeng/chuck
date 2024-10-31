@@ -226,10 +226,11 @@ t_CKBOOL Chuck_Compiler::compileFile( const string & filename )
 // name: compileCode()
 // desc: parse, type-check, and emit a program from code
 //-----------------------------------------------------------------------------
-t_CKBOOL Chuck_Compiler::compileCode( const string & codeLiteral )
+t_CKBOOL Chuck_Compiler::compileCode( const string & codeLiteral,
+                                      const string & optFilepath )
 {
     // call internal compile file with option
-    return this->compile_code_opt( codeLiteral, te_do_all );
+    return this->compile_code_opt( codeLiteral, optFilepath, te_do_all );
 }
 
 
@@ -252,10 +253,11 @@ t_CKBOOL Chuck_Compiler::importFile( const string & filename )
 // name: importCode()
 // desc: import from code, observing the semantics of chuck @import
 //-----------------------------------------------------------------------------
-t_CKBOOL Chuck_Compiler::importCode( const string & codeLiteral )
+t_CKBOOL Chuck_Compiler::importCode( const string & codeLiteral,
+                                     const string & optFilepath )
 {
     // call internal compile file with option
-    return this->compile_code_opt( codeLiteral, te_do_import_only );
+    return this->compile_code_opt( codeLiteral, optFilepath, te_do_import_only );
 }
 
 
@@ -265,10 +267,36 @@ t_CKBOOL Chuck_Compiler::importCode( const string & codeLiteral )
 // name: importChugin()
 // desc: import a chugin by path (and optional short-hand name)
 //-----------------------------------------------------------------------------
-t_CKBOOL Chuck_Compiler::importChugin( const string & path, const string & name )
+t_CKBOOL Chuck_Compiler::importChugin( const string & path,
+                                       t_CKBOOL createNamespace, const string & name )
 {
-    // call internal import chugin with option
-    return this->import_chugin_opt( path, name );
+    // check if this import should be in its namespace | 1.5.4.0 (ge) added
+    if( createNamespace )
+    {
+        // make context for this chugin import and load it
+        // this is necessary to make sure the chugin is imported into its own
+        // namespace, to avoid being imported into say a host namespace -- e.g.,
+        // a chuck file that @import this chugin
+        // ALSO: if the chuck file that imports the chugin contains an error,
+        // its context would be cleaned up, which leads to a crash on chuck exit;
+        // this created context prevent that crash
+        // ... further investigation may be beneficial to fully understand this
+        // mechanism
+        type_engine_load_context( this->carrier()->env, type_engine_make_context( NULL, "@[chugin-import]" ) );
+    }
+
+    // call internal import chugin
+    t_CKBOOL ret = this->import_chugin_opt( path, name );
+
+    // if create namespace
+    if( createNamespace )
+    {
+        // unload the context
+        type_engine_unload_context( this->carrier()->env );
+    }
+
+    // done
+    return ret;
 }
 
 
@@ -300,18 +328,36 @@ t_CKBOOL Chuck_Compiler::compile_file_opt( const string & filename, te_HowMuch e
 
 //-----------------------------------------------------------------------------
 // name: compile_code_opt()
-// desc: parse, type-check, and emit a program, with option for how much to compile
+// desc: parse, type-check, and emit a program, with options for filepath
+//       and for how much to compile
 //-----------------------------------------------------------------------------
-t_CKBOOL Chuck_Compiler::compile_code_opt( const string & codeLiteral, te_HowMuch extent )
+t_CKBOOL Chuck_Compiler::compile_code_opt( const string & codeLiteral,
+                                           const string & optFilepath,
+                                           te_HowMuch extent )
 {
     // create a compile target
     Chuck_CompileTarget * target = new Chuck_CompileTarget( extent );
     // set filename to code literal constant
     target->filename = CHUCK_CODE_LITERAL_SIGNIFIER;
-    // get working directory
-    string workingDir = this->carrier()->chuck->getParamString( CHUCK_PARAM_WORKING_DIRECTORY );
+    // check for optional filename
+    string opt = trim(optFilepath);
+    // the path base (e.g., for import path)
+    string pathBase;
+    // is it empty?
+    if( opt == "" )
+    {
+        // get working directory
+        pathBase = this->carrier()->chuck->getParamString( CHUCK_PARAM_WORKING_DIRECTORY );
+    }
+    else // not empty
+    {
+        // use the optionally provided path, make into full path if not already
+        opt = get_full_path( opt );
+        // get the path portion of the optionally provide path
+        pathBase = extract_filepath_dir( opt );
+    }
     // construct full path to be associated with the file so me.sourceDir() works
-    target->absolutePath = workingDir + target->filename;
+    target->absolutePath = pathBase + target->filename;
     // set code literal
     target->codeLiteral = codeLiteral;
 
@@ -394,7 +440,7 @@ t_CKBOOL Chuck_Compiler::compile( Chuck_CompileTarget * target )
                 // set target for error reporting for the originating file
                 EM_setCurrentTarget( target );
                 // report container
-                EM_error2( 0, "(hint: this an imported file that '%s' depends on...", target->filename.c_str() );
+                EM_error2( 0, "(error originates in an imported file that '%s' depends on...", target->filename.c_str() );
                 EM_error2( 0, "...i.e., '%s' directly or indirectly imports '%s')", target->filename.c_str(), sequence[i]->target->filename.c_str() );
                 // unset target
                 EM_setCurrentTarget( NULL );
@@ -508,8 +554,8 @@ t_CKBOOL Chuck_Compiler::visit( ImportTargetNode * node,
 //       this function updates 'filename' with the first match
 //-----------------------------------------------------------------------------
 static t_CKBOOL matchFilename( std::string & filename,
-                              const std::string & ext,
-                              const std::vector<std::string> & extensions )
+                               const std::string & ext,
+                               const std::vector<std::string> & extensions )
 {
     // test filename as is
     if( ck_fileexists( filename ) && !ck_isdir( filename ) ) return TRUE;
@@ -610,8 +656,13 @@ std::string Chuck_Compiler::resolveFilename( const std::string & filename,
     // need for expanded search
     if( !isAlreadyAbsolutePath && !hasMatch && expandSearchToGlobal )
     {
-        // get search paths
-        list<string> searchPaths = this->carrier()->chuck->getParamStringList( CHUCK_PARAM_CHUGIN_LIST_IMPORT_PATHS );
+        // TODO: possible caching -- search for match first in registry
+        // match-right between each entry and fname; if found, return entry absolute path
+
+        // get search paths; order: system, packages, user
+        list<string> searchPaths = this->carrier()->chuck->getParamStringList( CHUCK_PARAM_IMPORT_PATH_SYSTEM );
+        append_path_list( searchPaths, this->carrier()->chuck->getParamStringList( CHUCK_PARAM_IMPORT_PATH_PACKAGES ) );
+        append_path_list( searchPaths, this->carrier()->chuck->getParamStringList( CHUCK_PARAM_IMPORT_PATH_USER ) );
         // go over paths
         for( list<string>::iterator it = searchPaths.begin(); it != searchPaths.end(); it++ )
         {
@@ -672,6 +723,9 @@ t_CKBOOL Chuck_Compiler::compile_entire_file( Chuck_Context * context )
 //-----------------------------------------------------------------------------
 t_CKBOOL Chuck_Compiler::compile_import_only( Chuck_Context * context )
 {
+    // set the state of the context to done
+    context->progress = Chuck_Context::P_IMPORTING;
+
     // 0th-scan (pass 0)
     if( !type_engine_scan0_prog( env(), context->parse_tree, te_do_import_only ) )
          return FALSE;
@@ -773,10 +827,10 @@ t_CKBOOL type_engine_scan_import( Chuck_Env * env, a_Stmt_List stmt_list,
                     // get extension
                     string ext = tolower(extract_filepath_ext(abs));
                     // test extension
-                    if( ext == ".chug" || ext == ".chug.wasm" )
+                    if( ext == ".chug" || ext == ".wasm" )
                     {
-                        // load the chugin
-                        if( !compiler->importChugin( abs, theFile ) )
+                        // load the chugin, in its own namespace == TRUE
+                        if( !compiler->importChugin( abs, TRUE, theFile ) )
                         {
                             // print error (chugin loading only prints to log)
                             EM_error2( import->where, "cannot load chugin: '%s'...", theFile.c_str() );
@@ -1582,7 +1636,9 @@ t_CKBOOL Chuck_Compiler::load_external_modules_in_directory(
     for( t_CKINT i = 0; i < chugins2load.size(); i++ )
     {
         // load module
-        t_CKBOOL loaded = this->importChugin( chugins2load[i].path, chugins2load[i].filename );
+        // ...in its own namespace == FALSE | 1.5.4.0 (ge) added
+        // ...since already in namespace (e.g., @[external]) from load_external_modules()
+        t_CKBOOL loaded = this->importChugin( chugins2load[i].path, FALSE, chugins2load[i].filename );
         // if no error
         if( chugins2load[i].isBundle && loaded) {
             // log
@@ -1647,8 +1703,8 @@ t_CKBOOL Chuck_Compiler::load_external_modules( const string & extension,
         // check extension, append if no match
         if( !extension_matches(dl_path, extension) )
             dl_path += extension;
-        // load the module
-        this->importChugin( dl_path );
+        // load the module, in its own namespace == FALSE
+        this->importChugin( dl_path, FALSE );
     }
 
     // now recurse through search paths and load any DLs or .ck files found
@@ -1668,6 +1724,8 @@ t_CKBOOL Chuck_Compiler::load_external_modules( const string & extension,
     // preserve all operator overloads currently in registry | 1.5.1.5
     env->op_registry.preserve();
 
+    // always return true...
+    // a failed chugin load should not prevent chuck from starting
     return TRUE;
 }
 

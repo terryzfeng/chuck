@@ -160,24 +160,44 @@ t_CKBOOL type_engine_scan0_prog( Chuck_Env * env, a_Program prog,
             break;
 
         case ae_section_class:
-            // check the compilation criteria | 1.5.2.5 (ge) added
-            if( !howMuch_criteria_match( how_much, prog->section->class_def ) ) break;
+            // -----------------------------------------
+            // 1.5.2.5 (ge) check the compilation criteria
+            // if( !howMuch_criteria_match( how_much, prog->section->class_def ) ) break;
+            // -----------------------------------------
+            // 1.5.4.0 (ge) commented out above howMuch_criteria_match()
+            // * go ahead and compile all classes (public or non-public) even if import_only
+            //   ...there is logic within to further sort out public vs. non-public classes
+            // * this is needed because public classes could make use of non-public classes
+            //   declared in the file (e.g., KSChord needing KS) related: `is_public`
+            // -----------------------------------------
+
             // make global, if marked public
             if( prog->section->class_def->decl == ae_key_public )
             {
+                // 1.5.4.0 (ge) removing restriction of one public class per file
+                // ---------------- legacy note ------------
                 // make sure the context has no public class
-                if( env->context->public_class_def != NULL )
-                {
-                    EM_error2( prog->section->class_def->where,
-                        "more than one 'public' class defined..." );
-                    ret = FALSE;
-                    continue;
-                }
-
-                // make global
-                prog->section->class_def->home = env->user();
+                // if( env->context->public_class_def != NULL )
+                //{
+                //    EM_error2( prog->section->class_def->where,
+                //        "more than one 'public' class defined..." );
+                //    ret = FALSE;
+                //    continue;
+                //}
                 // remember
-                env->context->public_class_def = prog->section->class_def;
+                // env->context->public_class_def = prog->section->class_def;
+                // -----------------------------------------
+
+                // -----------------------------------------
+                // mark this class definition to be added to [user] namespace
+                //   which typically sits between [global] namespace and context namesapce
+                prog->section->class_def->home = env->user();
+                // -----------------------------------------
+                // NOTE: for legacy reasons, fallback to [global] if no [user] namespace
+                //   this fallback mechanism was moved out of env->user() to here for clarity in 1.5.4.0 (ge)
+                //   needs further verification, as this fallback may not be necessary
+                if( !prog->section->class_def->home ) prog->section->class_def->home = env->global();
+                // -----------------------------------------
             }
             // scan the class definition
             ret = type_engine_scan0_class_def( env, prog->section->class_def );
@@ -260,28 +280,30 @@ t_CKBOOL type_engine_scan0_class_def( Chuck_Env * env, a_Class_Def class_def )
     // set the fields
     the_class->xid = te_user;
     the_class->base_name = S_name(class_def->name->xid);
-    the_class->owner = env->curr; CK_SAFE_ADD_REF(the_class->owner);
+    // the_class->owner = env->curr; CK_SAFE_ADD_REF(the_class->owner);
     the_class->array_depth = 0;
     the_class->size = sizeof(void *);
     the_class->obj_size = 0;  // TODO:
-    the_class->info = env->context->new_Chuck_Namespace();
-    CK_SAFE_ADD_REF( the_class->info );
-    the_class->info->name = the_class->base_name;
+    the_class->nspc = env->context->new_Chuck_Namespace();
+    CK_SAFE_ADD_REF( the_class->nspc );
+    the_class->nspc->name = the_class->base_name;
+    // public? | 1.5.4.0 (ge) added
+    the_class->is_public = (class_def->decl == ae_key_public);
     // if public class, then set parent to context
     // ... allowing the class to address current context
-    if( env->context->public_class_def == class_def )
-    { the_class->info->parent = env->context->nspc; }
-    else { the_class->info->parent = env->curr; }
     // TODO: add ref to the parent?
+    if( the_class->is_public )
+    { the_class->nspc->parent = env->context->nspc; }
+    else { the_class->nspc->parent = env->curr; }
     the_class->func = NULL;
     // 1.5.0.5 (ge) commented out; the AST is cleaned up after every compilation;
     // would need to make deep copy if want to keep around
     // the_class->def = class_def;
     // add code
-    the_class->info->pre_ctor = new Chuck_VM_Code;
-    CK_SAFE_ADD_REF( the_class->info->pre_ctor );
+    the_class->nspc->pre_ctor = new Chuck_VM_Code;
+    CK_SAFE_ADD_REF( the_class->nspc->pre_ctor );
     // name | 1.5.2.0 (ge) added
-    the_class->info->pre_ctor->name = string("class ") + the_class->base_name;
+    the_class->nspc->pre_ctor->name = string("class ") + the_class->base_name;
     // add to env
     env->curr->type.add( the_class->base_name, the_class );  // URGENT: make this global
     // incomplete
@@ -289,7 +311,7 @@ t_CKBOOL type_engine_scan0_class_def( Chuck_Env * env, a_Class_Def class_def )
 
     // set the new type as current
     env->nspc_stack.push_back( env->curr );
-    env->curr = the_class->info;
+    env->curr = the_class->nspc;
     // push the class def
     env->class_stack.push_back( env->class_def );
     env->class_def = the_class;
@@ -309,6 +331,13 @@ t_CKBOOL type_engine_scan0_class_def( Chuck_Env * env, a_Class_Def class_def )
             break;
 
         case ae_section_class:
+            // check for public | 1.5.4.0 (ge) added
+            if( body->section->class_def->decl == ae_key_public )
+            {
+                EM_error2( class_def->where,
+                          "cannot declare public classes within a class" );
+                ret = FALSE; goto done;
+            }
             // do the class
             ret = type_engine_scan0_class_def( env, body->section->class_def );
             break;
@@ -414,8 +443,10 @@ t_CKBOOL type_engine_scan1_prog( Chuck_Env * env, a_Program prog,
             break;
 
         case ae_section_class:
-            // check the compilation criteria | 1.5.2.5 (ge)
-            if( !howMuch_criteria_match( how_much, prog->section->class_def ) ) break;
+            // 1.5.2.5 (ge) check the compilation criteria
+            // if( !howMuch_criteria_match( how_much, prog->section->class_def ) ) break;
+            // 1.5.4.0 (ge) commented out (see type_engine_prog0_scan() for explanation)
+
             // scan the class definition
             ret = type_engine_scan1_class_def( env, prog->section->class_def );
             break;
@@ -1420,7 +1451,7 @@ t_CKBOOL type_engine_scan1_class_def( Chuck_Env * env, a_Class_Def class_def )
 
     // set the new type as current
     env->nspc_stack.push_back( env->curr );
-    env->curr = the_class->info;
+    env->curr = the_class->nspc;
     // push the class def
     env->class_stack.push_back( env->class_def );
     env->class_def = the_class;
@@ -1582,13 +1613,12 @@ t_CKBOOL type_engine_scan1_func_def( Chuck_Env * env, a_Func_Def f )
             return FALSE;
         }
 
-        // create the new array type
-        t = new_array_type(
-            env,  // the env
+        // get (or create) matching array type
+        t = env->get_array_type(
             env->ckt_array,  // the array base class
             f->type_decl->array->depth,  // the depth of the new type
-            t2,  // the 'array_type'
-            env->curr  // the owner namespace
+            t2  // the 'array_type'
+            // env->curr  // the owner namespace
         );
 
         // TODO: verify
@@ -1684,8 +1714,10 @@ t_CKBOOL type_engine_scan2_prog( Chuck_Env * env, a_Program prog,
             break;
 
         case ae_section_class:
-            // check the compilation criteria | 1.5.2.5 (ge)
-            if( !howMuch_criteria_match( how_much, prog->section->class_def ) ) break;
+            // 1.5.2.5 (ge) check the compilation criteria
+            // if( !howMuch_criteria_match( how_much, prog->section->class_def ) ) break;
+            // 1.5.4.0 (ge) commented out (see type_engine_prog0_scan() for explanation)
+
             // scan the class definition
             ret = type_engine_scan2_class_def( env, prog->section->class_def );
             break;
@@ -2602,13 +2634,12 @@ t_CKBOOL type_engine_scan2_exp_decl_create( Chuck_Env * env, a_Exp_Decl decl )
             // the declaration type | 1.4.2.0 (ge) fixed for multiple decl (e.g., int x[1], y[2];)
             Chuck_Type * t2 = decl->ck_type; // was: type, which won't work if more than one var declared
 
-            // create the new array type
-            type = new_array_type(
-                env,  // the env
+            // get (or create) matching array type
+            type = env->get_array_type(
                 env->ckt_array,  // the array base class
                 var_decl->array->depth,  // the depth of the new type
-                t2,  // the 'array_type'
-                env->curr  // the owner namespace
+                t2  // the 'array_type'
+                // env->curr  // the owner namespace
             );
 
             // 1.4.2.0 (ge) | assign new array type to current var decl
@@ -2835,7 +2866,7 @@ t_CKBOOL type_engine_scan2_class_def( Chuck_Env * env, a_Class_Def class_def )
 
     // set the new type as current
     env->nspc_stack.push_back( env->curr );
-    env->curr = the_class->info;
+    env->curr = the_class->nspc;
     // push the class def
     env->class_stack.push_back( env->class_def );
     env->class_def = the_class;
@@ -2915,7 +2946,7 @@ t_CKBOOL type_engine_scan2_class_def( Chuck_Env * env, a_Class_Def class_def )
     // check for fun
     assert( env->context != NULL );
     assert( class_def->type != NULL );
-    assert( class_def->type->info != NULL );
+    assert( class_def->type->nspc != NULL );
 
     // retrieve the new type (created in scan_class_def)
     the_class = class_def->type;
@@ -3172,13 +3203,12 @@ t_CKBOOL type_engine_scan2_func_def( Chuck_Env * env, a_Func_Def f )
                 goto error; // return FALSE;
             }
 
-            // create the new array type
-            t = new_array_type(
-                env,  // the env
+            // get (or create) matching array type
+            t = env->get_array_type(
                 env->ckt_array,  // the array base class
                 arg_list->var_decl->array->depth,  // the depth of the new type
-                t2,  // the 'array_type'
-                env->curr  // the owner namespace
+                t2  // the 'array_type'
+                // env->curr  // the owner namespace
             );
 
             // set ref

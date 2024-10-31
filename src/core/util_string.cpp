@@ -894,7 +894,7 @@ std::string extract_filepath_file( const std::string & filepath )
 
 
 //-----------------------------------------------------------------------------
-// name: extract_filepath_ext() | 1.5.3.5 (ge) added
+// name: extract_filepath_ext() | 1.5.4.0 (ge) added
 // desc: return the extension portion of a file path, including the .
 //-----------------------------------------------------------------------------
 std::string extract_filepath_ext( const std::string & filepath )
@@ -915,10 +915,10 @@ std::string extract_filepath_ext( const std::string & filepath )
     // look for separator from the right
     size_t pathPos = normalize.rfind( path_separator );
     // if path separator found after the rightmost ext separator
-    if( pathPos > extPos ) return "";
+    if( (pathPos != std::string::npos) && (pathPos > extPos) ) return "";
 
     // substring after the rightmost ext separator
-    return std::string( filepath, extPos );
+    return std::string( normalize, extPos );
 }
 
 
@@ -1010,9 +1010,9 @@ string dir_go_up( const string & dir, t_CKINT numUp )
 
 //-----------------------------------------------------------------------------
 // name: parse_path_list()
-// desc: split "x:y:z"-style path list into {"x","y","z"}
+// desc: split "x:y:z"-style path list into {"x","y","z"}, with trailing '/'
 //-----------------------------------------------------------------------------
-void parse_path_list( std::string & str, std::list<std::string> & lst )
+void parse_path_list( const std::string & str, std::list<std::string> & lst )
 {
 #if defined(__PLATFORM_WINDOWS__)
     const char separator = ';';
@@ -1030,6 +1030,26 @@ void parse_path_list( std::string & str, std::list<std::string> & lst )
 
     // push the final path
     lst.push_back( normalize_directory_name(str.substr(last,str.size()-last)) );
+}
+
+
+
+
+//-----------------------------------------------------------------------------
+// name: append_path_list()
+// desc: append a list (appendThis) to a list (list)
+//-----------------------------------------------------------------------------
+void append_path_list( std::list<std::string> & list,
+                       const std::list<std::string> & appendMe )
+{
+    // first
+    std::list<std::string>::const_iterator it = appendMe.begin();
+    // iterate
+    for( ; it != appendMe.end(); it ++ )
+    {
+        // append element
+        list.push_back( *it );
+    }
 }
 
 
@@ -1265,7 +1285,7 @@ std::string autoFilename( const std::string & prefix, const std::string & fileEx
 #endif
 //-----------------------------------------------------------------------------
 // name: file_last_write_time()
-// desc: unformatted last-write timestamp of a file | 1.5.3.5 (ge)
+// desc: unformatted last-write timestamp of a file | 1.5.4.0 (ge)
 //-----------------------------------------------------------------------------
 time_t file_last_write_time( const std::string & filename )
 {

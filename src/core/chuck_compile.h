@@ -249,7 +249,7 @@ public: // get protected data
     Chuck_VM * vm() const { return m_carrier->vm; }
     // REFACTOR-2017: get associated, per-compiler carrier
     Chuck_Carrier * carrier() const { return m_carrier; }
-    // get import registry | 1.5.3.5 (ge)
+    // get import registry | 1.5.4.0 (ge)
     Chuck_ImportRegistry * imports() { return &m_importRegistry; }
     // set carrier
     t_CKBOOL setCarrier( Chuck_Carrier * c ) { m_carrier = c; return TRUE; }
@@ -288,7 +288,10 @@ public: // compile from file or code
     // parse, type-check, and emit a program from file
     t_CKBOOL compileFile( const std::string & filename );
     // parse, type-check, and emit a program from code string
-    t_CKBOOL compileCode( const std::string & codeLiteral );
+    // * can optionally provide a filename (or path ending in '/')
+    //   for @import pathing (by default, working dir is used)
+    t_CKBOOL compileCode( const std::string & codeLiteral,
+                          const std::string & optFilepath = "" );
     // get the code generated from the last compile()
     Chuck_VM_Code * output();
 
@@ -296,12 +299,15 @@ public: // import while observing semantics of chuck @import
     // import a .ck module by file path
     t_CKBOOL importFile( const std::string & filename );
     // import from ChucK code
-    t_CKBOOL importCode( const std::string & codeLiteral );
+    t_CKBOOL importCode( const std::string & codeLiteral,
+                         const std::string & optFilepath );
     // import a chugin by path (and optional short-hand name)
-    t_CKBOOL importChugin( const std::string & path, const std::string & name = "" );
+    t_CKBOOL importChugin( const std::string & path,
+                           t_CKBOOL createNamespace,
+                           const std::string & name = "" );
 
 public:
-    // compile a target | 1.5.3.5 (ge)
+    // compile a target | 1.5.4.0 (ge)
     // NOTE: this function will memory-manage `target`
     // (do not access or delete `target` after function call)
     t_CKBOOL compile( Chuck_CompileTarget * target );
@@ -377,7 +383,7 @@ protected: // internal
     // parse, type-check, and emit a program from file (with option on extent)
     t_CKBOOL compile_file_opt( const std::string & filename, te_HowMuch extent );
     // parse, type-check, and emit a program from code string (with option on extent)
-    t_CKBOOL compile_code_opt( const std::string & codeLiteral, te_HowMuch extent );
+    t_CKBOOL compile_code_opt( const std::string & codeLiteral, const std::string & optFilepath, te_HowMuch extent );
     // compile a single target
     t_CKBOOL compile_single( Chuck_CompileTarget * target );
     // compile entire file
