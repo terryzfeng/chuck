@@ -2,47 +2,379 @@
 ChucK VERSIONS log
 ------------------
 
-1.5.3.3
+1.5.4.4 (January 2025)
 =======
-***************** new language feature ***************
-- (added) chuck @import system for .ck and .chug files
-- for language specification and examples regarding @import, see:
+(added) basic @doc functionality for language-defined classes to add inline
+    CKDoc documentation for class definitions and function defintions.
+(added) function to retrive CKDoc descriptions for classes and functions:
+    string CKDoc.describe( Object target );
+    ----------------------------------------
+    class Foo
+    {
+        // add inline documenation (processed at compile-time)
+        @doc "this is a description for the class Foo"
+
+        fun void bar()
+        {
+            // add inline documenation (processed at compile-time)
+            @doc "a function in Foo, bar() likes calling his friends"
+        }
+    }
+    // print class description
+    CKDoc.describe( Foo );
+    // with an instance, can also get info about instanced functions
+    Foo f;
+    <<< CKDoc.describe( f ) >>>;
+    <<< CKDoc.describe( f.bar ) >>>;
+    ----------------------------------------
+(fixed) proper emission of classes by name, e.g., `<<< SinOsc >>>;`
+(fixed) attempts to assign to a constant right-hand-side variable
+    e.g., `null @=> SinOsc;` now results in a compiler error
+    NOTE: in the above example, SinOsc is a variable of type 'Type'
+    and is created alongside the SinOsc class/type; such Type variables
+    associated with class definitions are automatically marked as constant
+(fixed) crash due to functions / classes references a local variable defined
+    at file-scope; code emission is now internally re-ordered to compile
+    file-scope code segments -> function definitions -> class definitions
+(fixed) foreach `auto` variable typing for multi-dimenion array, e.g.,
+    --------
+    // two dim array
+    for( auto x : [[1,2],[3,4]] ) {
+        for( auto y : x ) {
+            // print
+            <<< y >>>;
+        }
+    }
+    --------
+=======
+(fixed) miniAudicle export and record functionalities; these resulted in
+    empty WAV file (in 1.5.4.2 and 1.5.4.3), due to updates to garbage collection
+    policy for UGens. exporting and recording should now work, once again
+
+
+1.5.4.3 (December 2024)
+=======
+new ChuGL v0.2.5 (see ChuGL release notes below)
+~~~
+ChucK 1.5.4.3
+=======
+(added, at last) class STATIC variable initialization for primitive
+    and Objects types. (Previously, static variables needed to be
+    instantiated and initialized separately.) Now variables of any
+    type can be declared as static variable and they will be automatically
+    initialized on a per-class basis. Example:
+    ----------------------------------------
+    class Foo
+    {
+        // declare a static int in class Foo
+        5 => static int THE_NUM;
+        // declare a static SinOsc in class Foo
+        static SinOsc THE_UGEN(440);
+    }
+    // can be accessed as before
+    <<< Foo.THE_NUM, Foo.THE_UGEN.freq() >>>;
+    ----------------------------------------
+    SEMANTICS for static variables
+    ----------------------------------------
+    as before, static variable can only be DECLARED:
+    a) within a class definition
+    b) outside of any class function defintion
+    c) at the outer-most class scope (cannot be in nested { })
+    -----------------------------------------
+    COMPILE-TIME checks:
+    1) a statement containing a static variable declaration
+       CANNOT access member data/functions
+    2) otherwise, a statement can access both static and member data.
+    3) a statement containing a static variable declaration
+       CANNOT access local (i.e., outside of class def) vars or funcs
+       even in non-public classes
+    -----------------------------------------
+    RUNTIME checks:
+    4) static initialization statements are run in immediate mode
+       meaning no time advances; this is enforced at runtime; any
+       time advances, including waiting on events, will result in
+       a runtime exception
+    -----------------------------------------
+(added) examples/class/static-init.ck
+        examples/import/import-test-3.ck
+(added) '/usr/lib/chuck' to @import system search paths on Linux and MacOS.
+    .chug files in system paths will auto-load on start up (.ck files will 
+    not auto-load and needs to be @imported in order to be used); also 
+    @import will now include this directory when resolving fileanems.
+(added) "ChucK => Music Programming Language" title to --about
+(fixed) object instantiation refcount integrity; now correctly accounts
+    for the situation where the object reference count is 0 during
+    constructors (before assignment to a variable) and the constructor
+    performs operations that previously could cause itself to be garbage
+    collected
+(fixed) now properly emits function calls vs. function values
+(fixed) class definitions that encounter compiler errors (or are
+    in files that have compiler errors) are now correctly rolled back
+    in the type system; previously it was possible to instantiate
+    partial class definition defined in previously compiled code/file,
+    with undefined outcome
+=======
+ChuGL v0.2.5 Release Notes
+=======
+(added) input functions to get *all* keys held/pressed/released this frame
+    GWindow.keys()
+    GWindow.keysDown()
+    GWindow.keysUp()
+(added) new RenderPass methods to set the output resolution, msaa sample 
+    count,target scene and target camera for rendering
+garbage collection mechanism for all UGens(added) HUD pass to ChuGL's default rendergraph. Can now easily add 2d HUD
+    overlay to 3D scenes by grucking ggens to GG.hud()
+(added) examples/basic/hud.ck
+(fixed) crash caused by ShaderDesc and other internal reference counting
+    logic
+=======
+
+
+1.5.4.2 (November 2024)
+=======
+new ChuGL v0.2.4 (see ChuGL release notes below)
+=======
+(updated) --chugin-path:<path> no longer auto-loads chugins found in the 
+    specified paths; instead the specified paths are added to the import 
+    system user paths, and the .chug and .ck files within the specified 
+    paths can be @imported.
+(updated) improved internal garbage collection mechanism for all UGens; 
+    now UGens are garbage collected and disconnected from all its UGen 
+    connections, as soon as it is now longer referenced from code (previously,
+    this was deferred until the end of origin shred the UGen was created on,
+    which poses potentially significant memory build-up if a shred repeatedly
+    instantiated/connected UGens without exiting). Overall, this internal
+    update should result in improved CPU performance and memory behavior in 
+    various scenarios.
+(fixed) long-standing SndBuf issue, especially prevalent on macOS:
+    "System error : Too many open files." this was due a combination of 
+(fixed) memory leak involving string operations (e.g., string + string);
+    internally, string operations now are appropriately handled by the
+    operator overloading mechanism
+(fixed) < <= > >= operators for strings
+(fixed) an issue chugin system auto-load and --chugin-probe was skipping
+    over the first element when scanning directories 
+(fixed) vec2/vec3/vec4 implicit cast logic for +=> and -=> operations
+    (previously, this would cause a crash in some cases)
+(fixed) vec2/vec3/vec4 function call from literal (non-variable) value
+    (e.g., @(1,0).magnitude(); previously this yielded a compiler error)
+(added) examples/stk/tubebell-algo5.ck
+(added) vector dot product methods for vec2, vec3, and vec4
+        float vec2.dot( vec2 rhs )
+        float vec3.dot( vec3 rhs )
+        float vec4.dot( vec4 rhs )
+(added) vector cross product method for vec3 and vec4 (as 3D shorthand)
+    NOTE: this is the same as vec3*vec3 or vec4*vec4
+    NOTE: 4D cross product is mathematically undefined; vec4 cross product
+        ignores the `w` components and computes a 3D cross product;
+        `w` is also set to zero in the resulting vec4
+        vec3 vec3.cross( vec3 rhs )
+        vec4 vec4.cross( vec4 rhs )
+(added) Type.of( vec2 ) function to get the associate Type
+(added) --auto-load-chugin-path:<path> flag -- this behaves as 
+    --chugin-path previously did: chugins in the specified path(s) are 
+    auto-loaded; .ck files can be @imported
+(fixed) --chugin:<name> and --chugin-path:<path> now correctly auto-expand
+    paths
+(updated) Shred(.parent(), .ancester(), .childMemSize(), .childRegSize())
+    now will operate with respect to the shred reference rather than always
+    w.r.t. the calling shred (e.g., shred that is running when these functions
+    are called)
+(added) Shred.pc(), .regSP(), .memSP() -- for debugging, info, amusement
+=======
+ChuGL v0.2.4 Release Notes
+=======
+New Features:
+- Should now support both X11 and Wayland on Linux
+- PolygonGeometry: provides (decently) robust/performant triangulation, useful for animating or 
+drawing deformable 2d shapes
+- WireframeMaterial: renders a mesh as a wireframe
+- Texture.copy(...): can now copy data between textures
+- Texture.read(...): read back texture data from GPU --> CPU
+~~~
+Improvements:
+- Significantly reduced startup time from loading large OBJ models or building geometry with 
+many vertices (tangent frame calculation has been moved from the CPU --> GPU)
+- Optimized webcam implementation (now consumes less memory and requires fewer memory transfers)
+~~~
+New examples
+- deep/ray_triangle_intersection.ck: 3d ray-triangle intersection testing. Thanks Shenran!!
+- deep/fish.ck: procedurally animating a fish, showcases PolygonGeometry
+- deep/webcam_echo.ck: webcam delay effect via texture copying
+- basic/triangulate.ck: polygon triangulation with PolygonGeometry
+- basic/texture_read.ck: showcases reading texture data from GPU into chuck
+~~~
+Bug Fixes:
+- Crash when using Video textures
+- Fix race condition in Webcam destructor
+- GText now supports empty strings, and can properly disconnect from the scenegraph
+- AssLoader will take model ambient color (Ka) into account
+=======
+
+
+1.5.4.1 (November 2024)
+=======
+(patch release)
+- (fixed, linux) a crash when the OTF handles an OTF command (add or replace)
+- (added) support for crawling subdirectories for importing for packages
+    to be managed by the upcoming ChuMP (ChucK Manager of Packages)
+- (updated) --chugin-probe now prints .ck files in the import search paths
+    NOTE: as of 1.5.4.1 chuck auto-loads ONLY chugins in the system search
+    paths; all other chugins and all chuck files in the import search paths
+    must be @imported in order to be used.
+
+
+1.5.4.0 (November 2024)
+=======
+\/\/\/\/\/
+LICENSE UPDATE: ChucK source code is dual-licensed under the MIT License 
+and the GNU General Public License 2.0 (or any later version). You can 
+choose either license in order to use the source code. Previoiusly, ChucK 
+was GPL-only. Please the LICENSE.MIT and LICENSE.GPL in the source 
+distribution for details.
+----
+NOTE: as before, miniAudicle source code remains GPL for now; chugins 
+each have their own license(s). WebChucK, ChuGL, Chunity, Chunreal 
+respectively have MIT licenses
+/\/\/\/\/\
+********** new language feature ************
+@import system for .ck and .chug files
+********************************************
+- for language specification and examples regarding @import:
   ***************************************************
   https://chuck.stanford.edu/doc/language/import.html
   ***************************************************
-- the @import mechanism imports classes and operator overloads from another .ck file, or from a 
-  chugin; it is designed to faciliate creating, using, and distributing multi-file programs
-  and libraries
+- the @import system imports classes and operator overloads from another 
+    .ck file, or from a chugin; it is designed to faciliate creating, 
+    using, and distributing multi-file programs and libraries
 - @import SYNTAX:
     @import "Foo.ck" // import Foo.ck
     @import "Bar.chug" // import Bar.chug chugin
     @import { "AAA.ck", "BBB.chug", "CCC" } // multiple imports on one line
     @import "/Users/ge/chuck/examples/import/foo-user.ck" // absolute path
     @import "../dir/Blarg.ck" // relative path
-    @import "Foo" // can use implicit filename; @import will search and match for
-      .ck, .chug, and .chug.wasm, in each directory in the chugin/import search paths
-- @import picks up all (and only) *public* definitions (classes and operator overloads);
-  -- this implies that @import will only add new definitions to the type system, but will
-  NEVER automatically run any code; client code must first instantiate class or use an operator
-  to execute the contents of imported files
-  -- this behavior  makes it possible to write unit test code for public classes in the same 
-  file in which it is defined; any code outside of public class/operator definition will NOT be 
-  type-checked or run (this code will only scanned for syntax)
-- @import is resolved at compile-time, before the rest of the file is evaluated; this makes it
-  possible for a .ck file to @import one of more files AND use their contents from the same
-  .ck file (this capability make @import more powerful than Machine.add() for dependency
-  management; as noted above, @import will only )
-- @import can work recursively; can @import files that @import other files
-- @import has built-in cycle-detection; if an @import cycle is detected, a compiler error
-  will be issued and that compilation will be failed 
-- (updated behavior) .ck files found in chugin/import search paths (e.g., ~/.chuck/lib) NO 
-  LONGER automatically loads; instead these now must be explicitly @imported to be used (FYI 
-  just the file name will suffice, assuming there are no filename conflicts elsewhere in the 
-  import paths)
-******************************************************
-- (fixed) specific internal UGen connection error now handled without exiting
-- (fixed, windows) single letter filenames without extensions (e.g., "A") now
-    are distinguished from windows drive letters (e.g., "A:\")
+    @import "Foo" // can use implicit filename; @import will search and 
+      match for .ck, .chug, and .chug.wasm, in each directory in the 
+      chugin/import search paths
+- @import picks up all (and only) *public* definitions (classes and 
+    operator overloads);
+    -- this implies that @import will only add new definitions to the type 
+       system, but will NEVER automatically run any code; client code must 
+       first instantiate class or use an operator to execute the contents 
+       of imported files
+    -- this makes it possible to write unit-test code for public classes 
+       in the same file in which it is defined; any code outside of public 
+       class/operator definition will NOT be type-checked or run (this 
+       code will only scanned for syntax)
+- @imports are resolved at compile-time, before the rest of the host file
+    is evaluated; this makes it possible for a a host .ck file to @import 
+    one or more files and make use of their contents immediately (when it 
+    comes to dependency management, this compile-time import mechanism is 
+    more powerful than the run-time Machine.add()).
+- @import can work recursively; can @import files that @import other 
+    files
+- @import has built-in cycle-detection; if an @import cycle is detected, 
+    a compiler error will be issued and that compilation will be failed 
+*******************
+ChuGL 0.2.3 Release
+*******************
+- Video textures! 
+  - Currently supporting MPEG1 Video decoding and playback
+- Webcam/video camera integration
+- ChuGL can now run at a fixed framerate across all machines/monitors
+  - `GG.fps(int fps)` to set the target framerate (lower values improve 
+    chuck's audio performance)
+  - defaults to 60fps
+- Added skybox support to GScene and environment lighting to PhongMaterial
+- New Examples
+  - basic/skybox.ck
+  - basic/webcam.ck
+  - basic/video.ck
+- Fix memory leak on creating new Shaders
+- (updated behavior) the one-public-class-per-file restriction has been 
+    lifted; i.e., it is now possible to define more than one public class 
+    in a single .ck file; this update is intended to give programmers and 
+    library creators more flexibility in organizing their public class 
+    definiition
+- (updated behavior) .ck files found in chugin/import search paths (e.g., 
+    ~/.chuck/lib) NO LONGER automatically loads; instead these now must 
+    be explicitly @imported to be used (FYI just the file name will 
+    suffice, assuming there are no filename conflicts elsewhere in the 
+    import paths)
+*******************
+- (added) member function in Object to get the instantiated type of an
+    object, regardless of the apparent type
+    Type Object.typeOfInstance()
+        Get the instanced type of this object.
+- (fixed) specific internal UGen connection error now handled without 
+    exiting
+- (fixed, windows) single letter filenames without extensions (e.g., "A") 
+    now are distinguished from windows drive letters (e.g., "A:\")
+- (fixed) Type.of() now reports more specific array type (e.g., 
+    `string[]`) instead ofgeneric `@array`
+- (fixed) type system [user] namespace now instantiated correctly at
+    initialization; previously [global] was used until a clearVM was 
+    performed -- this caused incorrect behavior with certain functionality,
+    including a crash in Type.children(); relatedly a long-standing
+    bug was fixed in the type system scope::lookup mechanism that added
+    NULL entries during lookup
+- (fixed) modulo `%` by zero (int or float) now throws an exception; 
+    previously this would either produce an incorrect result or cause a 
+    crash
+- (updated) .sort() a string array will now sort alphabetically (instead 
+    of by Object refs)
+- (updated, internal) dynamic array types are now cached and reused,
+    preventing potential memory build-up across compilations
+- (updated) chugin probe no longer recursively crawl directories
+- (updated) variable dependency check now treats sporked functions same 
+    as function calls; unfulfilled dependencies will result in a compiler 
+    error; previously, correctness in this regard was left to the 
+    programmer but could cause a crash. this update is more stringent than 
+    is always necessary (due to spork being parallel and the timing 
+    behavior, the dependency sometimes are resolved in actuality. 
+    however, ChucK team deems potentially over-aggressive dependency 
+    checking  for sporked functions is preferrable to unexpected and 
+    hard-to-debug crashes.
+============
+For example:
+============
+```
+// spork a function (that depends on foo)
+spork ~ printArray();
+
+// initialize foo
+5 => int foo;
+
+// function that needs foo
+fun void printArray()
+{
+    // need 'foo' initialized here
+    if( foo == 5 ) <<< "success" >>>;
+}
+
+// give the sporked shred a chance to run
+me.yield();
+```
+===============
+compiler error:
+===============
+error: sporking 'printArray()' at this point potentially skips 
+initialization of a needed variable:
+
+  [9] spork ~ printArray();
+              ^
+error: ...(note: this skipped variable initialization is needed by 'fun 
+void printArray()')
+
+  [12] 5 => int foo;
+                ^
+error: ...(note: this is where the variable is used within 'fun void 
+printArray()' or its subsidiaries)
+
+  [18]     if( foo == 5 ) <<< "success" >>>;
+               ^
+...(hint: try calling 'printArray()' after the variable initialization)
+==============
 
 
 1.5.3.2 (October 2024)

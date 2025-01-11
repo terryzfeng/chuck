@@ -1,25 +1,26 @@
 /*----------------------------------------------------------------------------
   ChucK Strongly-timed Audio Programming Language
-    Compiler and Virtual Machine
+    Compiler, Virtual Machine, and Synthesis Engine
 
   Copyright (c) 2003 Ge Wang and Perry R. Cook. All rights reserved.
     http://chuck.stanford.edu/
     http://chuck.cs.princeton.edu/
 
   This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
+  it under the dual-license terms of EITHER the MIT License OR the GNU
+  General Public License (the latter as published by the Free Software
+  Foundation; either version 2 of the License or, at your option, any
+  later version).
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful and/or
+  interesting, but WITHOUT ANY WARRANTY; without even the implied warranty
+  of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  MIT Licence and/or the GNU General Public License for details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-  U.S.A.
+  You should have received a copy of the MIT License and the GNU General
+  Public License (GPL) along with this program; a copy of the GPL can also
+  be obtained by writing to the Free Software Foundation, Inc., 59 Temple
+  Place, Suite 330, Boston, MA 02111-1307 U.S.A.
 -----------------------------------------------------------------------------*/
 
 //-----------------------------------------------------------------------------
@@ -43,6 +44,7 @@
 #include "chuck_vm.h"
 #include <list>
 #include <set>
+#include <string>
 
 
 
@@ -111,8 +113,8 @@ public:
     // constructor
     Chuck_CompileTarget( te_HowMuch extent = te_do_all )
         : state(te_compile_inprogress), howMuch(extent), isSystemImport(FALSE),
-          timestamp(0), fd2parse(NULL), chugin(NULL), lineNum(1), tokPos(0),
-          AST(NULL), the_chuck(NULL)
+          fd2parse(NULL), chugin(NULL), lineNum(1), tokPos(0),
+          AST(NULL), timestamp(0), the_chuck(NULL)
     {
         // initialize
         the_linePos = intList( 0, NULL );
@@ -249,7 +251,7 @@ public: // get protected data
     Chuck_VM * vm() const { return m_carrier->vm; }
     // REFACTOR-2017: get associated, per-compiler carrier
     Chuck_Carrier * carrier() const { return m_carrier; }
-    // get import registry | 1.5.3.5 (ge)
+    // get import registry | 1.5.4.0 (ge)
     Chuck_ImportRegistry * imports() { return &m_importRegistry; }
     // set carrier
     t_CKBOOL setCarrier( Chuck_Carrier * c ) { m_carrier = c; return TRUE; }
@@ -288,7 +290,10 @@ public: // compile from file or code
     // parse, type-check, and emit a program from file
     t_CKBOOL compileFile( const std::string & filename );
     // parse, type-check, and emit a program from code string
-    t_CKBOOL compileCode( const std::string & codeLiteral );
+    // * can optionally provide a filename (or path ending in '/')
+    //   for @import pathing (by default, working dir is used)
+    t_CKBOOL compileCode( const std::string & codeLiteral,
+                          const std::string & optFilepath = "" );
     // get the code generated from the last compile()
     Chuck_VM_Code * output();
 
@@ -296,12 +301,16 @@ public: // import while observing semantics of chuck @import
     // import a .ck module by file path
     t_CKBOOL importFile( const std::string & filename );
     // import from ChucK code
-    t_CKBOOL importCode( const std::string & codeLiteral );
+    t_CKBOOL importCode( const std::string & codeLiteral,
+                         const std::string & optFilepath );
     // import a chugin by path (and optional short-hand name)
-    t_CKBOOL importChugin( const std::string & path, const std::string & name = "" );
+    t_CKBOOL importChugin( const std::string & path,
+                           t_CKBOOL createNamespace,
+                           const std::string & name,
+                           std::string & errorStr );
 
 public:
-    // compile a target | 1.5.3.5 (ge)
+    // compile a target | 1.5.4.0 (ge)
     // NOTE: this function will memory-manage `target`
     // (do not access or delete `target` after function call)
     t_CKBOOL compile( Chuck_CompileTarget * target );
@@ -377,13 +386,13 @@ protected: // internal
     // parse, type-check, and emit a program from file (with option on extent)
     t_CKBOOL compile_file_opt( const std::string & filename, te_HowMuch extent );
     // parse, type-check, and emit a program from code string (with option on extent)
-    t_CKBOOL compile_code_opt( const std::string & codeLiteral, te_HowMuch extent );
+    t_CKBOOL compile_code_opt( const std::string & codeLiteral, const std::string & optFilepath, te_HowMuch extent );
     // compile a single target
     t_CKBOOL compile_single( Chuck_CompileTarget * target );
     // compile entire file
     t_CKBOOL compile_entire_file( Chuck_Context * context );
     // import only: public definitions (e.g., classes and operator overloads)
-    t_CKBOOL compile_import_only( Chuck_Context * context ); // 1.5.2.5 (ge) added
+    t_CKBOOL compile_import_only( Chuck_Context * context ); // 1.5.4.0 (ge) added
     // all except import
     t_CKBOOL compile_all_except_import( Chuck_Context * context );
 
@@ -393,7 +402,7 @@ protected: // import
     // scan for @import statements, and return a list of resulting import targets
     t_CKBOOL scan_imports( Chuck_Env * env, Chuck_CompileTarget * target );
     // import chugin
-    t_CKBOOL import_chugin_opt( const std::string & path, const std::string & name );
+    t_CKBOOL import_chugin_opt( const std::string & path, const std::string & name, std::string & errorStr );
 
 protected: // internal import dependency helpers
     // produce a compilation sequences of targets from a import dependency graph
@@ -408,6 +417,21 @@ protected: // internal import dependency helpers
                            std::vector<ImportTargetNode *> & problems );
 };
 
+
+
+
+//-----------------------------------------------------------------------------
+// helper functions
+//-----------------------------------------------------------------------------
+// log a chugin load
+void logChuginLoad( const std::string & name, t_CKINT logLevel );
+// log a chuck file found
+void logCKFileFound( const std::string & name, t_CKINT logLevel );
+// scan for subdirs in a dir
+t_CKBOOL scan_for_dirs_in_directory( const std::string & directory,
+                                     const std::string & extensionForSubdirTest,
+                                     t_CKBOOL recursiveSearch,
+                                     std::list<std::string> & results );
 
 
 

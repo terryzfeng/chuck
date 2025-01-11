@@ -1,25 +1,26 @@
 /*----------------------------------------------------------------------------
   ChucK Strongly-timed Audio Programming Language
-    Compiler and Virtual Machine
+    Compiler, Virtual Machine, and Synthesis Engine
 
   Copyright (c) 2003 Ge Wang and Perry R. Cook. All rights reserved.
     http://chuck.stanford.edu/
     http://chuck.cs.princeton.edu/
 
   This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
+  it under the dual-license terms of EITHER the MIT License OR the GNU
+  General Public License (the latter as published by the Free Software
+  Foundation; either version 2 of the License or, at your option, any
+  later version).
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful and/or
+  interesting, but WITHOUT ANY WARRANTY; without even the implied warranty
+  of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  MIT Licence and/or the GNU General Public License for details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-  U.S.A.
+  You should have received a copy of the MIT License and the GNU General
+  Public License (GPL) along with this program; a copy of the GPL can also
+  be obtained by writing to the Free Software Foundation, Inc., 59 Temple
+  Place, Suite 330, Boston, MA 02111-1307 U.S.A.
 -----------------------------------------------------------------------------*/
 
 //-----------------------------------------------------------------------------
@@ -226,10 +227,11 @@ t_CKBOOL Chuck_Compiler::compileFile( const string & filename )
 // name: compileCode()
 // desc: parse, type-check, and emit a program from code
 //-----------------------------------------------------------------------------
-t_CKBOOL Chuck_Compiler::compileCode( const string & codeLiteral )
+t_CKBOOL Chuck_Compiler::compileCode( const string & codeLiteral,
+                                      const string & optFilepath )
 {
     // call internal compile file with option
-    return this->compile_code_opt( codeLiteral, te_do_all );
+    return this->compile_code_opt( codeLiteral, optFilepath, te_do_all );
 }
 
 
@@ -252,10 +254,11 @@ t_CKBOOL Chuck_Compiler::importFile( const string & filename )
 // name: importCode()
 // desc: import from code, observing the semantics of chuck @import
 //-----------------------------------------------------------------------------
-t_CKBOOL Chuck_Compiler::importCode( const string & codeLiteral )
+t_CKBOOL Chuck_Compiler::importCode( const string & codeLiteral,
+                                     const string & optFilepath )
 {
     // call internal compile file with option
-    return this->compile_code_opt( codeLiteral, te_do_import_only );
+    return this->compile_code_opt( codeLiteral, optFilepath, te_do_import_only );
 }
 
 
@@ -265,10 +268,38 @@ t_CKBOOL Chuck_Compiler::importCode( const string & codeLiteral )
 // name: importChugin()
 // desc: import a chugin by path (and optional short-hand name)
 //-----------------------------------------------------------------------------
-t_CKBOOL Chuck_Compiler::importChugin( const string & path, const string & name )
+t_CKBOOL Chuck_Compiler::importChugin( const string & path,
+                                       t_CKBOOL createNamespace,
+                                       const string & name,
+                                       string & errorStr )
 {
-    // call internal import chugin with option
-    return this->import_chugin_opt( path, name );
+    // check if this import should be in its namespace | 1.5.4.0 (ge) added
+    if( createNamespace )
+    {
+        // make context for this chugin import and load it
+        // this is necessary to make sure the chugin is imported into its own
+        // namespace, to avoid being imported into say a host namespace -- e.g.,
+        // a chuck file that @import this chugin
+        // ALSO: if the chuck file that imports the chugin contains an error,
+        // its context would be cleaned up, which leads to a crash on chuck exit;
+        // this created context prevent that crash
+        // ... further investigation may be beneficial to fully understand this
+        // mechanism
+        type_engine_load_context( this->carrier()->env, type_engine_make_context( NULL, "@[chugin-import]" ) );
+    }
+
+    // call internal import chugin
+    t_CKBOOL ret = this->import_chugin_opt( path, name, errorStr );
+
+    // if create namespace
+    if( createNamespace )
+    {
+        // unload the context
+        type_engine_unload_context( this->carrier()->env );
+    }
+
+    // done
+    return ret;
 }
 
 
@@ -300,18 +331,36 @@ t_CKBOOL Chuck_Compiler::compile_file_opt( const string & filename, te_HowMuch e
 
 //-----------------------------------------------------------------------------
 // name: compile_code_opt()
-// desc: parse, type-check, and emit a program, with option for how much to compile
+// desc: parse, type-check, and emit a program, with options for filepath
+//       and for how much to compile
 //-----------------------------------------------------------------------------
-t_CKBOOL Chuck_Compiler::compile_code_opt( const string & codeLiteral, te_HowMuch extent )
+t_CKBOOL Chuck_Compiler::compile_code_opt( const string & codeLiteral,
+                                           const string & optFilepath,
+                                           te_HowMuch extent )
 {
     // create a compile target
     Chuck_CompileTarget * target = new Chuck_CompileTarget( extent );
     // set filename to code literal constant
     target->filename = CHUCK_CODE_LITERAL_SIGNIFIER;
-    // get working directory
-    string workingDir = this->carrier()->chuck->getParamString( CHUCK_PARAM_WORKING_DIRECTORY );
+    // check for optional filename
+    string opt = trim(optFilepath);
+    // the path base (e.g., for import path)
+    string pathBase;
+    // is it empty?
+    if( opt == "" )
+    {
+        // get working directory
+        pathBase = this->carrier()->chuck->getParamString( CHUCK_PARAM_WORKING_DIRECTORY );
+    }
+    else // not empty
+    {
+        // use the optionally provided path, make into full path if not already
+        opt = get_full_path( opt );
+        // get the path portion of the optionally provide path
+        pathBase = extract_filepath_dir( opt );
+    }
     // construct full path to be associated with the file so me.sourceDir() works
-    target->absolutePath = workingDir + target->filename;
+    target->absolutePath = pathBase + target->filename;
     // set code literal
     target->codeLiteral = codeLiteral;
 
@@ -394,7 +443,7 @@ t_CKBOOL Chuck_Compiler::compile( Chuck_CompileTarget * target )
                 // set target for error reporting for the originating file
                 EM_setCurrentTarget( target );
                 // report container
-                EM_error2( 0, "(hint: this an imported file that '%s' depends on...", target->filename.c_str() );
+                EM_error2( 0, "(error originates in an imported file that '%s' depends on...", target->filename.c_str() );
                 EM_error2( 0, "...i.e., '%s' directly or indirectly imports '%s')", target->filename.c_str(), sequence[i]->target->filename.c_str() );
                 // unset target
                 EM_setCurrentTarget( NULL );
@@ -508,8 +557,8 @@ t_CKBOOL Chuck_Compiler::visit( ImportTargetNode * node,
 //       this function updates 'filename' with the first match
 //-----------------------------------------------------------------------------
 static t_CKBOOL matchFilename( std::string & filename,
-                              const std::string & ext,
-                              const std::vector<std::string> & extensions )
+                               const std::string & ext,
+                               const std::vector<std::string> & extensions )
 {
     // test filename as is
     if( ck_fileexists( filename ) && !ck_isdir( filename ) ) return TRUE;
@@ -573,6 +622,10 @@ std::string Chuck_Compiler::resolveFilename( const std::string & filename,
     // extensions to test (if none is present)
     vector<string> exts; exts.push_back(".ck"); exts.push_back(".chug"); exts.push_back(".chug.wasm");
 
+    // log
+    EM_log( CK_LOG_FINE, "resolving filename: '%s' importer: '%s' expand-search: %s",
+            filename.c_str(), importerAbsolutePath.c_str(), expandSearchToGlobal ? "YES" : "NO" );
+
     // check if already absolute path
     if( isAlreadyAbsolutePath )
     {
@@ -610,19 +663,45 @@ std::string Chuck_Compiler::resolveFilename( const std::string & filename,
     // need for expanded search
     if( !isAlreadyAbsolutePath && !hasMatch && expandSearchToGlobal )
     {
-        // get search paths
-        list<string> searchPaths = this->carrier()->chuck->getParamStringList( CHUCK_PARAM_CHUGIN_LIST_IMPORT_PATHS );
+        // TODO: possible caching -- search for match first in registry
+        // match-right between each entry and fname; if found, return entry absolute path
+
+        // search paths: start with system paths
+        std::list<std::string> searchPaths = this->carrier()->chuck->getParamStringList( CHUCK_PARAM_IMPORT_PATH_SYSTEM );
+        // next, process packages paths (e.g., as managed by ChuMP)
+        std::list<std::string> packages_paths = this->carrier()->chuck->getParamStringList( CHUCK_PARAM_IMPORT_PATH_PACKAGES);
+        // append packages paths to search paths
+        append_path_list( searchPaths, packages_paths );
+        // iterate over packages paths | 1.5.4.1 (ge & nshaheed) added
+        for( std::list<std::string>::iterator it = packages_paths.begin(); it != packages_paths.end(); it++ )
+        {
+            // scan for subdirs, but only one-level in each packages path
+            scan_for_dirs_in_directory( *it, "", FALSE, searchPaths );
+        }
+        // finally, add user-managed search paths (no auto-load; all must be @imported)
+        append_path_list( searchPaths, this->carrier()->chuck->getParamStringList( CHUCK_PARAM_IMPORT_PATH_USER) );
+
         // go over paths
         for( list<string>::iterator it = searchPaths.begin(); it != searchPaths.end(); it++ )
         {
             // construct path; expand path again here in case search path has things like ~
-            absolutePath = expand_filepath(*it+fname);
-            // try to match
+            // make sure to get_full_path on the directory itself before appending fname,
+            // FYI get_full_path() verifies presence of file, fname could be without extension e.g., @import "Foo"
+            absolutePath = get_full_path( expand_filepath(*it), TRUE ) + fname;
+            // try to match, by known extensions if none specified
             hasMatch = matchFilename( absolutePath, extension, exts );
+            // log
+            EM_log( CK_LOG_FINER, "testing match: '%s' ('%s')", absolutePath.c_str(), hasMatch ? "yes" : "no" );
             // if match found, break out
             if( hasMatch ) break;
         }
     }
+
+    // log
+    EM_pushlog();
+    if( hasMatch ) EM_log( CK_LOG_FINE, "resolved: '%s'", absolutePath.c_str() );
+    else EM_log( CK_LOG_FINE, "filename '%s' unresolved", filename.c_str() );
+    EM_poplog();
 
     // return value
     return hasMatch ? absolutePath : "";
@@ -667,11 +746,14 @@ t_CKBOOL Chuck_Compiler::compile_entire_file( Chuck_Context * context )
 
 
 //-----------------------------------------------------------------------------
-// name: compile_import_only() // 1.5.2.5 (ge) added
+// name: compile_import_only() | 1.5.4.0 (ge) added
 // desc: import only public definitions (classes and operator overloads)
 //-----------------------------------------------------------------------------
 t_CKBOOL Chuck_Compiler::compile_import_only( Chuck_Context * context )
 {
+    // set the state of the context to done
+    context->progress = Chuck_Context::P_IMPORTING;
+
     // 0th-scan (pass 0)
     if( !type_engine_scan0_prog( env(), context->parse_tree, te_do_import_only ) )
          return FALSE;
@@ -749,17 +831,17 @@ t_CKBOOL type_engine_scan_import( Chuck_Env * env, a_Stmt_List stmt_list,
         if( stmt_list->stmt && stmt_list->stmt->s_type == ae_stmt_import )
         {
             // get the import list
-            a_Import import = stmt_list->stmt->stmt_import.list;
+            a_Import importList = stmt_list->stmt->stmt_import.list;
             // loop over import list
-            while( import )
+            while( importList )
             {
                 // resolve, using importer's absolute path, expandSearch == TRUE
-                string abs = compiler->resolveFilename( import->what, target->absolutePath, TRUE );
+                string abs = compiler->resolveFilename( importList->what, target->absolutePath, TRUE );
                 // if cannot resolve filename
                 if( abs == "" )
                 {
                     // print error
-                    EM_error2( import->where, "no such file: '%s'", import->what );
+                    EM_error2( importList->where, "no such file: '%s'", importList->what );
                     // done
                     return FALSE;
                 }
@@ -772,14 +854,17 @@ t_CKBOOL type_engine_scan_import( Chuck_Env * env, a_Stmt_List stmt_list,
                     string theFile = extract_filepath_file(abs);
                     // get extension
                     string ext = tolower(extract_filepath_ext(abs));
+                    // error string for reporting, in case of error
+                    string errorStr;
                     // test extension
-                    if( ext == ".chug" || ext == ".chug.wasm" )
+                    if( ext == ".chug" || ext == ".wasm" )
                     {
-                        // load the chugin
-                        if( !compiler->importChugin( abs, theFile ) )
+                        // load the chugin, in its own namespace == TRUE
+                        if( !compiler->importChugin( abs, TRUE, theFile, errorStr ) )
                         {
                             // print error (chugin loading only prints to log)
-                            EM_error2( import->where, "cannot load chugin: '%s'...", theFile.c_str() );
+                            EM_error2( importList->where, "cannot load chugin: '%s'...", theFile.c_str() );
+                            EM_error2( 0, "...(reason) %s", errorStr.length() ? errorStr.c_str() : "[none provided, unhelpfully (try running with more verbose log-level)]" );
                             EM_error2( 0, "...in file '%s'", abs.c_str() );
                             // error encountered in chugin load, bailing out
                             return FALSE;
@@ -802,7 +887,7 @@ t_CKBOOL type_engine_scan_import( Chuck_Env * env, a_Stmt_List stmt_list,
                         // make new target with import only
                         t = new Chuck_CompileTarget( te_do_import_only );
                         // set filename, with transplant path, expand search if necessary
-                        if( !compiler->openFile( t, import->what, target, TRUE, import->where ) )
+                        if( !compiler->openFile( t, importList->what, target, TRUE, importList->where ) )
                         {
                             // clean up
                             CK_SAFE_DELETE( t );
@@ -814,9 +899,9 @@ t_CKBOOL type_engine_scan_import( Chuck_Env * env, a_Stmt_List stmt_list,
                     }
                 }
                 // add to target
-                target->dependencies.push_back( ImportTargetNode( t, import->where, import->line ) );
+                target->dependencies.push_back( ImportTargetNode( t, importList->where, importList->line ) );
                 // next in list
-                import = import->next;
+                importList = importList->next;
             }
         }
 
@@ -848,7 +933,7 @@ t_CKBOOL type_engine_scan_import( Chuck_Env * env,
     target->dependencies.clear();
 
     // push indent
-    EM_pushlog();
+    // EM_pushlog();
 
     // go through each of the program sections
     while( prog && ret )
@@ -878,7 +963,7 @@ t_CKBOOL type_engine_scan_import( Chuck_Env * env,
     }
 
     // pop indent
-    EM_poplog();
+    // EM_poplog();
 
     return ret;
 }
@@ -924,7 +1009,7 @@ t_CKBOOL Chuck_Compiler::scan_imports( Chuck_CompileTarget * target )
     target->AST = g_program;
 
     // log
-    EM_log( CK_LOG_FINER, "@import scanning within target '%s'...", target->filename.c_str() );
+    EM_log( CK_LOG_INFO, "@import scanning within target '%s'...", target->filename.c_str() );
 
     // add the current file name to targets (to avoid duplicates/cycles)
     // scan for @import statements
@@ -950,7 +1035,7 @@ t_CKBOOL Chuck_Compiler::scan_imports( Chuck_CompileTarget * target )
         if( t->state != te_compile_complete && t->chugin == NULL && t->AST == NULL )
         {
             // log
-            EM_log( CK_LOG_FINER, "dependency found: '%s'", t->absolutePath.c_str() );
+            EM_log( CK_LOG_FINE, "@import dependency found: '%s'", t->absolutePath.c_str() );
             // parse for scan import on imported file
             if( !scan_imports( t ) )
             {
@@ -1025,9 +1110,11 @@ cleanup:
     EM_setCurrentTarget( NULL );
 
     // commit
-    if( ret ) env()->global()->commit();
+    if( ret ) // 1.5.4.3 (ge) update to call commit_namespaces | was: env()->global()->commit();
+    { env()->commit_namespaces(); }
     // or rollback
-    else env()->global()->rollback();
+    else // 1.5.4.3 (ge) update to call commit_namespaces | was: env()->global()->rollback();
+    { env()->rollback_namespaces(); }
 
     // unload the context from the type-checker
     if( !type_engine_unload_context( env() ) )
@@ -1124,7 +1211,7 @@ error:
 
 //-----------------------------------------------------------------------------
 // name: load_module()
-// desc: load a dll and add it
+// desc: load an internal module and add it to the type system
 //-----------------------------------------------------------------------------
 t_CKBOOL load_module( Chuck_Compiler * compiler, Chuck_Env * env, f_ck_query query,
                       const char * name, const char * nspc )
@@ -1132,20 +1219,23 @@ t_CKBOOL load_module( Chuck_Compiler * compiler, Chuck_Env * env, f_ck_query que
     Chuck_DLL * dll = NULL;
     t_CKBOOL query_failed = FALSE;
 
-    // load osc
+    // create a DLL as a module (here DLL is not actually dynamically loaded
+    // from disk, but rather is a construct that contains a query function
     dll = new Chuck_DLL( compiler->carrier(), name );
     // (fixed: 1.3.0.0) query_failed now catches either failure of load or query
     query_failed = !(dll->load( query ) && dll->query());
+    // check and add contents to type system
     if( query_failed || !type_engine_add_dll( env, dll, nspc ) )
     {
-        EM_error2( 0, "internal error loading module '%s.%s'...",
-                   nspc, name );
-        if( query_failed )
-        EM_error2( 0, "...(reason: %s)", dll->last_error() );
-
+        // print error
+        EM_error2( 0, "internal error loading module '%s.%s'...", nspc, name );
+        // print error if it came from DLL query
+        if( query_failed ) { EM_error2( 0, "...(reason: %s)", dll->last_error() ); }
+        // done
         return FALSE;
     }
 
+    // TODO: SAFE_DELETE( dll ) -- possibly in both error and success cases?
     return TRUE;
 }
 
@@ -1349,17 +1439,18 @@ t_CKBOOL scan_external_modules_in_directory( const string & directory,
     vector<string> & ckfiles2load )
 {
     // expand directory path
-    string path = expand_filepath( string(directory), FALSE );
+    string path = expand_filepath( directory, FALSE );
+    // normalize path
+    path = normalize_directory_name( path );
     // open the directory
     DIR * dir = opendir( path.c_str() );
 
     // cannot open
     if( !dir ) return FALSE;
 
-    // do first read | 1.5.0.0 (ge + eito) #chunreal
-    struct dirent * de = readdir( dir );
     // while( (de = readdir(dir)) ) <- UE5 forces us to not do this
-    while( de != NULL )
+    // iterate over directory entries | 1.5.0.0 (ge + eito) #chunreal
+    for( struct dirent * de = readdir( dir ); de != NULL; de = readdir(dir) )
     {
         t_CKBOOL is_regular = false;
         t_CKBOOL is_directory = false;
@@ -1373,7 +1464,7 @@ t_CKBOOL scan_external_modules_in_directory( const string & directory,
             if( extension_matches( de->d_name, ".ck" ) )
             {
                 // construct absolute path
-                string absolute_path = path + "/" + de->d_name;
+                string absolute_path = path + de->d_name;
                 // append file path
                 ckfiles2load.push_back( absolute_path );
             }
@@ -1381,7 +1472,7 @@ t_CKBOOL scan_external_modules_in_directory( const string & directory,
             else if( extension_matches( de->d_name, extension ) )
             {
                 // construct absolute path
-                string absolute_path = path + "/" + de->d_name;
+                string absolute_path = path + de->d_name;
                 // append module
                 chugins2load.push_back( ChuginFileInfo( de->d_name, absolute_path ) );
             }
@@ -1395,7 +1486,7 @@ t_CKBOOL scan_external_modules_in_directory( const string & directory,
                 strncmp( de->d_name, "..", sizeof( ".." ) ) != 0 )
             {
                 // construct absolute path (use the non-expanded path for consistency when printing)
-                string absolute_path = string(directory) + "/" + de->d_name;
+                string absolute_path = string(directory) + de->d_name;
                 // queue search in sub-directory
                 dirs2search.push_back( absolute_path );
             }
@@ -1420,9 +1511,6 @@ t_CKBOOL scan_external_modules_in_directory( const string & directory,
             chugins2load.push_back( ChuginFileInfo( de->d_name, subdirectory, true ) );
         }
 #endif // #ifdef __PLATFORM_APPLE__
-
-        // read next | 1.5.0.0 (ge) moved here due to #chunreal
-        de = readdir( dir );
     }
 
     // close
@@ -1435,10 +1523,82 @@ t_CKBOOL scan_external_modules_in_directory( const string & directory,
 
 
 //-----------------------------------------------------------------------------
+// name: scan_for_dirs_in_directory() | 1.5.4.1 (ge & nshaheed) added
+// desc: scan all subdirectories within a directory
+//-----------------------------------------------------------------------------
+t_CKBOOL scan_for_dirs_in_directory( const string & directory,
+                                     const string & extensionForSubdirTest,
+                                     t_CKBOOL recursiveSearch,
+                                     list<string> & results )
+{
+    // expand directory path
+    string path = normalize_directory_name( expand_filepath( directory, FALSE ) );
+    // open the directory
+    DIR * dir = opendir( path.c_str() );
+    // cannot open
+    if( !dir ) return FALSE;
+
+    // local results
+    list<string> localResults;
+
+    // do first read | 1.5.0.0 (ge + eito) #chunreal
+    struct dirent * de = readdir( dir );
+    // while( (de = readdir(dir)) ) <- UE5 forces us to not do this
+    for( de = readdir(dir); de != NULL; de = readdir(dir) )
+    {
+        t_CKBOOL is_regularFile = false;
+        t_CKBOOL is_directory = false;
+        // get attributes
+        if( !getDirEntryAttribute( de, is_directory, is_regularFile ) ) continue;
+
+        // check if directory
+        if( is_directory )
+        {
+            // test for special cases (e.g., chugins that are directories)
+            if( extensionForSubdirTest.length() && !subdir_ok2recurse( de->d_name, extensionForSubdirTest ) ) continue;
+
+            // check dir entry
+            if( strncmp( de->d_name, ".", sizeof( "." ) ) != 0 &&
+                strncmp( de->d_name, "..", sizeof( ".." ) ) != 0 )
+            {
+                // construct absolute path (use the non-expanded path for consistency when printing)
+                string absolute_path = string(path) + de->d_name;
+                // queue sub-directory
+                localResults.push_back( normalize_directory_name(absolute_path) );
+            }
+        }
+    }
+
+    // close
+    closedir( dir );
+
+    // sort the local results
+    localResults.sort();
+    // copy local results
+    append_path_list( results, localResults );
+
+    // recurse?
+    if( recursiveSearch )
+    {
+        // iterate over local directoriesug
+        for( list<string>::iterator it = localResults.begin(); it != localResults.end(); it++ )
+        {
+            // scan subdirs in this local dir
+            scan_for_dirs_in_directory( *it, extensionForSubdirTest, recursiveSearch, results );
+        }
+    }
+
+    return TRUE;
+}
+
+
+
+
+//-----------------------------------------------------------------------------
 // name: logChuginLoad() | 1.5.2.5 (ge)
 // desc: local function quick-hand for logging a chugin load
 //-----------------------------------------------------------------------------
-static void logChuginLoad( const string & name, t_CKINT logLevel )
+void logChuginLoad( const string & name, t_CKINT logLevel )
 {
     // log with no newline; print `[chugin] X.chug`
     EM_log_opts( logLevel, EM_LOG_NO_NEWLINE, "[%s] %s ", TC::magenta("chugin",true).c_str(), name.c_str() );
@@ -1448,20 +1608,40 @@ static void logChuginLoad( const string & name, t_CKINT logLevel )
 
 
 //-----------------------------------------------------------------------------
+// name: logCKFileFound() | 1.5.4.1 (ge & nshaheed)
+// desc: local function quick-hand for logging a chuck file found
+//-----------------------------------------------------------------------------
+void logCKFileFound( const string & name, t_CKINT logLevel )
+{
+    // log with no newline; print `[chuck file] X.ck`
+    EM_log_opts( logLevel, EM_LOG_NO_NEWLINE, "[%s] %s ", TC::blue("chuck file",true).c_str(), name.c_str() );
+
+    // print success status
+    EM_log_opts( logLevel, EM_LOG_NO_PREFIX, "[%s]", TC::green("FOUND",true).c_str() );
+}
+
+
+
+
+//-----------------------------------------------------------------------------
 // name: import_chugin_opt()
 // desc: load chugin module by path, with options
 //-----------------------------------------------------------------------------
-t_CKBOOL Chuck_Compiler::import_chugin_opt( const string & path, const string & name )
+t_CKBOOL Chuck_Compiler::import_chugin_opt( const string & path, const string & name, string & errorStr )
 {
     // get env
     Chuck_Env * env = this->env();
 
     // NOTE this (verbose >= 5) is more informative if the chugin crashes, we can see the name
-    EM_log( CK_LOG_INFO, "loading [chugin] %s...", name.c_str() );
+    EM_log( CK_LOG_INFO, "@import loading [chugin] %s...", name.c_str() );
+    EM_log( CK_LOG_FINE, " |- path: '%s'", path.c_str() );
 
     // create chuck DLL data structure
     Chuck_DLL * dll = new Chuck_DLL( this->carrier(), name != "" ? name.c_str() : (extract_filepath_file(path)).c_str() );
     t_CKBOOL query_failed = FALSE;
+
+    // clear error string
+    errorStr = "";
 
     // load (but don't query yet; lazy mode == TRUE)
     if( dll->load( path.c_str(), CK_QUERY_FUNC, TRUE) )
@@ -1479,6 +1659,8 @@ t_CKBOOL Chuck_Compiler::import_chugin_opt( const string & path, const string & 
             EM_pushlog();
             EM_log( CK_LOG_HERALD, "reason: %s", TC::orange(dll->last_error(),true).c_str() );
             EM_poplog();
+            // set error string
+            errorStr = dll->last_error();
             // go to error for cleanup
             goto error;
         }
@@ -1501,6 +1683,8 @@ t_CKBOOL Chuck_Compiler::import_chugin_opt( const string & path, const string & 
             }
             EM_log( CK_LOG_HERALD, "%s '%s'...", TC::blue("skipping",true).c_str(), path.c_str() );
             EM_poplog();
+            // set error string
+            errorStr = dll->last_error();
             // go to error for cleanup
             goto error;
         }
@@ -1515,6 +1699,8 @@ t_CKBOOL Chuck_Compiler::import_chugin_opt( const string & path, const string & 
         EM_pushlog();
         EM_log( CK_LOG_HERALD, "reason: %s", TC::orange(dll->last_error(),true).c_str() );
         EM_poplog();
+        // set error string
+        errorStr = dll->last_error();
         // go to error for cleanup
         goto error;
     }
@@ -1527,6 +1713,7 @@ t_CKBOOL Chuck_Compiler::import_chugin_opt( const string & path, const string & 
     m_importRegistry.commit( dll );
     // commit operator overloads | 1.5.1.5
     env->op_registry.preserve();
+
     // return home successful
     return TRUE;
 
@@ -1536,6 +1723,7 @@ error:
     // rollback operator overloads | 1.5.1.5
     env->op_registry.reset2local();
 
+    // return home :(
     return FALSE;
 }
 
@@ -1554,6 +1742,7 @@ t_CKBOOL Chuck_Compiler::load_external_modules_in_directory(
     vector<ChuginFileInfo> chugins2load;
     vector<string> dirs2search;
     vector<string> ckfiles2load;
+    string errorStr;
 
     // print directory to examine
     EM_log( CK_LOG_HERALD, "searching '%s'", format_dir_name_for_display(directory).c_str() );
@@ -1582,7 +1771,9 @@ t_CKBOOL Chuck_Compiler::load_external_modules_in_directory(
     for( t_CKINT i = 0; i < chugins2load.size(); i++ )
     {
         // load module
-        t_CKBOOL loaded = this->importChugin( chugins2load[i].path, chugins2load[i].filename );
+        // ...in its own namespace == FALSE | 1.5.4.0 (ge) added
+        // ...since already in namespace (e.g., @[external]) from load_external_modules()
+        t_CKBOOL loaded = this->importChugin( chugins2load[i].path, FALSE, chugins2load[i].filename, errorStr );
         // if no error
         if( chugins2load[i].isBundle && loaded) {
             // log
@@ -1642,23 +1833,29 @@ t_CKBOOL Chuck_Compiler::load_external_modules( const string & extension,
     {
         // get chugin name
         std::string & dl_path = *i_dl;
+        // error string
+        std::string error_str;
         // expand the filepath (e.g., ~) | 1.5.2.6 (ge) added
-        dl_path = expand_filepath(dl_path);
+        dl_path = expand_filepath( dl_path );
+        // get full path | 1.5.4.2 (ge) added
+        dl_path = get_full_path( dl_path );
         // check extension, append if no match
-        if( !extension_matches(dl_path, extension) )
+        if( !extension_matches( dl_path, extension ) )
             dl_path += extension;
-        // load the module
-        this->importChugin( dl_path );
+        // load the module, in its own namespace == FALSE
+        this->importChugin( dl_path, FALSE, mini(dl_path.c_str()), error_str );
     }
 
-    // now recurse through search paths and load any DLs or .ck files found
+    // now recurse through search paths and load any .chug files found
     for( list<string>::iterator i_sp = chugin_search_paths.begin();
          i_sp != chugin_search_paths.end(); i_sp++ )
     {
         // expand the filepath (e.g., ~) | 1.5.2.6 (ge) added
-        string dl_path = expand_filepath(*i_sp);
+        string dl_path = expand_filepath( *i_sp );
+        // get full path | 1.5.4.2 (ge) added
+        dl_path = get_full_path( dl_path, TRUE );
         // search directory and load contents
-        load_external_modules_in_directory( *i_sp, extension, recursiveSearch );
+        load_external_modules_in_directory( dl_path, extension, recursiveSearch );
     }
 
     // clear context
@@ -1668,6 +1865,8 @@ t_CKBOOL Chuck_Compiler::load_external_modules( const string & extension,
     // preserve all operator overloads currently in registry | 1.5.1.5
     env->op_registry.preserve();
 
+    // always return true...
+    // a failed chugin load should not prevent chuck from starting
     return TRUE;
 }
 
@@ -1687,6 +1886,7 @@ t_CKBOOL Chuck_Compiler::probe_external_chugin( const string & path, const strin
 
     // NOTE this (verbose >= 5) is more informative if the chugin crashes, we can see the name
     EM_log( CK_LOG_INFO, "probing [chugin] %s...", name.c_str() );
+    EM_log( CK_LOG_FINE, " |- path: '%s'", path.c_str() );
 
     // load the dll, lazy mode
     if( dll->load(path.c_str(), CK_QUERY_FUNC, TRUE) )
@@ -1747,6 +1947,9 @@ t_CKBOOL Chuck_Compiler::probe_external_chugin( const string & path, const strin
         EM_log( CK_LOG_SYSTEM, "reason: %s", TC::orange(dll->last_error(),true).c_str() );
         EM_poplog();
     }
+
+    // clean up | 1.5.4.1 (ge) added
+    CK_SAFE_DELETE( dll );
 
     // done
     return TRUE;
@@ -1855,12 +2058,14 @@ t_CKBOOL Chuck_Compiler::probe_external_modules( const string & extension,
         // get chugin name
         std::string & dl_path = *i_dl;
         // expand the filepath (e.g., ~) | 1.5.2.6 (ge) added
-        dl_path = expand_filepath(dl_path);
+        dl_path = expand_filepath( dl_path );
+        // get full path | 1.5.4.2 (ge) added
+        dl_path = get_full_path( dl_path );
         // check extension, append if no match
-        if( !extension_matches(dl_path, extension) )
+        if( !extension_matches( dl_path, extension ) )
             dl_path += extension;
         // load the module
-        probe_external_chugin( dl_path, dl_path );
+        probe_external_chugin( dl_path, mini(dl_path.c_str()) );
     }
 
     // check
@@ -1874,12 +2079,14 @@ t_CKBOOL Chuck_Compiler::probe_external_modules( const string & extension,
     // push
     EM_pushlog();
 
-    // now recurse through search paths and load any DLs or .ck files found
+    // now recurse through search paths and note any .chug files found
     for( list<string>::iterator i_sp = chugin_search_paths.begin();
          i_sp != chugin_search_paths.end(); i_sp++ )
     {
         // expand the filepath (e.g., ~) | 1.5.2.6 (ge) added
-        string dl_path = expand_filepath(*i_sp);
+        string dl_path = expand_filepath( *i_sp );
+        // get full path | 1.5.4.2 (ge) added
+        dl_path = get_full_path( dl_path, TRUE );
         // search directory and load contents
         probe_external_modules_in_directory( dl_path, extension, recursiveSearch, ck_libs );
     }
@@ -2303,8 +2510,6 @@ t_CKBOOL Chuck_Compiler::openFile( Chuck_CompileTarget * target,
         return FALSE;
     }
 
-    // open file
-    target->fd2parse = fopen( target->absolutePath.c_str(), "rb" );
     // check for directory
     if( ck_isdir( target->absolutePath ) )
     {
@@ -2314,6 +2519,8 @@ t_CKBOOL Chuck_Compiler::openFile( Chuck_CompileTarget * target,
         return FALSE;
     }
 
+    // open file
+    target->fd2parse = fopen( target->absolutePath.c_str(), "rb" );
     // if still unresolved
     if( !target->fd2parse )
     {

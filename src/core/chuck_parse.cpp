@@ -1,25 +1,26 @@
 /*----------------------------------------------------------------------------
   ChucK Strongly-timed Audio Programming Language
-    Compiler and Virtual Machine
+    Compiler, Virtual Machine, and Synthesis Engine
 
   Copyright (c) 2003 Ge Wang and Perry R. Cook. All rights reserved.
     http://chuck.stanford.edu/
     http://chuck.cs.princeton.edu/
 
   This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
+  it under the dual-license terms of EITHER the MIT License OR the GNU
+  General Public License (the latter as published by the Free Software
+  Foundation; either version 2 of the License or, at your option, any
+  later version).
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful and/or
+  interesting, but WITHOUT ANY WARRANTY; without even the implied warranty
+  of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  MIT Licence and/or the GNU General Public License for details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-  U.S.A.
+  You should have received a copy of the MIT License and the GNU General
+  Public License (GPL) along with this program; a copy of the GPL can also
+  be obtained by writing to the Free Software Foundation, Inc., 59 Temple
+  Place, Suite 330, Boston, MA 02111-1307 U.S.A.
 -----------------------------------------------------------------------------*/
 
 //-----------------------------------------------------------------------------
@@ -97,7 +98,7 @@ t_CKBOOL chuck_parse( Chuck_CompileTarget * target )
     // check for conflict
     if( fd && target->codeLiteral != "" )
     {
-        // no warning... quietly let the code literal take precedence | 1.5.3.5 (ge)
+        // no warning... quietly let the code literal take precedence | 1.5.4.0 (ge)
         // CK_FPRINTF_STDERR( "[chuck](parser): (internal) code and FILE descriptor both present!\n" );
         // CK_FPRINTF_STDERR( "[chuck](parser):  |- ignoring FILE descriptor...\n" );
     }
@@ -133,8 +134,8 @@ t_CKBOOL chuck_parse( Chuck_CompileTarget * target )
     }
     else
     {
-        CK_FPRINTF_STDERR( "[chuck](parser): (internal) code and FILE descriptor both NULL!\n" );
-        CK_FPRINTF_STDERR( "[chuck](parser):  |- bailing out...\n" );
+        CK_FPRINTF_STDERR( "[chuck](parser): nothing to parse (empty code / file)...\n" );
+        CK_FPRINTF_STDERR( "[chuck](parser):  |- no action taken\n" );
         return FALSE;
     }
 
@@ -232,6 +233,7 @@ string absyn_loop2str( a_Stmt_Loop stmt_loop );
 string absyn_break2str( a_Stmt_Break stmt_break );
 string absyn_continue2str( a_Stmt_Continue stmt_continue );
 string absyn_return2str( a_Stmt_Return stmt_return );
+string absyn_doc2str( a_Stmt_Doc stmt_doc );
 string absyn_code2str( a_Stmt_Code stmt_code );
 
 
@@ -304,6 +306,14 @@ string absyn_stmt2str( a_Stmt stmt )
             str = absyn_return2str( &stmt->stmt_return );
             break;
 
+        case ae_stmt_import: // import statement
+            // (compile-time evaluated)
+            break;
+
+        case ae_stmt_doc: // doc statement | 1.5.4.4 (ge) added
+            str = absyn_doc2str( &stmt->stmt_doc );
+            break;
+
         case ae_stmt_code:  // code segment
             str = absyn_code2str( &stmt->stmt_code );
             break;
@@ -312,7 +322,6 @@ string absyn_stmt2str( a_Stmt stmt )
         case ae_stmt_switch: // switch statement
         case ae_stmt_case: // case statement
         case ae_stmt_gotolabel: // goto label statement
-        default: // bad
             break;
     }
 
@@ -342,10 +351,21 @@ string absyn2str( a_Exp exp, t_CKBOOL appendSemicolon )
 //-----------------------------------------------------------------------------
 string name_demangle( const string & name )
 {
-    // find the first @
-    size_t pos = name.find_first_of('@');
-    // if found, substring
-    return ( pos != string::npos ) ? name.substr(0,pos) : name;
+    // account for @( for vec2/3/4 literals | 1.5.4.2 (ge) added
+    size_t where = 0;
+    while( where < name.length() )
+    {
+        // find the first '@' that's not "@("
+        size_t pos = name.find_first_of( '@', where );
+        // if not found or if found in the last character, we are done
+        if( pos == string::npos ) return name;
+        // check for (
+        if( pos == name.length()-1 || name[pos+1] != '(' ) return name.substr(where,pos);
+        // otherwise, found @(... keep searching
+        where += 2;
+    }
+    // if reached here, no need to modify
+    return name;
 }
 
 
@@ -416,9 +436,10 @@ string absyn_exp2str( a_Exp exp, t_CKBOOL iterate )
             return "";
         }
 
-        // implicit cast
-        if( exp->cast_to != NULL )
-            break;
+        // implicit cast | 1.5.4.2 (ge) commented out
+        // ...hmm can't remember why this is here
+        // if( exp->cast_to != NULL )
+        //    break;
 
         // break
         if( !iterate ) break;
@@ -838,6 +859,45 @@ string absyn_continue2str( a_Stmt_Continue stmt_continue )
 string absyn_return2str( a_Stmt_Return stmt_return )
 {
     return "return " + absyn_exp2str( stmt_return->val ) + ";";
+}
+
+
+
+
+//-----------------------------------------------------------------------------
+// name: absyn_doc2str() | 1.5.4.4 (ge) added
+// desc: convert abstract syntax doc stmt to string
+//-----------------------------------------------------------------------------
+string absyn_doc2str( a_Stmt_Doc stmt_doc )
+{
+    // check
+    if( !stmt_doc || !stmt_doc->list ) return "@doc [empty]";
+
+    // more than one target in list?
+    if( stmt_doc->list->next == NULL )
+    {
+        // return one item format
+        return "@doc \"" + string(stmt_doc->list->desc) + "\";";
+    }
+
+    // the string to be constructed
+    string str = "@doc [ ";
+    // the current target
+    a_Doc i = stmt_doc->list;
+    // iterate
+    while( i )
+    {
+        // append
+        str += "\"" + string( i->desc ) + "\"";
+        // next
+        i = i->next;
+        // check
+        str += ( i ? ", " : " ");
+    }
+    // end string
+    str += "];";
+    // return it
+    return str;
 }
 
 
