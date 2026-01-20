@@ -1,0 +1,1226 @@
+{
+  "title": "Unit Analyzers",
+  "groups": [
+    {
+      "name": "UAna",
+      "description": "Base class from which all unit analyzer (UAna) types inherit; UAnae (note plural form) can be interconnected using => (chuck operator for synthesis; all UAnae are also UGens) or using =^ (upchuck operator for analysis) -- the operator used will determine how data is passed. When .upchuck() is invoked on a given UAna, the UAna-chain (i.e., UAnae connected via =^) is traversed upstream from the upchucked UAna, and analysis is performed at each UAna along the chain; the analysis results are returned in UAnaBlobs.",
+      "inherits": ["UGen", "Object"],
+      "constructors": [
+        {
+          "constructor": "UAna",
+          "arguments": [],
+          "description": "Default constructor for UAna."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "cval",
+          "return type": "complex",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "index"
+            }
+          ],
+          "description": "Get blob's complex value at index."
+        },
+        {
+          "member function": "cvals",
+          "return type": "complex[]",
+          "arguments": [],
+          "description": "Get blob's complex array."
+        },
+        {
+          "member function": "fval",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "index"
+            }
+          ],
+          "description": "Get blob's float value at index."
+        },
+        {
+          "member function": "fvals",
+          "return type": "float[]",
+          "arguments": [],
+          "description": "Get blob's float array."
+        },
+        {
+          "member function": "isUpConnectedTo",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "UAna",
+              "name": "right"
+            }
+          ],
+          "description": "Is connected to another uana via =^?"
+        },
+        {
+          "member function": "upchuck",
+          "return type": "UAnaBlob",
+          "arguments": [],
+          "description": "Initiate analysis at the UAna and return result."
+        }
+      ]
+    },
+    {
+      "name": "UAnaBlob",
+      "description": "A data structure that contains results associated with UAna analysis. There is a UAnaBlob associated with every UAna. As a UAna is upchucked (using .upchuck()), the result is stored in the UAnaBlob's floating point vector and/or complex vector. The interpretation of the results depends on the specific UAna.",
+      "inherits": ["Object"],
+      "constructors": [
+        {
+          "constructor": "UAnaBlob",
+          "arguments": [],
+          "description": "Default constructor for UAnaBlob."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "cval",
+          "return type": "complex",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "index"
+            }
+          ],
+          "description": "Get blob's complex value at index."
+        },
+        {
+          "member function": "cvals",
+          "return type": "complex[]",
+          "arguments": [],
+          "description": "Get blob's complex array."
+        },
+        {
+          "member function": "fval",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "index"
+            }
+          ],
+          "description": "Get blob's float value at index."
+        },
+        {
+          "member function": "fvals",
+          "return type": "float[]",
+          "arguments": [],
+          "description": "Get blob's float array."
+        },
+        {
+          "member function": "when",
+          "return type": "time",
+          "arguments": [],
+          "description": "Get the time when blob was last upchucked."
+        }
+      ],
+      "member variables": [
+        {
+          "name": "m_cvals",
+          "type": "complex[]",
+          "description": ""
+        },
+        {
+          "name": "m_fvals",
+          "type": "float[]",
+          "description": ""
+        },
+        {
+          "name": "m_when",
+          "type": "time",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "Centroid",
+      "description": "A unit analyzer that computes the spectral centroid from a magnitude spectrum (either from incoming UAna or manually given), and outputs a single number.",
+      "inherits": ["UAna", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/ai/features/centroid.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/genre-classify/feature-extract.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/genre-classify/genre-classify.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Centroid",
+          "arguments": [],
+          "description": "Default constructor for Centroid."
+        }
+      ],
+      "static member functions": [
+        {
+          "static member function": "compute",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "input"
+            }
+          ],
+          "description": "Manually computes the centroid from a float array."
+        }
+      ]
+    },
+    {
+      "name": "Chroma",
+      "description": "A unit analyzer that computes the Chroma features from a magnitude spectrum (either from an incoming UAna, or given manually), and outputs a vector of coefficients.",
+      "inherits": ["UAna", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/ai/features/chroma.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Chroma",
+          "arguments": [],
+          "description": "Default constructor for Chroma."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "compute",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "input"
+            },
+            {
+              "type": "float[]",
+              "name": "output"
+            }
+          ],
+          "description": "Manually computes the Chroma of the input (an FFT spectrum), and stores the results in the output array (Chroma coefficients)."
+        },
+        {
+          "member function": "highOctNum",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "high_oct_num"
+            }
+          ],
+          "description": "Set the highest octave number for Chroma analysis."
+        },
+        {
+          "member function": "highOctNum",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the highest octave number for Chroma analysis."
+        },
+        {
+          "member function": "lowOctNum",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "low_oct_num"
+            }
+          ],
+          "description": "Set the lowest octave number for Chroma analysis."
+        },
+        {
+          "member function": "lowOctNum",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the lowest octave number for Chroma analysis."
+        },
+        {
+          "member function": "sampleRate",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "sample_rate"
+            }
+          ],
+          "description": "Set the sample rate for Chroma analysis."
+        },
+        {
+          "member function": "sampleRate",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get the sample rate for Chroma analysis."
+        }
+      ]
+    },
+    {
+      "name": "Flux",
+      "description": "A unit analyzer that computes the spectral flux between successive magnitude spectra (via incoming UAna, or given manually), and outputs a single number.",
+      "inherits": ["UAna", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/ai/features/flux.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/features/flux0.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Flux",
+          "arguments": [],
+          "description": "Default constructor for Flux."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "reset",
+          "return type": "void",
+          "arguments": [],
+          "description": "Reset the extractor."
+        }
+      ],
+      "static member functions": [
+        {
+          "static member function": "compute",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "lhs"
+            },
+            {
+              "type": "float[]",
+              "name": "rhs"
+            }
+          ],
+          "description": "Manually computes the flux between two frames."
+        },
+        {
+          "static member function": "compute",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "lhs"
+            },
+            {
+              "type": "float[]",
+              "name": "rhs"
+            },
+            {
+              "type": "float[]",
+              "name": "diff"
+            }
+          ],
+          "description": "Manually computes the flux between two frames, and stores the difference in a third array."
+        }
+      ]
+    },
+    {
+      "name": "Kurtosis",
+      "description": "A unit analyzer that computes the kurtosis of a given input array, and outputs a single number.",
+      "inherits": ["UAna", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/ai/features/kurtosis.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Kurtosis",
+          "arguments": [],
+          "description": "Default constructor for Kurtosis."
+        }
+      ],
+      "static member functions": [
+        {
+          "static member function": "compute",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "input"
+            }
+          ],
+          "description": "Manually computes the kurtosis of a given input array."
+        }
+      ]
+    },
+    {
+      "name": "MFCC",
+      "description": "A unit analyzer that computes Mel-frequency Cepstral Coefficients (MFCCs), and outputs a vector of coefficients.",
+      "inherits": ["UAna", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/ai/features/mfcc-basic.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/features/mfcc-mean.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/genre-classify/feature-extract.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/genre-classify/genre-classify.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "MFCC",
+          "arguments": [],
+          "description": "Default constructor for MFCC."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "compute",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "input"
+            },
+            {
+              "type": "float[]",
+              "name": "output"
+            }
+          ],
+          "description": "Manually computes the MFCC of the input (an FFT spectrum), and stores the results in the output array (MFCC coefficients)."
+        },
+        {
+          "member function": "numCoeffs",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "n"
+            }
+          ],
+          "description": "Set the number of MFCC coefficients to compute."
+        },
+        {
+          "member function": "numCoeffs",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the number of MFCC coefficients to compute."
+        },
+        {
+          "member function": "numFilters",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "n"
+            }
+          ],
+          "description": "Set the number of linearly spaced filters in MEL space."
+        },
+        {
+          "member function": "numFilters",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the number of linearly spaced filters in MEL space."
+        },
+        {
+          "member function": "sampleRate",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "sr"
+            }
+          ],
+          "description": "Set the sample rate for MFCC analysis; NOTE: by default this is set to current ChucK sample rate."
+        },
+        {
+          "member function": "sampleRate",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the sample rate for MFCC analysis."
+        }
+      ]
+    },
+    {
+      "name": "RMS",
+      "description": "A unit analyzer that computes the root-mean-square (RMS) power mean from a magnitude spectrum (either from an incoming UAna, or given manually), and outputs a single number.",
+      "inherits": ["UAna", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/ai/features/rms.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "RMS",
+          "arguments": [],
+          "description": "Default constructor for RMS."
+        }
+      ],
+      "static member functions": [
+        {
+          "static member function": "compute",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "input"
+            }
+          ],
+          "description": "Manually computes the RMS from a float array."
+        }
+      ]
+    },
+    {
+      "name": "RollOff",
+      "description": "A unit analyzer that computes the spectral rolloff from a magnitude spectrum (either from incoming UAna, or given manually), and outputs a single number.",
+      "inherits": ["UAna", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/ai/features/rolloff.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/features/rolloff2.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "RollOff",
+          "arguments": [],
+          "description": "Default constructor for RollOff."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "percent",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float",
+              "name": "percent"
+            }
+          ],
+          "description": "Set the percentage for computing rolloff."
+        },
+        {
+          "member function": "percent",
+          "return type": "float",
+          "arguments": [],
+          "description": "Get the percentage specified for the rolloff."
+        }
+      ],
+      "static member functions": [
+        {
+          "static member function": "compute",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "input"
+            },
+            {
+              "type": "float",
+              "name": "percent"
+            }
+          ],
+          "description": "Manually computes the rolloff from a float array."
+        }
+      ]
+    },
+    {
+      "name": "SFM",
+      "description": "A unit analyzer that computes the Spectral Flatness Measure (SFM) from a magnitude spectrum (either from an incoming UAna, or given manually), and outputs a single number.",
+      "inherits": ["UAna", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/ai/features/sfm.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "SFM",
+          "arguments": [],
+          "description": "Default constructor for SFM."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "compute",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "input"
+            },
+            {
+              "type": "float[]",
+              "name": "output"
+            }
+          ],
+          "description": "Manually computes the SFM of the input (an FFT spectrum), and stores the results in the output array (SFM coefficients)."
+        },
+        {
+          "member function": "nrBands",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "nr_bands"
+            }
+          ],
+          "description": "Set the number of frequency bands to use for SFM analysis."
+        },
+        {
+          "member function": "nrBands",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the number of frequency bands to use for SFM analysis."
+        }
+      ]
+    },
+    {
+      "name": "ZeroX",
+      "description": "Zero crossing detector.",
+      "inherits": ["UAna", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/ai/features/zerox.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "ZeroX",
+          "arguments": [],
+          "description": "Default constructor for ZeroX."
+        }
+      ],
+      "static member functions": [
+        {
+          "static member function": "compute",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "input"
+            }
+          ],
+          "description": "Manually computes the zero crossing rate for an array."
+        }
+      ]
+    },
+    {
+      "name": "AutoCorr",
+      "description": "A unit analyzer that computes auto-correlation of the incoming analysis frame.",
+      "inherits": ["UAna", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/analysis/autocorr.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "AutoCorr",
+          "arguments": [],
+          "description": "Default constructor for AutoCorr."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "normalize",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "flag"
+            }
+          ],
+          "description": ""
+        },
+        {
+          "member function": "normalize",
+          "return type": "int",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "static member functions": [
+        {
+          "static member function": "compute",
+          "return type": "float[]",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "input"
+            },
+            {
+              "type": "int",
+              "name": "normalize"
+            },
+            {
+              "type": "float[]",
+              "name": "output"
+            }
+          ],
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "DCT",
+      "description": "Computes the Discrete Cosine Transform on incoming audio samples, and outputs the result via its UAnaBlob as real values in the D.C. spectrum. A buffering mechanism maintains the previous DCT size # of samples, allowing DCT to be taken at any point in time, on demand (via .upchuck() or by upchucking a downstream UAna; see UAna documentation). The window size (along with an arbitrary window shape) is controlled via the .window method. The hop size is complete dynamic, and is throttled by how time is advanced.",
+      "inherits": ["UAna", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/analysis/dct.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "DCT",
+          "arguments": [],
+          "description": "Default constructor for DCT."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "size",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "size"
+            }
+          ],
+          "description": "Set the DCT size."
+        },
+        {
+          "member function": "size",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the DCT size."
+        },
+        {
+          "member function": "spectrum",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "buffer"
+            }
+          ],
+          "description": "Manually retrieve the results of a transform."
+        },
+        {
+          "member function": "transform",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "from"
+            }
+          ],
+          "description": "Manually take DCT (as opposed to using .upchuck() / upchuck operator)."
+        },
+        {
+          "member function": "window",
+          "return type": "float[]",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "win"
+            }
+          ],
+          "description": "Set/get the transform window/size."
+        },
+        {
+          "member function": "windowSize",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the current window size."
+        }
+      ]
+    },
+    {
+      "name": "FeatureCollector",
+      "description": "Turns UAna input into a single feature vector, upon .upchuck()",
+      "inherits": ["UAna", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/ai/genre-classify/feature-extract.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/genre-classify/genre-classify.ck",
+        "https://chuck.stanford.edu/doc/examples/analysis/concat.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "FeatureCollector",
+          "arguments": [],
+          "description": "Default constructor for FeatureCollector."
+        }
+      ]
+    },
+    {
+      "name": "FFT",
+      "description": "Computes the Fast Fourier Transform on incoming audio samples, and outputs the result via its UAnaBlob as both the complex spectrum and the magnitude spectrum. A buffering mechanism maintains the previous FFTsize # of samples, allowing FFT's to be taken at any point in time, on demand (via .upchuck() or by upchucking a downstream UAna. The window size (along with an arbitrary window shape) is controlled via the .window method. The hop size is complete dynamic, and is throttled by how time is advanced.",
+      "inherits": ["UAna", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/analysis/fft.ck",
+        "https://chuck.stanford.edu/doc/examples/analysis/fft2.ck",
+        "https://chuck.stanford.edu/doc/examples/analysis/fft3.ck",
+        "https://chuck.stanford.edu/doc/examples/analysis/ifft.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/genre-classify/feature-extract.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/genre-classify/genre-classify.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "FFT",
+          "arguments": [],
+          "description": "Default constructor for FFT."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "size",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "size"
+            }
+          ],
+          "description": "Set the FFT-size."
+        },
+        {
+          "member function": "size",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the FFT-size."
+        },
+        {
+          "member function": "spectrum",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "complex[]",
+              "name": "buffer"
+            }
+          ],
+          "description": "Manually retrieve the results of a transform."
+        },
+        {
+          "member function": "transform",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "from"
+            }
+          ],
+          "description": "Manually take FFT (as opposed to using .upchuck() / upchuck operator)"
+        },
+        {
+          "member function": "window",
+          "return type": "float[]",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "win"
+            }
+          ],
+          "description": "Set/get the transform window/size."
+        },
+        {
+          "member function": "windowSize",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the current window size."
+        }
+      ]
+    },
+    {
+      "name": "Flip",
+      "description": "Turn N (size) audio samples into a Unit Analyzer audio analysis frame.",
+      "inherits": ["UAna", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/analysis/flip.ck",
+        "https://chuck.stanford.edu/doc/examples/analysis/autocorr.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/features/zerox.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Flip",
+          "arguments": [],
+          "description": "Default constructor for Flip."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "output",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "buffer"
+            }
+          ],
+          "description": "Manually take Flip (as opposed to using .upchuck() / upchuck operator)"
+        },
+        {
+          "member function": "size",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "size"
+            }
+          ],
+          "description": "Set the Flip size."
+        },
+        {
+          "member function": "size",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the Flip size."
+        },
+        {
+          "member function": "transform",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "from"
+            }
+          ],
+          "description": "Manually take Flip (as opposed to using .upchuck() / upchuck operator)."
+        },
+        {
+          "member function": "window",
+          "return type": "float[]",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "win"
+            }
+          ],
+          "description": "Set/get the transform window/size."
+        },
+        {
+          "member function": "windowSize",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the current window size."
+        }
+      ]
+    },
+    {
+      "name": "IDCT",
+      "description": "Computes the inverse Discrete Cosine Transform on incoming spectral frames (on demand), and overlap-adds the results into its internal buffer, ready to be sent to other UGen's connected via =>. The window size (along with an arbitrary window shape) is controlled via the .window method.",
+      "inherits": ["UAna", "UGen", "Object"],
+      "constructors": [
+        {
+          "constructor": "IDCT",
+          "arguments": [],
+          "description": "Default constructor for IDCT."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "samples",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "buffer"
+            }
+          ],
+          "description": "Manually get result of previous IDCT."
+        },
+        {
+          "member function": "size",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "size"
+            }
+          ],
+          "description": "Set the IDCT size."
+        },
+        {
+          "member function": "size",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the IDCT size."
+        },
+        {
+          "member function": "transform",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "complex[]",
+              "name": "from"
+            }
+          ],
+          "description": "Manually take IDCT (as opposed to using .upchuck() / upchuck operator)."
+        },
+        {
+          "member function": "window",
+          "return type": "float[]",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "win"
+            }
+          ],
+          "description": "Set/get the transform window/size."
+        },
+        {
+          "member function": "windowSize",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the current window size."
+        }
+      ]
+    },
+    {
+      "name": "IFFT",
+      "description": "Computes the inverse Fast Fourier Transform on incoming spectral frames (on demand), and overlap-adds the results into its internal buffer, ready to be sent to other UGen's connected via =>. The window size (along with an arbitrary window shape) is controlled via the .window method.",
+      "inherits": ["UAna", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/analysis/ifft.ck",
+        "https://chuck.stanford.edu/doc/examples/analysis/ifft2.ck",
+        "https://chuck.stanford.edu/doc/examples/analysis/ifft3.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "IFFT",
+          "arguments": [],
+          "description": "Default constructor for IFFT."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "samples",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "buffer"
+            }
+          ],
+          "description": "Manually take IFFT (as opposed to using .upchuck() / upchuck operator)"
+        },
+        {
+          "member function": "size",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "size"
+            }
+          ],
+          "description": "Set the IFFT-size."
+        },
+        {
+          "member function": "size",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the IFFT-size."
+        },
+        {
+          "member function": "transform",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "complex[]",
+              "name": "from"
+            }
+          ],
+          "description": "Manually take IFFT (as opposed to using .upchuck() / upchuck operator)"
+        },
+        {
+          "member function": "window",
+          "return type": "float[]",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "win"
+            }
+          ],
+          "description": "Set/get the transform window/size."
+        },
+        {
+          "member function": "windowSize",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the current window size."
+        }
+      ]
+    },
+    {
+      "name": "UnFlip",
+      "description": "Turns UAna frames into audio samples, via overlap add.",
+      "inherits": ["UAna", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/analysis/flip.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "UnFlip",
+          "arguments": [],
+          "description": "Default constructor for UnFlip."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "output",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "buffer"
+            }
+          ],
+          "description": "Manually take pilF (as opposed to using .upchuck() / upchuck operator)"
+        },
+        {
+          "member function": "size",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "size"
+            }
+          ],
+          "description": "Set the pilF size."
+        },
+        {
+          "member function": "size",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the pilF size."
+        },
+        {
+          "member function": "transform",
+          "return type": "void",
+          "arguments": [],
+          "description": "Manually take pilF (as opposed to using .upchuck() / upchuck operator)."
+        },
+        {
+          "member function": "window",
+          "return type": "float[]",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "win"
+            }
+          ],
+          "description": "Set/get the transform window/size."
+        },
+        {
+          "member function": "windowSize",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the current window size."
+        }
+      ]
+    },
+    {
+      "name": "XCorr",
+      "description": "A unit analyzer that computes cross-correlation between two incoming analysis frames.",
+      "inherits": ["UAna", "UGen", "Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/analysis/xcorr.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "XCorr",
+          "arguments": [],
+          "description": "Default constructor for XCorr."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "normalize",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "flag"
+            }
+          ],
+          "description": ""
+        },
+        {
+          "member function": "normalize",
+          "return type": "int",
+          "arguments": [],
+          "description": ""
+        }
+      ],
+      "static member functions": [
+        {
+          "static member function": "compute",
+          "return type": "float[]",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "f"
+            },
+            {
+              "type": "float[]",
+              "name": "g"
+            },
+            {
+              "type": "int",
+              "name": "normalize"
+            },
+            {
+              "type": "float[]",
+              "name": "y"
+            }
+          ],
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "Windowing",
+      "description": "",
+      "inherits": ["Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/analysis/win.ck",
+        "https://chuck.stanford.edu/doc/examples/analysis/xsynth.ck",
+        "https://chuck.stanford.edu/doc/examples/analysis/tracking/pitch-track.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/features/rolloff2.ck",
+        "https://chuck.stanford.edu/doc/examples/analysis/win.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/genre-classify/feature-extract.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/genre-classify/genre-classify.ck"
+      ],
+      "static member functions": [
+        {
+          "static member function": "blackmanHarris",
+          "return type": "float[]",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "size"
+            }
+          ],
+          "description": ""
+        },
+        {
+          "static member function": "hamming",
+          "return type": "float[]",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "size"
+            }
+          ],
+          "description": ""
+        },
+        {
+          "static member function": "hann",
+          "return type": "float[]",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "size"
+            }
+          ],
+          "description": ""
+        },
+        {
+          "static member function": "rectangle",
+          "return type": "float[]",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "size"
+            }
+          ],
+          "description": ""
+        },
+        {
+          "static member function": "triangle",
+          "return type": "float[]",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "size"
+            }
+          ],
+          "description": ""
+        }
+      ]
+    }
+  ]
+}

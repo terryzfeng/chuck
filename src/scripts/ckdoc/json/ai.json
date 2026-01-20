@@ -1,0 +1,1513 @@
+{
+  "title": "AI Tools",
+  "groups": [
+    {
+      "name": "MLP",
+      "description": "A multilayer perceptron (MLP)--a basic artificial neural network--that maps an input layer to an output layer across a number of fully-connected hidden layers. This implementation can be trained either 1) by using one of the comprehensive .train() functions OR 2) by iteratively calling .forward() and .backprop() for each input-output observation, and using .shuffle() for each epoch. Commonly used for regression or classification.",
+      "inherits": ["Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/ai/mlp/mlp.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/mlp/mlp-manual.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/mlp/model-load.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/mlp/model-save.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "MLP",
+          "arguments": [],
+          "description": "Default constructor for MLP."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "backprop",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "output"
+            },
+            {
+              "type": "float",
+              "name": "learningRate"
+            }
+          ],
+          "description": "(Manually) backpropagate from the output layer, for a single input-output observation; compute the gradient of the loss function with respect to the weights in the network, one layer at a time."
+        },
+        {
+          "member function": "forward",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "input"
+            }
+          ],
+          "description": "(Manually) forward-propagate the input vector through the network."
+        },
+        {
+          "member function": "getActivations",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "layer"
+            },
+            {
+              "type": "float[]",
+              "name": "activations"
+            }
+          ],
+          "description": "Get the activations of the given layer, after a manual .forward()."
+        },
+        {
+          "member function": "getBiases",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "layer"
+            },
+            {
+              "type": "float[]",
+              "name": "biases"
+            }
+          ],
+          "description": "Get the biases of the given layer."
+        },
+        {
+          "member function": "getGradients",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "layer"
+            },
+            {
+              "type": "float[]",
+              "name": "gradients"
+            }
+          ],
+          "description": "Get the gradients of the given layer, after a manual .backprop()."
+        },
+        {
+          "member function": "getWeights",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "layer"
+            },
+            {
+              "type": "float[][]",
+              "name": "weights"
+            }
+          ],
+          "description": "Get the weights of the given layer."
+        },
+        {
+          "member function": "init",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int[]",
+              "name": "nodesPerLayer"
+            }
+          ],
+          "description": "Initialize the MLP with the given number of nodes per layer."
+        },
+        {
+          "member function": "init",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int[]",
+              "name": "nodesPerLayer"
+            },
+            {
+              "type": "int[]",
+              "name": "activationPerLayer"
+            }
+          ],
+          "description": "Initialize the MLP with the given number of nodes per layer and the given activation function per layer, as specified in 'activationPerLayer' (options: AI.Linear, AI.Sigmoid, AI.ReLU, AI.Tanh, or AI.Softmax)."
+        },
+        {
+          "member function": "init",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int[]",
+              "name": "nodesPerLayer"
+            },
+            {
+              "type": "int",
+              "name": "activationFunction"
+            }
+          ],
+          "description": "Initialize the MLP with the given number of nodes per layer and the given activation function for all layers (options: AI.Linear, AI.Sigmoid, AI.ReLU, AI.Tanh, or AI.Softmax)."
+        },
+        {
+          "member function": "load",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "filename"
+            }
+          ],
+          "description": "Load a MLP model from file."
+        },
+        {
+          "member function": "predict",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "input"
+            },
+            {
+              "type": "float[]",
+              "name": "output"
+            }
+          ],
+          "description": "Predict the output layer from an input layer."
+        },
+        {
+          "member function": "save",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "filename"
+            }
+          ],
+          "description": "Save the MLP model to file."
+        },
+        {
+          "member function": "train",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[][]",
+              "name": "inputs"
+            },
+            {
+              "type": "float[][]",
+              "name": "outputs"
+            }
+          ],
+          "description": "Train the MLP with the given input and output observations with default learning rate=.01 and epochs=100. (Also see MLP.train(inputs,outputs,learningRate,epochs).)"
+        },
+        {
+          "member function": "train",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[][]",
+              "name": "inputs"
+            },
+            {
+              "type": "float[][]",
+              "name": "outputs"
+            },
+            {
+              "type": "float",
+              "name": "learningRate"
+            },
+            {
+              "type": "int",
+              "name": "epochs"
+            }
+          ],
+          "description": "Train the MLP with the given input and output observations, the learning rate, and number of epochs."
+        }
+      ],
+      "static member functions": [
+        {
+          "static member function": "shuffle",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[][]",
+              "name": "X"
+            },
+            {
+              "type": "float[][]",
+              "name": "Y"
+            }
+          ],
+          "description": "(Manually) shuffle the given input and output vectors."
+        }
+      ]
+    },
+    {
+      "name": "KNN",
+      "description": "A basic k-NN utility that searches for k nearest neighbors from a set of observations / feature vectors. (Also see KNN2. The differrence between KNN and KNN2 is that KNN does not deal with labels whereas KNN2 is designed to work with labels.)",
+      "inherits": ["Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/ai/knn/knn-search.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "KNN",
+          "arguments": [],
+          "description": "Default constructor for KNN."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "search",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "query"
+            },
+            {
+              "type": "int",
+              "name": "k"
+            },
+            {
+              "type": "int[]",
+              "name": "indices"
+            }
+          ],
+          "description": "Search for the 'k' nearest neighbors of 'query' and return their corresponding indices."
+        },
+        {
+          "member function": "search",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "query"
+            },
+            {
+              "type": "int",
+              "name": "k"
+            },
+            {
+              "type": "int[]",
+              "name": "indices"
+            },
+            {
+              "type": "float[][]",
+              "name": "observations"
+            }
+          ],
+          "description": "Search for the 'k' nearest neighbors of 'query' and return their corresponding indices and observations."
+        },
+        {
+          "member function": "train",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "float[][]",
+              "name": "x"
+            }
+          ],
+          "description": "Train the KNN model with the given observations 'x'"
+        },
+        {
+          "member function": "weigh",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "weights"
+            }
+          ],
+          "description": "Set the weights for each dimension in the data."
+        }
+      ]
+    },
+    {
+      "name": "KNN2",
+      "description": "A k-NN utility that predicts probabilities of class membership based on distances from a test input to its k nearest neighbors. (Also see KNN. The differrence between KNN and KNN2 is that KNN does not deal with labels whereas KNN2 is designed to work with labels.)",
+      "inherits": ["Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/ai/knn/knn2-classify.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/knn/knn2-search.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "KNN2",
+          "arguments": [],
+          "description": "Default constructor for KNN2."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "predict",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "query"
+            },
+            {
+              "type": "int",
+              "name": "k"
+            },
+            {
+              "type": "float[]",
+              "name": "prob"
+            }
+          ],
+          "description": "Predict the output probabilities 'prob' given unlabeled test input 'query' based on distances to 'k' nearest neighbors."
+        },
+        {
+          "member function": "search",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "query"
+            },
+            {
+              "type": "int",
+              "name": "k"
+            },
+            {
+              "type": "int[]",
+              "name": "labels"
+            }
+          ],
+          "description": "Search for the 'k' nearest neighbors of 'query' and return their labels."
+        },
+        {
+          "member function": "search",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "query"
+            },
+            {
+              "type": "int",
+              "name": "k"
+            },
+            {
+              "type": "int[]",
+              "name": "labels"
+            },
+            {
+              "type": "int[]",
+              "name": "indices"
+            }
+          ],
+          "description": "Search for the 'k' nearest neighbors of 'query' and return their labels and indices."
+        },
+        {
+          "member function": "search",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "query"
+            },
+            {
+              "type": "int",
+              "name": "k"
+            },
+            {
+              "type": "int[]",
+              "name": "labels"
+            },
+            {
+              "type": "int[]",
+              "name": "indices"
+            },
+            {
+              "type": "float[][]",
+              "name": "observations"
+            }
+          ],
+          "description": "Search for the 'k' nearest neighbors of 'query' and return their labels, indices, and observations."
+        },
+        {
+          "member function": "train",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "float[][]",
+              "name": "x"
+            },
+            {
+              "type": "int[]",
+              "name": "labels"
+            }
+          ],
+          "description": "Train the KNN model with the given observations 'x' and corresponding labels."
+        },
+        {
+          "member function": "weigh",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "weights"
+            }
+          ],
+          "description": "Set the weights for each dimension in the data."
+        }
+      ]
+    },
+    {
+      "name": "HMM",
+      "description": "A hidden markov model (HMM) utility that generates a sequence of observations based on the training data.",
+      "inherits": ["Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/ai/hmm/hmm-load.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/hmm/hmm-train.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "HMM",
+          "arguments": [],
+          "description": "Default constructor for HMM."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "generate",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "length"
+            },
+            {
+              "type": "int[]",
+              "name": "output"
+            }
+          ],
+          "description": "Generate a sequence of observations of the given length."
+        },
+        {
+          "member function": "load",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "initiailDistribution"
+            },
+            {
+              "type": "float[][]",
+              "name": "transitionMatrix"
+            },
+            {
+              "type": "float[][]",
+              "name": "emissionMatrix"
+            }
+          ],
+          "description": "Initialize the HMM model with the given initial state distribution, transition matrix, and emission matrix."
+        },
+        {
+          "member function": "train",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "numStates"
+            },
+            {
+              "type": "int",
+              "name": "numEmissions"
+            },
+            {
+              "type": "int[]",
+              "name": "observations"
+            }
+          ],
+          "description": "Train the HMM model with the given observations."
+        }
+      ]
+    },
+    {
+      "name": "SVM",
+      "description": "A support vector machine (SVM) utility trains a model and predicts output based on new input.",
+      "inherits": ["Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/ai/svm/svm-basic.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "SVM",
+          "arguments": [],
+          "description": "Default constructor for SVM."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "predict",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "x"
+            },
+            {
+              "type": "float[]",
+              "name": "y"
+            }
+          ],
+          "description": "Predict the output 'y' given the input 'x'."
+        },
+        {
+          "member function": "train",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "float[][]",
+              "name": "x"
+            },
+            {
+              "type": "float[][]",
+              "name": "y"
+            }
+          ],
+          "description": "Train the SVM model with the given samples 'x' and 'y'."
+        }
+      ]
+    },
+    {
+      "name": "Word2Vec",
+      "description": "A word embeddings utility that maps words to vectors; can load a model and perform similarity retrieval.",
+      "inherits": ["Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/ai/word2vec/word2vec-basic.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/word2vec/poem-i-feel.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/word2vec/poem-randomwalk.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/word2vec/poem-spew.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/word2vec/poem-ungenerate.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/word2vec/word2vec-prompt.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Word2Vec",
+          "arguments": [],
+          "description": "Default constructor for Word2Vec."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "contains",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "word"
+            }
+          ],
+          "description": "Query if 'word' is in the current model."
+        },
+        {
+          "member function": "dim",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get number of dimensions for word embedding."
+        },
+        {
+          "member function": "getSimilar",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "word"
+            },
+            {
+              "type": "int",
+              "name": "k"
+            },
+            {
+              "type": "string[]",
+              "name": "output"
+            }
+          ],
+          "description": "Get the k most similar words to the given word; return false if 'word' is not in model."
+        },
+        {
+          "member function": "getSimilar",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "vec"
+            },
+            {
+              "type": "int",
+              "name": "k"
+            },
+            {
+              "type": "string[]",
+              "name": "output"
+            }
+          ],
+          "description": "Get the k most similar words to the given vector."
+        },
+        {
+          "member function": "getVector",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "word"
+            },
+            {
+              "type": "float[]",
+              "name": "output"
+            }
+          ],
+          "description": "Get the vector of the given word; returns false if 'word' is not in model."
+        },
+        {
+          "member function": "load",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "path"
+            }
+          ],
+          "description": "Load pre-trained word embedding model from the given path."
+        },
+        {
+          "member function": "load",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "path"
+            },
+            {
+              "type": "int",
+              "name": "useKDTreeDim"
+            }
+          ],
+          "description": "Load pre-trained word embedding model from the given path; will use KDTree for similarity searches if the data dimension is less than or equal to 'useKDTreeDim'. Set 'useKDTreeDim' to 0 to use linear (brute force) similarity search; set 'useKDTreeDim' to less than 0 to always use KDTree."
+        },
+        {
+          "member function": "minMax",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "mins"
+            },
+            {
+              "type": "float[]",
+              "name": "maxs"
+            }
+          ],
+          "description": "Retrieve the minimums and maximums for each dimension."
+        },
+        {
+          "member function": "size",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get number of words in dictionary."
+        },
+        {
+          "member function": "useKDTree",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get whether a KDTree is used for similarity search."
+        }
+      ]
+    },
+    {
+      "name": "PCA",
+      "description": "A principle component analysis (PCA) utility, commonly used for dimensionality reduction.",
+      "inherits": ["Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/ai/pca/pca.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "PCA",
+          "arguments": [],
+          "description": "Default constructor for PCA."
+        }
+      ],
+      "static member functions": [
+        {
+          "static member function": "reduce",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[][]",
+              "name": "input"
+            },
+            {
+              "type": "int",
+              "name": "D"
+            },
+            {
+              "type": "float[][]",
+              "name": "output"
+            }
+          ],
+          "description": "Dimension-reduce 'input' (NxM) to 'output' (NxD) as the projection of the input data onto its first 'D' principle components."
+        }
+      ]
+    },
+    {
+      "name": "Wekinator",
+      "description": "A Wekinator utility that maps input vectors to output vectors, commonly used for interactive machine learning combining human-computer interaction and ML. Based on Rebecca Fiebrink's Wekinator framework.",
+      "inherits": ["Object"],
+      "examples": [
+        "https://chuck.stanford.edu/doc/examples/ai/wekinator/wekinator-basic.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/wekinator/wekinator-customize.ck",
+        "https://chuck.stanford.edu/doc/examples/ai/wekinator/wekinator-import.ck"
+      ],
+      "constructors": [
+        {
+          "constructor": "Wekinator",
+          "arguments": [],
+          "description": "Default constructor for Wekinator."
+        }
+      ],
+      "member functions": [
+        {
+          "member function": "add",
+          "return type": "void",
+          "arguments": [],
+          "description": "Add current inputs and outputs to the observations."
+        },
+        {
+          "member function": "add",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "inputs"
+            },
+            {
+              "type": "float[]",
+              "name": "outputs"
+            }
+          ],
+          "description": "Add given inputs and outputs to the observations."
+        },
+        {
+          "member function": "add",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "output_index"
+            },
+            {
+              "type": "float[]",
+              "name": "inputs"
+            },
+            {
+              "type": "float[]",
+              "name": "outputs"
+            }
+          ],
+          "description": "Add given inputs and outputs to the observations for the specified output."
+        },
+        {
+          "member function": "clear",
+          "return type": "void",
+          "arguments": [],
+          "description": "Clear everything except the global properties."
+        },
+        {
+          "member function": "clearAllObs",
+          "return type": "void",
+          "arguments": [],
+          "description": "Clear all observations."
+        },
+        {
+          "member function": "clearAllObs",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "output_index"
+            }
+          ],
+          "description": "Clear all observations for the specified output."
+        },
+        {
+          "member function": "clearObs",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "lo"
+            },
+            {
+              "type": "int",
+              "name": "hi"
+            }
+          ],
+          "description": "Clear the observations by id range."
+        },
+        {
+          "member function": "clearObs",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "output_index"
+            },
+            {
+              "type": "int",
+              "name": "lo"
+            },
+            {
+              "type": "int",
+              "name": "hi"
+            }
+          ],
+          "description": "Clear the observations by id range for the specified output."
+        },
+        {
+          "member function": "deleteLastRound",
+          "return type": "void",
+          "arguments": [],
+          "description": "Delete the last round of observations."
+        },
+        {
+          "member function": "exportObs",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "filename"
+            }
+          ],
+          "description": "Export the observations to a file."
+        },
+        {
+          "member function": "exportObs",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "output_index"
+            },
+            {
+              "type": "string",
+              "name": "filename"
+            }
+          ],
+          "description": "Export the observations for the specified output to a file."
+        },
+        {
+          "member function": "getAllRecordStatus",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the record status for all outputs."
+        },
+        {
+          "member function": "getAllRunStatus",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the run status for all outputs."
+        },
+        {
+          "member function": "getObs",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[][]",
+              "name": "obs"
+            }
+          ],
+          "description": "Get the observations in the Wekinator."
+        },
+        {
+          "member function": "getObs",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "output_index"
+            },
+            {
+              "type": "float[][]",
+              "name": "obs"
+            }
+          ],
+          "description": "Get the observations for the specified output in the Wekinator."
+        },
+        {
+          "member function": "getOutputProperty",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "output_index"
+            },
+            {
+              "type": "string",
+              "name": "property_name"
+            },
+            {
+              "type": "int[]",
+              "name": "property_value"
+            }
+          ],
+          "description": "Get the output property of the Wekinator. See the Wekinator documentation for more information."
+        },
+        {
+          "member function": "getOutputPropertyFloat",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "output_index"
+            },
+            {
+              "type": "int",
+              "name": "property_type"
+            },
+            {
+              "type": "string",
+              "name": "property_name"
+            }
+          ],
+          "description": "Get the output property of the Wekinator. See the Wekinator documentation for more information."
+        },
+        {
+          "member function": "getOutputPropertyInt",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "output_index"
+            },
+            {
+              "type": "string",
+              "name": "property_name"
+            }
+          ],
+          "description": "Get the output property of the Wekinator. See the Wekinator documentation for more information."
+        },
+        {
+          "member function": "getOutputPropertyInt",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "output_index"
+            },
+            {
+              "type": "int",
+              "name": "property_type"
+            },
+            {
+              "type": "string",
+              "name": "property_name"
+            }
+          ],
+          "description": "Get the output property of the Wekinator. See the Wekinator documentation for more information."
+        },
+        {
+          "member function": "getOutputRecordStatus",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "output_index"
+            }
+          ],
+          "description": "Get the record status for the specified output."
+        },
+        {
+          "member function": "getOutputRunStatus",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "output_index"
+            }
+          ],
+          "description": "Get the run status for the specified output."
+        },
+        {
+          "member function": "getPropertyFloat",
+          "return type": "float",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "property_type"
+            },
+            {
+              "type": "string",
+              "name": "property_name"
+            }
+          ],
+          "description": "Get the property of the Wekinator. See the Wekinator documentation for more information."
+        },
+        {
+          "member function": "getPropertyInt",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "property_type"
+            },
+            {
+              "type": "string",
+              "name": "property_name"
+            }
+          ],
+          "description": "Get the property of the Wekinator. See the Wekinator documentation for more information."
+        },
+        {
+          "member function": "getRound",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the current recording round."
+        },
+        {
+          "member function": "importObs",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "filename"
+            }
+          ],
+          "description": "Import the observations from a file."
+        },
+        {
+          "member function": "input",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "inputs"
+            }
+          ],
+          "description": "Set the inputs of the Wekinator."
+        },
+        {
+          "member function": "inputDims",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "n"
+            }
+          ],
+          "description": "Set the number of input dimensions to Wekinator."
+        },
+        {
+          "member function": "inputDims",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the number of input dimensions to Wekinator."
+        },
+        {
+          "member function": "load",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "filename"
+            }
+          ],
+          "description": "Load the Wekinator from a file."
+        },
+        {
+          "member function": "modelType",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "model_type"
+            }
+          ],
+          "description": "Set the model type of the Wekinator. Options: AI.Regression: AI.MLP, AI.LR, AI.Classification: AI.KNN, AI.SVM, AI.DT."
+        },
+        {
+          "member function": "modelType",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the model type id of the Wekinator."
+        },
+        {
+          "member function": "modelTypeName",
+          "return type": "string",
+          "arguments": [],
+          "description": "Get the model type name of the Wekinator."
+        },
+        {
+          "member function": "nextRound",
+          "return type": "void",
+          "arguments": [],
+          "description": "Bump the recording round."
+        },
+        {
+          "member function": "numObs",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the number of observations in the Wekinator."
+        },
+        {
+          "member function": "numObs",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "output_index"
+            }
+          ],
+          "description": "Get the number of observations for the specified output in the Wekinator."
+        },
+        {
+          "member function": "output",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "outputs"
+            }
+          ],
+          "description": "Set the outputs of the Wekinator."
+        },
+        {
+          "member function": "outputDims",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "n"
+            }
+          ],
+          "description": "Set the number of output dimensions to Wekinator."
+        },
+        {
+          "member function": "outputDims",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the number of output dimensions to Wekinator."
+        },
+        {
+          "member function": "predict",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "float[]",
+              "name": "inputs"
+            },
+            {
+              "type": "float[]",
+              "name": "outputs"
+            }
+          ],
+          "description": "Predict outputs for the given inputs."
+        },
+        {
+          "member function": "randomizeOutputs",
+          "return type": "void",
+          "arguments": [],
+          "description": "Randomize the outputs of the Wekinator."
+        },
+        {
+          "member function": "save",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "string",
+              "name": "filename"
+            }
+          ],
+          "description": "Save the Wekinator to a file."
+        },
+        {
+          "member function": "setAllRecordStatus",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "status"
+            }
+          ],
+          "description": "Set the record status for all outputs."
+        },
+        {
+          "member function": "setAllRunStatus",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "status"
+            }
+          ],
+          "description": "Set the run status for all outputs."
+        },
+        {
+          "member function": "setOutputProperty",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "output_index"
+            },
+            {
+              "type": "string",
+              "name": "property_name"
+            },
+            {
+              "type": "int",
+              "name": "property_value"
+            }
+          ],
+          "description": "Set the output property of the Wekinator. See the Wekinator documentation for more information."
+        },
+        {
+          "member function": "setOutputProperty",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "output_index"
+            },
+            {
+              "type": "int",
+              "name": "property_type"
+            },
+            {
+              "type": "string",
+              "name": "property_name"
+            },
+            {
+              "type": "int",
+              "name": "property_value"
+            }
+          ],
+          "description": "Set the output property of the Wekinator. See the Wekinator documentation for more information."
+        },
+        {
+          "member function": "setOutputProperty",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "output_index"
+            },
+            {
+              "type": "int",
+              "name": "property_type"
+            },
+            {
+              "type": "string",
+              "name": "property_name"
+            },
+            {
+              "type": "float",
+              "name": "property_value"
+            }
+          ],
+          "description": "Set the output property of the Wekinator. See the Wekinator documentation for more information."
+        },
+        {
+          "member function": "setOutputProperty",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "output_index"
+            },
+            {
+              "type": "string",
+              "name": "property_name"
+            },
+            {
+              "type": "int[]",
+              "name": "property_value"
+            }
+          ],
+          "description": "Set the output property of the Wekinator. See the Wekinator documentation for more information."
+        },
+        {
+          "member function": "setOutputRecordStatus",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "output_index"
+            },
+            {
+              "type": "int",
+              "name": "status"
+            }
+          ],
+          "description": "Set the record status for the specified output."
+        },
+        {
+          "member function": "setOutputRunStatus",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "output_index"
+            },
+            {
+              "type": "int",
+              "name": "status"
+            }
+          ],
+          "description": "Set the run status for the specified output."
+        },
+        {
+          "member function": "setProperty",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "property_type"
+            },
+            {
+              "type": "string",
+              "name": "property_name"
+            },
+            {
+              "type": "int",
+              "name": "property_value"
+            }
+          ],
+          "description": "Set the property of the Wekinator. See the Wekinator documentation for more information."
+        },
+        {
+          "member function": "setProperty",
+          "return type": "void",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "property_type"
+            },
+            {
+              "type": "string",
+              "name": "property_name"
+            },
+            {
+              "type": "float",
+              "name": "property_value"
+            }
+          ],
+          "description": "Set the property of the Wekinator. See the Wekinator documentation for more information."
+        },
+        {
+          "member function": "taskType",
+          "return type": "int",
+          "arguments": [
+            {
+              "type": "int",
+              "name": "task_type"
+            }
+          ],
+          "description": "Set the task type of the Wekinator. Options: AI.Regression, AI.Classification."
+        },
+        {
+          "member function": "taskType",
+          "return type": "int",
+          "arguments": [],
+          "description": "Get the task type id of the Wekinator."
+        },
+        {
+          "member function": "taskTypeName",
+          "return type": "string",
+          "arguments": [],
+          "description": "Get the task type name of the Wekinator."
+        },
+        {
+          "member function": "train",
+          "return type": "void",
+          "arguments": [],
+          "description": "Train models for all outputs."
+        }
+      ]
+    },
+    {
+      "name": "AI",
+      "description": "AI class library.",
+      "inherits": ["Object"],
+      "static member variables": [
+        {
+          "name": "BOOST",
+          "type": "int",
+          "description": "Model type: Boosting."
+        },
+        {
+          "name": "Classification",
+          "type": "int",
+          "description": "Task type: Classification."
+        },
+        {
+          "name": "DT",
+          "type": "int",
+          "description": "Model type: Decision tree."
+        },
+        {
+          "name": "KNN",
+          "type": "int",
+          "description": "Model type: K-nearest neighbor."
+        },
+        {
+          "name": "Linear",
+          "type": "int",
+          "description": "Activation type: Linear."
+        },
+        {
+          "name": "LR",
+          "type": "int",
+          "description": "Model type: Logistic regression."
+        },
+        {
+          "name": "MLP",
+          "type": "int",
+          "description": "Model type: Multi-layer perceptron."
+        },
+        {
+          "name": "NAIVEBAYES",
+          "type": "int",
+          "description": "Model type: Naive Bayes."
+        },
+        {
+          "name": "PR",
+          "type": "int",
+          "description": "Model type: Polynomial regression."
+        },
+        {
+          "name": "Regression",
+          "type": "int",
+          "description": "Task type: Regression."
+        },
+        {
+          "name": "ReLU",
+          "type": "int",
+          "description": "Activation type: ReLU."
+        },
+        {
+          "name": "Sigmoid",
+          "type": "int",
+          "description": "Activation type: Sigmoid."
+        },
+        {
+          "name": "Softmax",
+          "type": "int",
+          "description": "Activation type: Softmax."
+        },
+        {
+          "name": "SVM",
+          "type": "int",
+          "description": "Model type: Support vector machine."
+        },
+        {
+          "name": "Tanh",
+          "type": "int",
+          "description": "Activation type: Tanh."
+        }
+      ]
+    }
+  ]
+}
