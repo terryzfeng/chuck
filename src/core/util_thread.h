@@ -189,7 +189,7 @@ private:
     void flush_data_buffer();
 
     // callback
-#if ( defined(__PLATFORM_APPLE__) || defined(__PLATFORM_LINUX__) || defined(__WINDOWS_PTHREAD__) )
+#if defined(__PLATFORM_APPLE__) || defined(__PLATFORM_LINUX__) || defined(__WINDOWS_PTHREAD__) || defined(__PLATFORM_EMSCRIPTEN__)
     static void * write_cb( void * _thiss );
 #elif defined(__PLATFORM_WINDOWS__)
     static unsigned THREAD_TYPE write_cb( void * _thiss );
