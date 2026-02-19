@@ -44,7 +44,8 @@ class FastCircularBuffer;
 template<typename T> class CircularBuffer;
 
 
-#if ( defined(__PLATFORM_APPLE__) || defined(__PLATFORM_LINUX__) || defined(__WINDOWS_PTHREAD__) )
+#if defined(__PLATFORM_APPLE__) || defined(__PLATFORM_LINUX__) || defined(__WINDOWS_PTHREAD__) || defined(__PLATFORM_EMSCRIPTEN__)
+  // 1.5.5.8 (ben, ge) added emscripten above since it uses POSIX
   #include <pthread.h>
   #define THREAD_TYPE
   typedef pthread_t THREAD_HANDLE;
