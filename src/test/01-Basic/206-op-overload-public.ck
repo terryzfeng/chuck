@@ -12,12 +12,6 @@ public int @operator +(Foo lhs, Foo rhs)
     return lhs.n + rhs.n;
 }
 
-// binary unary prefix overloading
-public int @operator !(Foo foo)
-{
-    return !foo.n;
-}
-
 // binary unary postfix overloading
 public int @operator (Foo foo) ++
 {
@@ -26,4 +20,4 @@ public int @operator (Foo foo) ++
 
 // use the overloading in a different code context
 // (could be another file; here we use Machine.eval())
-Machine.eval( "Foo a, b; <<<a++, !b, a+b>>>;" );
+Machine.eval( "Foo a, b; <<<a++, a+b>>>;" );

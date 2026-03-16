@@ -7,12 +7,6 @@ public class Foo
 { 0 => int n; }
 
 // unary pre overloading
-fun int @operator !(Foo foo)
-{
-    return !foo.n;
-}
-
-// unary pre overloading
 fun int @operator ++(Foo foo)
 {
     return ++foo.n;
@@ -26,5 +20,5 @@ fun int @operator (Foo foo)++
 
 // make foo
 Foo a;
-// print 1 1 2 2 2 3
-<<< !a, ++a, ++a, a.n, a++, a.n >>>;
+// print 1 2 2 2 3
+<<< ++a, ++a, a.n, a++, a.n >>>;

@@ -1426,6 +1426,8 @@ t_CKBOOL type_engine_check_if( Chuck_Env * env, a_Stmt_If stmt )
     case te_float:
     case te_dur:
     case te_time:
+    case te_object:
+    case te_user:
         break;
 
     default:
@@ -1670,6 +1672,8 @@ t_CKBOOL type_engine_check_while( Chuck_Env * env, a_Stmt_While stmt )
     case te_float:
     case te_dur:
     case te_time:
+    case te_object:
+    case te_user:
         break;
 
     default:
@@ -2770,13 +2774,19 @@ t_CKTYPE type_engine_check_op( Chuck_Env * env, ae_Operator op, a_Exp lhs, a_Exp
     case ae_op_shift_right_chuck:
     case ae_op_shift_left_chuck:
         // the above are non-commutative
-    case ae_op_and:
-    case ae_op_or:
     case ae_op_s_xor:
     case ae_op_s_and:
     case ae_op_s_or:
         // shift
         CK_LR( te_int, te_int ) return env->ckt_int;
+    break;
+
+    case ae_op_and:
+    case ae_op_or:
+        // allow Object in if() statements | 1.5.5.7 (azaday)
+        CK_LR( te_int, te_int ) return env->ckt_int;
+        CK_LR( te_object, te_object ) return env->ckt_int;
+        CK_LR( te_user, te_user ) return env->ckt_int;
     break;
 
     case ae_op_percent:
@@ -3460,6 +3470,9 @@ t_CKTYPE type_engine_check_exp_unary( Chuck_Env * env, a_Exp_Unary unary )
         case ae_op_exclamation:
             // int
             if( isa( t, env->ckt_int ) ) return t;
+            // object | 1.5.5.8 (azaday)
+            if( isa( t, env->ckt_object) ) return env->ckt_int;
+            // if( isa( t, env->ckt_object) ) return t;
         break;
 
         case ae_op_spork:
@@ -8088,7 +8101,9 @@ void type_engine_init_op_overload_builtin( Chuck_Env * env )
     // && & || | ^ << >> %
     //-------------------------------------------------------------------------
     registry->reserve( env->ckt_int, ae_op_and, env->ckt_int );
+    registry->reserve( env->ckt_object, ae_op_and, env->ckt_int, TRUE );
     registry->reserve( env->ckt_int, ae_op_or, env->ckt_int );
+    registry->reserve( env->ckt_object, ae_op_or, env->ckt_int, TRUE );
     registry->reserve( env->ckt_int, ae_op_s_and, env->ckt_int );
     registry->reserve( env->ckt_int, ae_op_s_or, env->ckt_int );
     registry->reserve( env->ckt_int, ae_op_s_xor, env->ckt_int );
@@ -8199,6 +8214,7 @@ void type_engine_init_op_overload_builtin( Chuck_Env * env )
     registry->reserve( NULL, ae_op_tilda, env->ckt_int );
     registry->reserve( NULL, ae_op_exclamation, env->ckt_int );
     registry->reserve( NULL, ae_op_new, env->ckt_object );
+    registry->reserve( NULL, ae_op_exclamation, env->ckt_object );
 
     //-------------------------------------------------------------------------
     // postfix ++ --

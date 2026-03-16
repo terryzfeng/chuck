@@ -26,10 +26,6 @@ fun Foo @operator *( Foo lhs, Foo rhs )
 fun int @operator(%)( Foo foo, int mod )
 { mod %=> foo.num; return foo.num; }
 
-// define unary operator overload for '!'
-fun int @operator !( Foo foo )
-{ return !foo.num; }
-
 // define postfix operator overload for '++'
 fun Foo @operator ( Foo foo ) ++
 { foo.num++; return foo; }

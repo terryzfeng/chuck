@@ -776,6 +776,8 @@ t_CKBOOL emit_engine_emit_if( Chuck_Emitter * emit, a_Stmt_If stmt )
     switch( stmt->cond->type->xid )
     {
     case te_int:
+    case te_object:  // 1.5.5.8 (azaday) allow if (obj)
+    case te_user:
         // push 0
         emit->append( new Chuck_Instr_Reg_Push_Imm( 0 ) );
         op = new Chuck_Instr_Branch_Eq_int( 0 );
@@ -1260,6 +1262,8 @@ t_CKBOOL emit_engine_emit_while( Chuck_Emitter * emit, a_Stmt_While stmt )
     switch( stmt->cond->type->xid )
     {
     case te_int:
+    case te_object:
+    case te_user:
         // push 0
         emit->append( new Chuck_Instr_Reg_Push_Imm( 0 ) );
         op = new Chuck_Instr_Branch_Eq_int( 0 );
@@ -1382,6 +1386,8 @@ t_CKBOOL emit_engine_emit_do_while( Chuck_Emitter * emit, a_Stmt_While stmt )
     switch( stmt->cond->type->xid )
     {
     case te_int:
+    case te_object:
+    case te_user:
         // push 0
         emit->append( new Chuck_Instr_Reg_Push_Imm( 0 ) );
         op = new Chuck_Instr_Branch_Neq_int( 0 );
@@ -3615,7 +3621,11 @@ t_CKBOOL emit_engine_emit_exp_unary( Chuck_Emitter * emit, a_Exp_Unary unary )
 
     case ae_op_exclamation:
         // !
-        if( equals( unary->exp->type, emit->env->ckt_int ) )
+        if( 
+            equals( unary->exp->type, emit->env->ckt_int ) 
+            ||
+            isa( unary->exp->type, emit->env->ckt_object ) 
+        )
         {
             emit->append( new Chuck_Instr_Not_int );
         }
