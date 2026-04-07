@@ -12,6 +12,10 @@ public int @operator +(Foo lhs, Foo rhs)
     return lhs.n + rhs.n;
 }
 
+// define unary operator overload for '~'
+fun int @operator ~( Foo foo )
+{ return !foo.num; }
+
 // binary unary postfix overloading
 public int @operator (Foo foo) ++
 {
@@ -20,4 +24,4 @@ public int @operator (Foo foo) ++
 
 // use the overloading in a different code context
 // (could be another file; here we use Machine.eval())
-Machine.eval( "Foo a, b; <<<a++, a+b>>>;" );
+Machine.eval( "Foo a, b; <<<a++, ~a, a+b>>>;" );

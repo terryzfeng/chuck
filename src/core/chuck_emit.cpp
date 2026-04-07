@@ -776,8 +776,8 @@ t_CKBOOL emit_engine_emit_if( Chuck_Emitter * emit, a_Stmt_If stmt )
     switch( stmt->cond->type->xid )
     {
     case te_int:
-    case te_object:  // 1.5.5.8 (azaday) allow if (obj)
-    case te_user:
+    case te_object: // 1.5.5.8 (azaday) allow if(obj)
+    case te_user: // 1.5.5.8 (azaday) allow if(obj)
         // push 0
         emit->append( new Chuck_Instr_Reg_Push_Imm( 0 ) );
         op = new Chuck_Instr_Branch_Eq_int( 0 );
@@ -901,6 +901,8 @@ t_CKBOOL emit_engine_emit_for( Chuck_Emitter * emit, a_Stmt_For stmt )
         switch( stmt->c2->stmt_exp->type->xid )
         {
         case te_int:
+        case te_object: // 1.5.5.8 (azaday) allow for( C1; obj; C3 )
+        case te_user: // 1.5.5.8 (azaday) allow for( C1; obj; C3 )
             // push 0
             emit->append( new Chuck_Instr_Reg_Push_Imm( 0 ) );
             op = new Chuck_Instr_Branch_Eq_int( 0 );
@@ -1262,8 +1264,8 @@ t_CKBOOL emit_engine_emit_while( Chuck_Emitter * emit, a_Stmt_While stmt )
     switch( stmt->cond->type->xid )
     {
     case te_int:
-    case te_object:
-    case te_user:
+    case te_object: // 1.5.5.8 (azaday) allow while(obj)
+    case te_user: // 1.5.5.8 (azaday) allow while(obj)
         // push 0
         emit->append( new Chuck_Instr_Reg_Push_Imm( 0 ) );
         op = new Chuck_Instr_Branch_Eq_int( 0 );
@@ -1386,8 +1388,8 @@ t_CKBOOL emit_engine_emit_do_while( Chuck_Emitter * emit, a_Stmt_While stmt )
     switch( stmt->cond->type->xid )
     {
     case te_int:
-    case te_object:
-    case te_user:
+    case te_object: // 1.5.5.8 (azaday) allow do{ }while(obj)
+    case te_user: // 1.5.5.8 (azaday) allow do{ }while(obj)
         // push 0
         emit->append( new Chuck_Instr_Reg_Push_Imm( 0 ) );
         op = new Chuck_Instr_Branch_Neq_int( 0 );
@@ -1486,6 +1488,8 @@ t_CKBOOL emit_engine_emit_until( Chuck_Emitter * emit, a_Stmt_Until stmt )
     switch( stmt->cond->type->xid )
     {
     case te_int:
+    case te_object: // 1.5.5.8 (azaday) allow until(obj)
+    case te_user: // 1.5.5.8 (azaday) allow until(obj)
         // push 0
         emit->append( new Chuck_Instr_Reg_Push_Imm( 0 ) );
         op = new Chuck_Instr_Branch_Neq_int( 0 );
@@ -1607,6 +1611,8 @@ t_CKBOOL emit_engine_emit_do_until( Chuck_Emitter * emit, a_Stmt_Until stmt )
     switch( stmt->cond->type->xid )
     {
     case te_int:
+    case te_object: // 1.5.5.8 (azaday) allow do{ }until(obj)
+    case te_user: // 1.5.5.8 (azaday) allow do{ }until(obj)
         // push 0
         emit->append( new Chuck_Instr_Reg_Push_Imm( 0 ) );
         op = new Chuck_Instr_Branch_Eq_int( 0 );
@@ -1715,7 +1721,7 @@ t_CKBOOL emit_engine_emit_loop( Chuck_Emitter * emit, a_Stmt_Loop stmt )
 
     default:
         EM_error2( stmt->cond->where,
-            "(emit): internal error: unhandled type '%s' in while conditional",
+            "(emit): internal error: unhandled type '%s' in loop conditional",
             type->base_name.c_str() );
 
         return FALSE;
@@ -3621,8 +3627,7 @@ t_CKBOOL emit_engine_emit_exp_unary( Chuck_Emitter * emit, a_Exp_Unary unary )
 
     case ae_op_exclamation:
         // !
-        if( 
-            equals( unary->exp->type, emit->env->ckt_int ) 
+        if( equals( unary->exp->type, emit->env->ckt_int ) 
             ||
             isa( unary->exp->type, emit->env->ckt_object ) 
         )

@@ -12,6 +12,10 @@ fun int @operator ++(Foo foo)
     return ++foo.n;
 }
 
+// define unary operator overload for '~'
+fun int @operator ~( Foo foo )
+{ return !foo.num; }
+
 // unary postfix overloading
 fun int @operator (Foo foo)++
 {
@@ -20,5 +24,5 @@ fun int @operator (Foo foo)++
 
 // make foo
 Foo a;
-// print 1 2 2 2 3
-<<< ++a, ++a, a.n, a++, a.n >>>;
+// print 1 1 2 2 2 3
+<<< ~a, ++a, ++a, a.n, a++, a.n >>>;
