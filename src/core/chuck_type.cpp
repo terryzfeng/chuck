@@ -2792,6 +2792,8 @@ t_CKTYPE type_engine_check_op( Chuck_Env * env, ae_Operator op, a_Exp lhs, a_Exp
         CK_LR( te_object, te_object ) return env->ckt_int;
         CK_LR( te_user, te_user ) return env->ckt_int;
         CK_COMMUTE( te_object, te_user ) return env->ckt_int;
+        CK_COMMUTE( te_object, te_int ) return env->ckt_int;
+        CK_COMMUTE( te_user, te_int ) return env->ckt_int;
     break;
 
     case ae_op_percent:

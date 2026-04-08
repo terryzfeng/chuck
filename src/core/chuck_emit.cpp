@@ -2089,6 +2089,9 @@ t_CKBOOL emit_engine_emit_exp_binary( Chuck_Emitter * emit, a_Exp_Binary binary 
         if( !right )
             return FALSE;
 
+        // boolify | 1.5.5.8 (ge,nick) added
+        emit->append( new Chuck_Instr_Boolify );
+
         // set branch location
         op->set( emit->next_index() );
 
@@ -2120,6 +2123,9 @@ t_CKBOOL emit_engine_emit_exp_binary( Chuck_Emitter * emit, a_Exp_Binary binary 
         right = emit_engine_emit_exp( emit, binary->rhs );
         if( !right )
             return FALSE;
+
+        // boolify | 1.5.5.8 (ge,nick) added
+        emit->append( new Chuck_Instr_Boolify );
 
         // set branch location
         op->set( emit->next_index() );
@@ -3050,6 +3056,8 @@ t_CKBOOL emit_engine_emit_op( Chuck_Emitter * emit, ae_Operator op, a_Exp lhs, a
         switch( left )
         {
         case te_int:
+        case te_object:
+        case te_user:
             emit->append( instr = new Chuck_Instr_And );
             break;
 
@@ -3061,6 +3069,8 @@ t_CKBOOL emit_engine_emit_op( Chuck_Emitter * emit, ae_Operator op, a_Exp lhs, a
         switch( left )
         {
         case te_int:
+        case te_object:
+        case te_user:
             emit->append( instr = new Chuck_Instr_Or );
             break;
 
