@@ -9787,7 +9787,7 @@ void Chuck_Instr_Gack::execute( Chuck_VM * vm, Chuck_VM_Shred * shred )
                 else
                 {
                     // print it
-                    CK_FPRINTF_STDERR( "%lld ", *(sp) );
+                    CK_FPRINTF_STDERR( "%ld ", *(sp) );
                 }
             }
             else
