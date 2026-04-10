@@ -13,6 +13,46 @@ ChucK VERSIONS log
 =============
 ChuGL v.0.3.0
 =============
+- (added) `TextureLoadDesc.srgb` for loading image data into srgb textures
+- (added) YCrCb video decoding mode to `Video`
+- (updated) cmake to build on linux. (thanks Lejun)
+- (added) new operator overloads `GGen[] --> GGen` and `GGen[] --< GGen` 
+  for grucking / ungrucking arrays of GGens all at once (thanks Brendan)
+- (added) `Color.srgb(vec3)` and `Color.linear(vec3)` for converting 
+  between linear and srgb color spaces
+- (added) `PhongMaterial.uvOffset()` and `PhongMaterial.uvScale()` for 
+  repeating/scrolling textures
+- (added) `Webcam` now has linux support! 
+- (added) `int GWindow.minimized()` to detect if the window is currently 
+  minimized (thanks to Nick for the misunderstanding)
+- (added) examples
+  - `deep/video-ycrcb.ck`: demonstrating the YCrCb decoding mode on 
+    `Video` UGen
+  - `deep/skybox-shader.ck`: procedural sky rendering via custom skybox 
+    shader
+(bug fixes)
+- (fixed) bug of FlatMaterial.emissive not being properly set
+- (fixed) crash caused by using a Material with no Shader
+- (fixed) bug where main camera (`GG.camera()`) was being incorrectly 
+  replaced upon instantiating a new `GScene`
+- (fixed) segfault caused by setting a null texture to 
+  `Material.texture(int, Texture)`
+- (fixed) `GGen.detach()` and `GGen.detachChildren()` now correctly set the 
+  `.parent()` pointers of all detached children to null
+- (fixed) `GVideo.rate()` now properly returns a float
+- (fixed) segfault caused by GText on Linux
+- (fixed) rare race condition on startup caused by the graphics thread 
+  broadcasting WindowResizeEvent
+- (fixed) segfault caused by walking scenegraph and calling 
+  `update(float dt)` during GG.autoUpdate()
+(general improvements)
+- (added) warning when setting RenderPass.clear(false) on a GScene that has 
+  a skybox
+- (updated) setting `FlatMaterial.color()` and `PhongMaterial.color()` no 
+  longer override the alpha value to be 1
+- (updated) improved performance of default skybox material shader
+- (updated) Material uniform updates are now batch-written to the GPU, 
+  improving renderer performance
 =============
 ChucK 1.5.5.8
 =============
@@ -55,7 +95,8 @@ ChucK 1.5.5.8
    harmonics.
 (updated) duplicate-name chugins (regardless of path) are no longer
    loaded; (previously such chugins are loaded and duplicate API queries
-   are ignored)
+   are ignored). This fixes potential issues if the duplicate chugin
+   persist state (e.g., registering shred watchers from ChuGL.chug)
 
 
 1.5.5.7 (January 2026)
