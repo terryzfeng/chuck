@@ -53,6 +53,9 @@ ChucK 1.5.5.8
    `Math.sh( int order, float azimuth, float zenith )`
    Returns an array of size (N+1)^2, containing ACN ordered spherical 
    harmonics.
+(updated) duplicate-name chugins (regardless of path) are no longer
+   loaded; (previously such chugins are loaded and duplicate API queries
+   are ignored)
 
 
 1.5.5.7 (January 2026)
