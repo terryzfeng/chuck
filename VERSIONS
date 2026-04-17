@@ -88,6 +88,9 @@ ChucK 1.5.5.8
    the actual value of rhs (which in practice is "correct", but also
    potentially violates the very definition of logical AND and OR in 
    ChucK...) (nick,ge)
+(added) @example statement for associating one or more example ChucK files
+   with class definitions; this will enable CKDoc to generate documention
+   with links to examples (e.g., https://chuck.stanford.edu/smuck/api/)
 (added) spherical harmonic calculator designed for ChucK's math library 
    (@everettcarpenter)
    `Math.sh( int order, float azimuth, float zenith )`
