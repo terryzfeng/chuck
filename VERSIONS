@@ -100,6 +100,7 @@ ChucK 1.5.5.8
    loaded; (previously such chugins are loaded and duplicate API queries
    are ignored). This fixes potential issues if the duplicate chugin
    persist state (e.g., registering shred watchers from ChuGL.chug)
+(added) examples/basic/noise-machine.ck (a toddler noise machine)
 
 
 1.5.5.7 (January 2026)
